@@ -140,7 +140,13 @@ class Client(LanCamera):
 
             while len(data) < msg_size:
                 data += self.__socket.recv(4096)
-
+                if data == b'':
+                    self.__socket.close()
+                    quit = True
+                    break
+            if quit:
+                break 
+                
             frame_data = data[:msg_size]
             data = data[msg_size:]  
             frame = pickle.loads(frame_data, fix_imports=True, encoding="bytes")
