@@ -3,6 +3,7 @@ import threading
 import socket
 import pickle
 import struct
+from scapy.all import *
 
 class LanCamera:
 
@@ -14,8 +15,57 @@ class LanCamera:
         self.__port = PORT
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    def list_servers(self):
-        pass
+    def list_servers(self, port_range: list):
+
+        hosts = self.__scan_ports(port_range)
+        if len(hosts) > 0:
+            print("Servidores encontrados: ")
+            for host, ports in hosts.items():
+                print(f"IP Servidor: {host}; Portas abertas: {ports}")
+        else:
+            print("Nenhum servidor foi encontrado")
+
+    def __scan_ports(self, port_range: list):
+
+        if type(port_range) is int:
+            start = port_range
+            end = start
+        else:
+            start = port_range[0]
+            end  = port_range[1]
+
+        ips = self.__get_ips()
+        hosts = {}
+        for ip in ips:
+            ports = []
+            print(f"Scaneando portas {start}-{end} do host {ip}")
+            for port in range(start, end):
+                if self.__scan_port(ip, port):
+                    ports.append(port)
+
+            hosts[ip] = ports
+
+        return hosts
+
+    def __scan_port(self, ip, port, timeout=2):
+
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(timeout)
+
+        if s.connect_ex((ip, port)) == 0:
+            s.close()
+            return True
+
+        s.close()
+        return False
+
+    def __get_ips(self, network='192.168.1.0/24'):
+
+        ans,unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=network),timeout=2)
+        ips = []
+        for res in ans.res:
+            ips.append(res.answer.psrc)
+        return ips
 
     def list_cams_local(self, num):
 
