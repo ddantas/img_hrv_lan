@@ -5,6 +5,9 @@ import pickle
 import struct
 from scapy.all import *
 import time
+from PIL import Image
+from PIL import ImageTk
+
 
 ## @package lancamera
 #  This package exposes the finctionalities of the cameras
@@ -128,49 +131,60 @@ class Client(LanCamera):
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket_commands = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+    def set_host(self, host, port):
+        self.__host = host
+        self.__port = port
+
     ## \brief List cameras from available hosts in the network.
     #
     #  List all cameras and hosts with available cameras in the LAN.
     def list_cams_lan(self):
 
         hosts = self.list_servers(9001)
+        devices = {}
         for ip, ports in hosts.items():
             for port in ports:
                 self.__socket_commands.connect((ip, port))
                 self.__socket_commands.sendall(b"LIST")
                 cams = self.__socket_commands.recv(1024).decode()
+                cams = cams.replace('[','')
+                cams = cams.replace(']','')
+                cams = cams.split(',')
+                devices[ip] = cams
                 print(f'Cameras do servidor {ip}:{port} -> {cams}')
                 self.__socket_commands.close()
+
+        return devices
 
     ## \brief Connects to a streaming server.
     #
     #  Starts a thread that does the connection with the streaming server
     #  If record=True, __handle_conn will save the frames to the hard drive
-    def start_connection(self, record=False):
+    def start_connection(self, record=False, container=None):
 
         if self.__running: 
             print("O cliente já está rodando")
         else:
             self.__running = True
-            server_thread = threading.Thread(target=self.__connect, args=(record, ))
+            server_thread = threading.Thread(target=self.__connect, args=(record, container, ))
             server_thread.start()
 
     ## \brief Connects to a streaming server.
     #
     #  Connects to the streaming server and starts a thread the handles the streaming data that is received
     #  If record=True, __handle_conn will save the frames to the hard drive
-    def __connect(self, record):
+    def __connect(self, record, container):
 
         self.__socket.connect((self.__host, self.__port))
         self.__connected = True
-        thread = threading.Thread(target=self.__handle_conn, args=(record, ))
+        thread = threading.Thread(target=self.__handle_conn, args=(record, container, ))
         thread.start()
 
     ## \brief Show and optionally save the streaming.
     #
     #  Receive, decode and display the streaming frames that were received from the server
     #  If record=True, it saves the frames to the hard drive
-    def __handle_conn(self, record):
+    def __handle_conn(self, record, container):
 
         if record:
             cod = cv2.VideoWriter_fourcc(*'MJPG')
@@ -214,7 +228,19 @@ class Client(LanCamera):
             if record:
                 vidWriter.write(frame)
 
-            cv2.imshow(str(self.__host), frame)
+            if container:
+                try:
+                    cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+                    img = Image.fromarray(cv2image)
+                    imgtk = ImageTk.PhotoImage(image=img)
+                    container.configure(image=imgtk)
+                    container.imgtk = imgtk
+                except:
+                    self.stop_client()
+                    break
+
+            else:
+                cv2.imshow(str(self.__host), frame)
 
             if cv2.waitKey(1) == ord('q'):
                 self.stop_client()
@@ -247,7 +273,7 @@ class Server(LanCamera):
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket_commands = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__cam = None
-        self.__init_camera(device)
+        # self.__init_camera(device)
         self.__init_socket()
 
     ## \brief Initialize socket
@@ -270,6 +296,22 @@ class Server(LanCamera):
         self.__cam.release()
         cv2.destroyAllWindows()
 
+    def list_cams_local(self, num):
+
+        index = 0
+        v = []
+        i = num
+        while i > 0:
+
+            cap = cv2.VideoCapture(index)
+
+            if cap.isOpened():
+                v.append(index)
+                cap.release()
+                
+            index += 1
+            i -= 1
+        return v
     ## \brief Start command server thread
     #
     #  Start a thread to receive commands from the client
@@ -336,25 +378,26 @@ class Server(LanCamera):
     ## \brief Start video streaming thread.
     #
     #  Starts a thread to listen for connections for video streaming
-    def start_stream(self):
+    def start_stream_server(self, device):
 
         if self.__streaming:
             print("O servidor já está realizando o streaming")
 
         else:
             self.__streaming = True
-            server_thread = threading.Thread(target=self.__server_listen, args=(record, ))
+            server_thread = threading.Thread(target=self.__server_listen, args=(device, ))
             server_thread.start()
 
     ## \brief Listen to streaming requisitions.
     #
     #  Listens for an incoming connection and starts a thread that handles the sending of
     #  camera frames after the connection is established
-    def __server_listen(self):
+    def __server_listen(self, device):
 
         self.__socket.listen()
         conn, addr = self.__socket.accept()
-        thread = threading.Thread(target=self.__stream, args=(conn, record, ))
+        self.__init_camera(device)
+        thread = threading.Thread(target=self.__stream, args=(conn,))
         thread.start()
 
     ## \brief Encode and stream video.
@@ -372,6 +415,7 @@ class Server(LanCamera):
                 conn.sendall(struct.pack('>L', size) + data)
 
             except:
+                self.stop_stream()
                 self.__streaming = False
 
         self.__cleanup()

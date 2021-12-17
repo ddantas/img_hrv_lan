@@ -14,7 +14,6 @@
 
 # python 3
 import tkinter as tk
-from lancamera import *
 from tkinter import ttk
 import cv2
 import tkinter.messagebox
@@ -31,6 +30,11 @@ import time
 
 from PIL import Image
 from PIL import ImageTk
+
+from lancamera import *
+# import ImgCanvas as ic
+# import WinThresh
+# import WinContrast
 
 WIN_TITLE = "GUIIMP"
 
@@ -49,8 +53,9 @@ class WinMainTk(tk.Frame):
 
         self.create_frame_toolbox()
 
-        self.cap_cam1 = cv2.VideoCapture('john-mayer.mp4')
-        self.cap_cam2 = cv2.VideoCapture('john-mayer.mp4')
+        self.client1 = Client()
+        self.client2 = Client()
+
         
     ## Create main frame, composed by an ImgCanvas object.
     #  @param self The object pointer.
@@ -76,7 +81,7 @@ class WinMainTk(tk.Frame):
         self.selected_host_cam1 = tk.StringVar()
         self.selected_host_cam2 = tk.StringVar()
 
-        self.btn_search =      tk.Button(self.frame_right, text="Scan the network", padx=3, width=BUTTON_WIDTH, command=self.search_network)
+        self.btn_scan = tk.Button(self.frame_right, text="Scan the network", padx=3, width=BUTTON_WIDTH, command=self.scan_network)
 
         self.select_cam1_label = tk.Label(self.frame_right,text="\nCAM 1", padx=3)
         self.select_cam2_label = tk.Label(self.frame_right,text="\nCAM 2", padx=3)
@@ -90,14 +95,14 @@ class WinMainTk(tk.Frame):
         self.schedule_time = tk.Entry(self.frame_right, width=BUTTON_WIDTH)
         self.btn_schedule =    tk.Button(self.frame_right, text="Schedule routine start", padx=3, width=BUTTON_WIDTH, command=self.schedule_routine)
 
-        self.combo_box_cam1 = ttk.Combobox(self.frame_right, width=BUTTON_WIDTH, textvariable=self.selected_host_cam2)
+        self.combo_box_cam1 = ttk.Combobox(self.frame_right, width=BUTTON_WIDTH, textvariable=self.selected_host_cam1)
         self.combo_box_cam1['state'] = 'readonly'
 
-        self.combo_box_cam2 = ttk.Combobox(self.frame_right, width=BUTTON_WIDTH, textvariable=self.selected_host_cam1)
+        self.combo_box_cam2 = ttk.Combobox(self.frame_right, width=BUTTON_WIDTH, textvariable=self.selected_host_cam2)
         self.combo_box_cam2['state'] = 'readonly'
 
 
-        self.btn_search.grid(row=0, column=0, ipady=10, pady=(100,0))
+        self.btn_scan.grid(row=0, column=0, ipady=10, pady=(100,0))
 
         self.select_cam1_label.grid(row=1, column=0, ipady=10)
         self.combo_box_cam1.grid(row=2, column=0, ipady=10)
@@ -115,55 +120,74 @@ class WinMainTk(tk.Frame):
         self.schedule_time.grid(row=10, column=0, ipady=10)
         self.btn_schedule.grid(row=11, column=0, ipady=10, pady=(0,100))
 
-    def get_frame_cam1(self):
-        _, frame = self.cap_cam1.read()
-        cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-        img = Image.fromarray(cv2image)
-        imgtk = ImageTk.PhotoImage(image=img)
+    def scan_network(self):
+        """ replace with call to list_cams_local, this would probably use a abstract class"""
+        hosts = self.client1.list_cams_lan()  
 
-        return imgtk
+        if not hosts:
+            tk.messagebox.showwarning(title="Scanning complete", message="No devices found")  
+            return
 
-    def get_frame_cam2(self):
-        _, frame = self.cap_cam2.read()
-        cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-        img = Image.fromarray(cv2image)
-        imgtk = ImageTk.PhotoImage(image=img)
+        tk.messagebox.showinfo(title="Scanning complete", message="HOSTS updated")  
+        print(hosts)
+        values = []
+        for host, devices in hosts.items():
+            for dev in devices: 
+                values.append(f'{host}; #{dev}')
 
-        return imgtk
+        self.combo_box_cam1['values'] = values
+        self.combo_box_cam2['values'] = values
+        print("Search network")
 
-    def show_video_cam1(self, frame=None):
-        imgtk = self.get_frame_cam1()
-        self.image_frame1.imgtk = imgtk
-        self.image_frame1.configure(image=imgtk)
-        self.image_frame1.after(10, self.show_video_cam1) 
-
-    def show_video_cam2(self, frame=None):
-        imgtk = self.get_frame_cam2()
-        self.image_frame2.imgtk = imgtk
-        self.image_frame2.configure(image=imgtk)
-        self.image_frame2.after(10, self.show_video_cam2) 
 
     def select_host_cam1(self):
-        """first establish connection with host1"""
         print("Select host cam1")
         self.image_frame1 = tk.Label(self.frame1)
         self.image_frame1.pack()
 
-        self.show_video_cam1()
+        host = self.selected_host_cam1.get()
+        if not host:
+            tk.messagebox.showerror(title="Error Connecting to HOST 1", message="Select HOST 1 first")  
+            return    
+
+        self.combo_box_cam1['values'] = list(self.combo_box_cam1['values']).remove(host) 
+        self.combo_box_cam2['values'] = list(self.combo_box_cam1['values']).remove(host) 
+        print(list(self.combo_box_cam1['values']).remove(host))
+
+        host = host.replace('#','')
+        split_host = host.split(';')
+        host = split_host[0]
+        port = 9000
+
+        # should send message to server to record its screen, because the server won't be able to capture the
+        # device that is being used to record the subjects camera
+        self.client1.set_host(host, port)
+        self.client1.start_connection(container=self.image_frame1)
 
     def select_host_cam2(self):
-        """first establish connection with host2"""
         print("Select host cam2")
         self.image_frame2 = tk.Label(self.frame2)
         self.image_frame2.pack()
 
-        self.show_video_cam2()
+        host = self.selected_host_cam2.get()
+        if not host:
+            tk.messagebox.showerror(title="Error Connecting to HOST 2", message="Select HOST 2 first")  
+            return    
 
-    def search_network(self):
-        """ replace with call to list_cams_local"""
-        self.combo_box_cam1['values'] = ['mock' for m in range(5)]
-        self.combo_box_cam2['values'] = ['mock' for m in range(5)]
-        print("Search network")
+        self.combo_box_cam1['values'] = list(self.combo_box_cam2['values']).remove(host) 
+        self.combo_box_cam2['values'] = list(self.combo_box_cam2['values']).remove(host) 
+        print(list(self.combo_box_cam1['values']).remove(host))
+
+        host = host.replace('#','')
+        split_host = host.split(';')
+        host = split_host[0]
+        port = 9000
+
+        # should send message to server to record its screen, because the server won't be able to capture the
+        # device that is being used to record the subjects camera
+        self.client2.set_host(host, port)
+        self.client2.start_connection(container=self.image_frame2)
+
 
     def select_routine_file(self):
         self.routine_filename = tk.filedialog.askopenfilename()
