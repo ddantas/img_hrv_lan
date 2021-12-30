@@ -79,6 +79,7 @@ class LanCamera:
         s.settimeout(timeout)
 
         if s.connect_ex((ip, port)) == 0:
+            s.sendall(b'END')
             s.close()
             return True
 
@@ -125,16 +126,41 @@ class Client(LanCamera):
     def __init__(self, HOST='127.0.0.1', PORT=9000):
 
         self.__running = False
-        self.__connected = False
+        self.__streaming = False
         self.__host = HOST
         self.__port = PORT
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket_commands = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.data = b''
 
     def set_host(self, host, port):
         self.__host = host
         self.__port = port
 
+
+    def list_cams_at(self, ip, port_range):
+        if len(port_range) > 1:
+            start = port_range[0]
+            end = port_range[1]
+
+        else:
+            start = end = port_range
+
+        devices = []
+        for port in range(start, end):
+            if self.__scan_port(ip, port):
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.connect((ip, port))
+                    s.sendall(b"LIST")
+                    cams = s.recv(1024).decode()
+                    cams = cams.replace('[','')
+                    cams = cams.replace(']','')
+                    cams = cams.split(',')
+                    devices.append(cams)
+                    print(f'Cameras do servidor {ip}:{port} -> {cams}')
+                    s.sendall(b"END")
+
+        return devices
     ## \brief List cameras from available hosts in the network.
     #
     #  List all cameras and hosts with available cameras in the LAN.
@@ -144,15 +170,17 @@ class Client(LanCamera):
         devices = {}
         for ip, ports in hosts.items():
             for port in ports:
-                self.__socket_commands.connect((ip, port))
-                self.__socket_commands.sendall(b"LIST")
-                cams = self.__socket_commands.recv(1024).decode()
-                cams = cams.replace('[','')
-                cams = cams.replace(']','')
-                cams = cams.split(',')
-                devices[ip] = cams
-                print(f'Cameras do servidor {ip}:{port} -> {cams}')
-                self.__socket_commands.close()
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.connect((ip, port))
+                    s.sendall(b"LIST")
+
+                    cams = s.recv(1024).decode()
+                    cams = cams.replace('[','')
+                    cams = cams.replace(']','')
+                    cams = cams.split(',')
+                    devices[ip] = cams
+                    print(f'Cameras do servidor {ip}:{port} -> {cams}')
+                    s.sendall(b"END")
 
         return devices
 
@@ -162,12 +190,22 @@ class Client(LanCamera):
     #  If record=True, __handle_conn will save the frames to the hard drive
     def start_connection(self, record=False, container=None):
 
-        if self.__running: 
+        if self.__streaming: 
             print("O cliente já está rodando")
         else:
+            self.__socket.connect((self.__host, self.__port))
+            self.__streaming = True
+            # self.__socket_commands.connect((self.__host, self.__port+1))
+            # server_thread = threading.Thread(target=self.__connect, args=(record, container, ))
+            # server_thread.start()
+
+    def start_commands_connection(self):
+
+        if self.__running:
+            print("O cliente já está conectado")
+        else:
             self.__running = True
-            server_thread = threading.Thread(target=self.__connect, args=(record, container, ))
-            server_thread.start()
+            self.__socket_commands.connect((self.__host, self.__port+1))
 
     ## \brief Connects to a streaming server.
     #
@@ -175,89 +213,86 @@ class Client(LanCamera):
     #  If record=True, __handle_conn will save the frames to the hard drive
     def __connect(self, record, container):
 
-        self.__socket.connect((self.__host, self.__port))
-        self.__connected = True
-        thread = threading.Thread(target=self.__handle_conn, args=(record, container, ))
-        thread.start()
+        if self.__streaming:
+            print("O cliente já está conectado")
 
-    ## \brief Show and optionally save the streaming.
+        else:
+            self.__streaming = True
+            self.__socket.connect((self.__host, self.__port))
+
+    ## \brief Sends a command to the server.
     #
-    #  Receive, decode and display the streaming frames that were received from the server
-    #  If record=True, it saves the frames to the hard drive
-    def __handle_conn(self, record, container):
+    #  Sends the specified command to the server
+    def send_command(self, command):
 
-        if record:
-            cod = cv2.VideoWriter_fourcc(*'MJPG')
-            vidWriter = cv2.VideoWriter('media/camera_client.mp4',cod,30.0,(640,480))
+        msg_len = struct.pack('i', len(command))
+        self.__socket_commands.sendall(msg_len + command.encode())
 
-        data = b''
-        img_data_size = struct.calcsize('>L')
-        while self.__running:
-            quit = False
+    def recv_response(self):
+        return self.__socket_commands.recv(1024)
 
-            while len(data) < img_data_size:
-                recv = self.__socket.recv(4096)
-                data += recv
-                if data == b'':
-                    self.__socket.close()
-                    quit = True
-                    break
-            if quit:
+    ## \brief Receives frame from the server.
+    #
+    #  Receives, decodes and displays a single streaming frame that was received from the server
+    #  This method is designed to be accessed by the GUI interface in order to display
+    #  the frame on the application window
+    def recv_frame(self, img_data_size):
+
+        quit = False
+
+        while len(self.data) < img_data_size:
+            recv = self.__socket.recv(4096)
+            self.data += recv
+
+            if self.data == b'':
+                self.__socket.close()
+                quit = True
                 break
 
-            msg_size = data[:img_data_size]
-            data = data[img_data_size:]
+        if quit:
+            return None
 
-            msg_size = struct.unpack(">L", msg_size)[0]
+        msg_size = self.data[:img_data_size]
+        self.data = self.data[img_data_size:]
 
-            while len(data) < msg_size:
-                data += self.__socket.recv(4096)
-                if data == b'':
-                    # self.__socket.close()
-                    self.stop_client()
-                    quit = True
-                    break
-            if quit:
-                break 
-                
-            frame_data = data[:msg_size]
-            data = data[msg_size:]  
-            frame = pickle.loads(frame_data, fix_imports=True, encoding="bytes")
-            frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
+        msg_size = struct.unpack(">L", msg_size)[0]
 
-            if record:
-                vidWriter.write(frame)
-
-            if container:
-                try:
-                    cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-                    img = Image.fromarray(cv2image)
-                    imgtk = ImageTk.PhotoImage(image=img)
-                    container.configure(image=imgtk)
-                    container.imgtk = imgtk
-                except:
-                    self.stop_client()
-                    break
-
-            else:
-                cv2.imshow(str(self.__host), frame)
-
-            if cv2.waitKey(1) == ord('q'):
+        while len(self.data) < msg_size:
+            self.data += self.__socket.recv(4096)
+            if self.data == b'':
                 self.stop_client()
+                quit = True
                 break
+        if quit:
+            return None
+            
+        frame_data = self.data[:msg_size]
+        self.data = self.data[msg_size:]  
+        frame = pickle.loads(frame_data, fix_imports=True, encoding="bytes")
+        frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
+
+        return frame
 
     ## \brief Stop connection.
     #
     #  Stop the client connection to the streaming server
-    def stop_client(self):
+    def stop_commands_client(self):
 
         if self.__running:
             self.__running = False
-            self.__socket.close()
+            self.__socket_commands.close()
 
         else:
             print("Não tem clientes rodando")
 
+    def stop_streaming_client(self):
+
+        if self.__streaming:
+            self.__streaming = False
+            self.__socket.close()
+
+        else:
+            print("Não tem clientes rodando")
 
 ## \brief Class Server.
 #
@@ -273,7 +308,7 @@ class Server(LanCamera):
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket_commands = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__cam = None
-        # self.__init_camera(device)
+        self.connections = []
         self.__init_socket()
 
     ## \brief Initialize socket
@@ -312,51 +347,81 @@ class Server(LanCamera):
             index += 1
             i -= 1
         return v
+
     ## \brief Start command server thread
     #
     #  Start a thread to receive commands from the client
-    def start_commands(self):
+    def start_commands_server(self, routine_handler=None):
 
         if self.__running:
             print("O servidor já está rodando")
 
         else:
-            self.__running = True
-            thread = threading.Thread(target=self.__server_listen_commands)
+            thread = threading.Thread(target=self.__server_listen_commands, args=(routine_handler, ))
             thread.start()
 
     ## \brief Listen to port.
     #
     #  Accept connections coming to the port that handles commands and start a thread to
     #  handle incoming commands
-    def __server_listen_commands(self):
+    def __server_listen_commands(self, routine_handler=None):
+
+        self.__running = True
 
         while self.__running:
             self.__socket_commands.listen()
             conn, addr = self.__socket_commands.accept()
-            thread = threading.Thread(target=self.__handle_commands, args=(conn, ))
+            thread = threading.Thread(target=self.__handle_commands, args=(conn, routine_handler, ))
             thread.start()
 
     ## \brief Handle received commands.
     #
-    #  Handle the data received, which should be a command specifying an action
-    #  (Only LIST is implemented)
-    def __handle_commands(self, conn):
+    #  Handle the data received, which should be a command specifying an action.
+    #  A function that treats the command should be specified as an argument (routine_handler)
+    #  in order to respond the received command properly.
+    def __handle_commands(self, conn, routine_handler):
 
         while self.__running:
-            data = conn.recv(1024)
+
+            try:
+                data = conn.recv(1024)
+            except:
+                conn.close()
+                break
 
             if data == b"LIST":
+
                 cams = self.list_cams_local(5)
+                conn.sendall(str(cams).encode())
 
-                try:
-                    print(cams)
-                    conn.sendall(str(cams).encode())
-                except:
-                    conn.close()
+            if b'ROUTINE' in data:
 
-            if data == b'':
-                # self.__running = False
+                while True:
+                    size = struct.unpack('i', conn.recv(struct.calcsize ('i')))[0]
+                    data = ''
+                    msg = conn.recv(size)
+                    data += msg.decode()
+                    data = data.replace("\"", "")
+
+                    if data == 'ROUTINEEND':
+                        print(data)
+                        break
+
+                    print(data)
+                    cmd, instruction = data.split(';')
+                    # data = conn.recv(1024)
+
+                    routine_handler(cmd, instruction)   
+
+            if b'SELECT' in data:
+                device = int(data.split(b' ')[1])
+                print(device)
+                self.__init_camera(device)
+
+                while not self.__cam:
+                    time.sleep(0.1)
+
+            if data == b'END':
                 conn.close()
                 break
 
@@ -367,6 +432,7 @@ class Server(LanCamera):
 
         if self.__running:
             self.__running = False
+
             closer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             closer.connect((self.__host, self.__port+1))
             closer.close()
@@ -384,39 +450,49 @@ class Server(LanCamera):
             print("O servidor já está realizando o streaming")
 
         else:
-            self.__streaming = True
+            # self.__init_camera(0) # this is temp
             server_thread = threading.Thread(target=self.__server_listen, args=(device, ))
             server_thread.start()
 
     ## \brief Listen to streaming requisitions.
     #
     #  Listens for an incoming connection and starts a thread that handles the sending of
-    #  camera frames after the connection is established
+    #  camera frames for each connection that is established
     def __server_listen(self, device):
 
-        self.__socket.listen()
-        conn, addr = self.__socket.accept()
-        self.__init_camera(device)
-        thread = threading.Thread(target=self.__stream, args=(conn,))
-        thread.start()
+        self.__streaming = True
+
+        while self.__streaming:
+            self.__socket.listen()
+            conn, addr = self.__socket.accept()
+            if not self.connections:
+                thread = threading.Thread(target=self.__stream)
+                thread.start()
+            self.connections.append(conn)
+
 
     ## \brief Encode and stream video.
     #
     #  Capture and encode camera frames in order to send them via the streaming socket
-    def __stream(self, conn):
+    def __stream(self):
 
         while self.__streaming:
-            ret, frame = self.__cam.read()
-            ret, frame = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
-            data = pickle.dumps(frame, 0)
-            size = len(data)
 
             try:
-                conn.sendall(struct.pack('>L', size) + data)
+                ret, frame = self.__cam.read()
+                ret, frame = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
+                data = pickle.dumps(frame, 0)
+                size = len(data)
 
+                try:
+                    # if one connection fails, closes all of them
+                    for i in range(len(self.connections)):
+                        self.connections[i].sendall(struct.pack('>L', size) + data)
+
+                except:
+                    self.stop_stream()  
             except:
-                self.stop_stream()
-                self.__streaming = False
+                time.sleep(0.1)
 
         self.__cleanup()
 
@@ -430,6 +506,13 @@ class Server(LanCamera):
             closer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             closer.connect((self.__host, self.__port))
             closer.close()
+            self.__cleanup()
+
+            for conn in self.connections:
+                conn.close()
+
+            self.connections = []
+
             self.__socket.close()
 
         else:

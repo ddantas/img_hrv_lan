@@ -65,6 +65,8 @@ class WinMainTk(tk.Frame):
 
         self.frame1 = tk.Frame(self.frame_main, bg='black', height=400, width=600)
         self.frame2 = tk.Frame(self.frame_main, bg='black', height=400, width=600)
+        self.frame1.grid_propagate(False)
+        self.frame2.grid_propagate(False)
         self.frame1.grid(row=0, column=0, padx=50, pady=100)
         self.frame2.grid(row=0, column=1, padx=50, pady=100)
 
@@ -93,6 +95,7 @@ class WinMainTk(tk.Frame):
 
         self.schedule_time_label = tk.Label(self.frame_right, text="\nSelect routine start in seconds", padx=3)
         self.schedule_time = tk.Entry(self.frame_right, width=BUTTON_WIDTH)
+        self.schedule_time.insert(0, '0')
         self.btn_schedule =    tk.Button(self.frame_right, text="Schedule routine start", padx=3, width=BUTTON_WIDTH, command=self.schedule_routine)
 
         self.combo_box_cam1 = ttk.Combobox(self.frame_right, width=BUTTON_WIDTH, textvariable=self.selected_host_cam1)
@@ -137,7 +140,25 @@ class WinMainTk(tk.Frame):
 
         self.combo_box_cam1['values'] = values
         self.combo_box_cam2['values'] = values
-        print("Search network")
+
+    def display_frames(self, client, container):
+
+        img_data_size = struct.calcsize('>L')
+        frame = client.recv_frame(img_data_size)
+
+        try:
+            cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+
+        except:
+            # let the client's command server know the connection is over
+            client.send_command('END')
+            return
+
+        img = Image.fromarray(cv2image)
+        imgtk = ImageTk.PhotoImage(image=img)
+        container.configure(image=imgtk)
+        container.imgtk = imgtk
+        container.after(1, lambda: self.display_frames(client, container))
 
 
     def select_host_cam1(self):
@@ -154,15 +175,23 @@ class WinMainTk(tk.Frame):
         self.combo_box_cam2['values'] = list(self.combo_box_cam1['values']).remove(host) 
         print(list(self.combo_box_cam1['values']).remove(host))
 
-        host = host.replace('#','')
-        split_host = host.split(';')
+        host = host.split('#')
+        device = host[1]
+        # host = host.replace('#','')
+        split_host = host[0].split(';')
         host = split_host[0]
         port = 9000
 
         # should send message to server to record its screen, because the server won't be able to capture the
         # device that is being used to record the subjects camera
+
         self.client1.set_host(host, port)
-        self.client1.start_connection(container=self.image_frame1)
+        self.client1.start_commands_connection()
+
+        self.client1.send_command(f'SELECT {device}')
+
+        self.client1.start_connection()
+        self.display_frames(self.client1, self.image_frame1)
 
     def select_host_cam2(self):
         print("Select host cam2")
@@ -178,16 +207,25 @@ class WinMainTk(tk.Frame):
         self.combo_box_cam2['values'] = list(self.combo_box_cam2['values']).remove(host) 
         print(list(self.combo_box_cam1['values']).remove(host))
 
-        host = host.replace('#','')
-        split_host = host.split(';')
+        host = host.split('#')
+        device = host[1]
+        # host = host.replace('#','')
+        split_host = host[0].split(';')
         host = split_host[0]
         port = 9000
 
         # should send message to server to record its screen, because the server won't be able to capture the
         # device that is being used to record the subjects camera
-        self.client2.set_host(host, port)
-        self.client2.start_connection(container=self.image_frame2)
+        # should send what camera wants to use
 
+
+        self.client2.set_host(host, port)
+        self.client2.start_commands_connection()
+        self.client2.start_connection()
+
+        self.client2.send_command(f'SELECT {device}')
+
+        self.display_frames(self.client2, self.image_frame2)
 
     def select_routine_file(self):
         self.routine_filename = tk.filedialog.askopenfilename()
@@ -199,14 +237,62 @@ class WinMainTk(tk.Frame):
             ..."""
 
     def schedule_routine(self):
+
         try:
             delay = int(self.schedule_time.get())
         except:
             tk.messagebox.showerror(title="Error Scheduling Routine", message="The specificied time is not a number")
             return
-            
-        time.sleep(delay)
+
+        with open(self.routine_filename) as f:
+            routine = f.read()
+        thread = threading.Thread(target=self.send_routine, args=(routine, delay, ))
+        thread.start()
         """ implement function to execute routine..."""
+        
+    def send_routine(self, routine, delay):
+
+        print(delay, routine)
+        time.sleep(delay)
+        lines = routine.split('\n')
+        cur_time = 0.0
+        self.client1.send_command("ROUTINE")
+        # self.client2.send_command("ROUTINE")
+        for line in lines:
+
+            if line:
+                cmds = line.split(';')
+                instant, cmd, hosts, instruction = cmds
+                instant = instant.strip()
+                cmd = cmd.strip()
+                hosts = hosts.strip()
+                instruction = instruction.lstrip()
+                instruction = instruction.rstrip()
+                instant = float(instant)
+                print(instant, cmd, hosts, instruction)
+
+                if instant - cur_time > 0:
+                    time.sleep(instant - cur_time)
+                    cur_time += instant
+
+                if hosts == 'all':
+                    hosts = ['s1', 's2']
+
+                if 's1' in hosts:
+                    self.client1.send_command(cmd + ';' + instruction)
+
+                # if 's2' in hosts:
+                    # self.client2.send_command(cmd + ';' + instruction)
+
+        self.client1.send_command("ROUTINEEND")
+        # self.client2.send_command("ROUTINEEND")
+
+    def cleanup(self):
+
+        self.client1.stop_commands_client()
+        self.client1.stop_streaming_client()
+        self.client2.stop_commands_client()
+        self.client2.stop_streaming_client()
 
 """#########################################################
 ############################################################
