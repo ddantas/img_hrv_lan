@@ -63,10 +63,14 @@ class WinMainTk(tk.Frame):
         self.frame_main = tk.Frame(self.root)
         self.frame_main.grid(row=0, column=0, stick='nsew')
 
-        self.frame1 = tk.Frame(self.frame_main, bg='black', height=400, width=600)
-        self.frame2 = tk.Frame(self.frame_main, bg='black', height=400, width=600)
+        self.frame1 = tk.Frame(self.frame_main, bg='black', height=480, width=600)
+        self.frame2 = tk.Frame(self.frame_main, bg='black', height=480, width=600)
+
+        self.frame1.pack_propagate(False)
+        self.frame2.pack_propagate(False)
         self.frame1.grid_propagate(False)
         self.frame2.grid_propagate(False)
+
         self.frame1.grid(row=0, column=0, padx=50, pady=100)
         self.frame2.grid(row=0, column=1, padx=50, pady=100)
 
@@ -144,14 +148,15 @@ class WinMainTk(tk.Frame):
     def display_frames(self, client, container):
 
         img_data_size = struct.calcsize('>L')
-        frame = client.recv_frame(img_data_size)
 
         try:
+            frame = client.recv_frame(img_data_size)
             cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
 
         except:
-            # let the client's command server know the connection is over
-            client.send_command('END')
+            client.stop_streaming_client()
+            client.stop_commands_client()
+            container.config(image='', bg='black')
             return
 
         img = Image.fromarray(cv2image)
@@ -162,7 +167,7 @@ class WinMainTk(tk.Frame):
 
 
     def select_host_cam1(self):
-        print("Select host cam1")
+
         self.image_frame1 = tk.Label(self.frame1)
         self.image_frame1.pack()
 
@@ -194,7 +199,7 @@ class WinMainTk(tk.Frame):
         self.display_frames(self.client1, self.image_frame1)
 
     def select_host_cam2(self):
-        print("Select host cam2")
+
         self.image_frame2 = tk.Label(self.frame2)
         self.image_frame2.pack()
 
@@ -218,7 +223,6 @@ class WinMainTk(tk.Frame):
         # device that is being used to record the subjects camera
         # should send what camera wants to use
 
-
         self.client2.set_host(host, port)
         self.client2.start_commands_connection()
         self.client2.start_connection()
@@ -229,12 +233,12 @@ class WinMainTk(tk.Frame):
 
     def select_routine_file(self):
         self.routine_filename = tk.filedialog.askopenfilename()
+
         if not self.routine_filename:
             return
+
         print(f"Log: selected {self.routine_filename}")
         self.select_routine_label.config(text=f"\nRoutine\n{self.routine_filename.split('/')[-1]}")
-        """ do stuff with the file
-            ..."""
 
     def schedule_routine(self):
 
@@ -244,20 +248,20 @@ class WinMainTk(tk.Frame):
             tk.messagebox.showerror(title="Error Scheduling Routine", message="The specificied time is not a number")
             return
 
+        thread = threading.Thread(target=self.send_routine, args=(delay, ))
+        thread.start()
+        
+    def send_routine(self, delay):
+
         with open(self.routine_filename) as f:
             routine = f.read()
-        thread = threading.Thread(target=self.send_routine, args=(routine, delay, ))
-        thread.start()
-        """ implement function to execute routine..."""
-        
-    def send_routine(self, routine, delay):
 
-        print(delay, routine)
         time.sleep(delay)
-        lines = routine.split('\n')
         cur_time = 0.0
         self.client1.send_command("ROUTINE")
         # self.client2.send_command("ROUTINE")
+        lines = routine.split('\n')
+        
         for line in lines:
 
             if line:
@@ -311,4 +315,5 @@ if __name__ == "__main__":
   
   app = WinMainTk(root)
   app.mainloop()
+  app.cleanup()
 

@@ -188,16 +188,13 @@ class Client(LanCamera):
     #
     #  Starts a thread that does the connection with the streaming server
     #  If record=True, __handle_conn will save the frames to the hard drive
-    def start_connection(self, record=False, container=None):
+    def start_connection(self, record=False):
 
         if self.__streaming: 
             print("O cliente já está rodando")
         else:
-            self.__socket.connect((self.__host, self.__port))
             self.__streaming = True
-            # self.__socket_commands.connect((self.__host, self.__port+1))
-            # server_thread = threading.Thread(target=self.__connect, args=(record, container, ))
-            # server_thread.start()
+            self.__socket.connect((self.__host, self.__port))
 
     def start_commands_connection(self):
 
@@ -206,19 +203,6 @@ class Client(LanCamera):
         else:
             self.__running = True
             self.__socket_commands.connect((self.__host, self.__port+1))
-
-    ## \brief Connects to a streaming server.
-    #
-    #  Connects to the streaming server and starts a thread the handles the streaming data that is received
-    #  If record=True, __handle_conn will save the frames to the hard drive
-    def __connect(self, record, container):
-
-        if self.__streaming:
-            print("O cliente já está conectado")
-
-        else:
-            self.__streaming = True
-            self.__socket.connect((self.__host, self.__port))
 
     ## \brief Sends a command to the server.
     #
@@ -238,19 +222,14 @@ class Client(LanCamera):
     #  the frame on the application window
     def recv_frame(self, img_data_size):
 
-        quit = False
-
+        self.__socket.send(b'READY')
         while len(self.data) < img_data_size:
             recv = self.__socket.recv(4096)
             self.data += recv
 
             if self.data == b'':
-                self.__socket.close()
-                quit = True
-                break
-
-        if quit:
-            return None
+                self.stop_streaming_client()
+                return None
 
         msg_size = self.data[:img_data_size]
         self.data = self.data[img_data_size:]
@@ -260,11 +239,8 @@ class Client(LanCamera):
         while len(self.data) < msg_size:
             self.data += self.__socket.recv(4096)
             if self.data == b'':
-                self.stop_client()
-                quit = True
-                break
-        if quit:
-            return None
+                self.stop_streaming_client()
+                return None
             
         frame_data = self.data[:msg_size]
         self.data = self.data[msg_size:]  
@@ -328,8 +304,9 @@ class Server(LanCamera):
     #
     #  Destroy video capture device and window data structures
     def __cleanup(self):
-        self.__cam.release()
-        cv2.destroyAllWindows()
+        if self.__cam:
+            self.__cam.release()
+            cv2.destroyAllWindows()
 
     def list_cams_local(self, num):
 
@@ -371,8 +348,10 @@ class Server(LanCamera):
         while self.__running:
             self.__socket_commands.listen()
             conn, addr = self.__socket_commands.accept()
-            thread = threading.Thread(target=self.__handle_commands, args=(conn, routine_handler, ))
-            thread.start()
+
+            if self.__running:
+                thread = threading.Thread(target=self.__handle_commands, args=(conn, routine_handler, ))
+                thread.start()
 
     ## \brief Handle received commands.
     #
@@ -386,44 +365,51 @@ class Server(LanCamera):
             try:
                 data = conn.recv(1024)
             except:
-                conn.close()
                 break
 
             if data == b"LIST":
 
                 cams = self.list_cams_local(5)
-                conn.sendall(str(cams).encode())
+                try:
+                    conn.sendall(str(cams).encode())
+                except:
+                    break
 
             if b'ROUTINE' in data:
 
                 while True:
                     size = struct.unpack('i', conn.recv(struct.calcsize ('i')))[0]
-                    data = ''
+                    command = ''
                     msg = conn.recv(size)
-                    data += msg.decode()
-                    data = data.replace("\"", "")
+                    command += msg.decode()
+                    command = command.replace("\"", "")
 
-                    if data == 'ROUTINEEND':
-                        print(data)
+                    if command == 'ROUTINEEND':
+                        print(command)
                         break
 
-                    print(data)
-                    cmd, instruction = data.split(';')
+                    print(command)
+                    cmd, instruction = command.split(';')
                     # data = conn.recv(1024)
 
                     routine_handler(cmd, instruction)   
 
             if b'SELECT' in data:
+
+                print(data, type(data))
                 device = int(data.split(b' ')[1])
-                print(device)
-                self.__init_camera(device)
 
-                while not self.__cam:
-                    time.sleep(0.1)
+                print(device, type(device))
+                try:
+                    self.__init_camera(device)
 
-            if data == b'END':
-                conn.close()
+                except:
+                    print("Erro ao selecionar camera")
+
+            if data == b'END' or data == b'':
                 break
+
+        conn.close()
 
     ## \brief Stop command server thread
     #
@@ -438,37 +424,44 @@ class Server(LanCamera):
             closer.close()
             self.__socket_commands.close()
 
+            # init_server again (?)
+
         else:
             print("O servidor não está realizando o streaming")
   
     ## \brief Start video streaming thread.
     #
     #  Starts a thread to listen for connections for video streaming
-    def start_stream_server(self, device):
+    def start_stream_server(self):
 
         if self.__streaming:
             print("O servidor já está realizando o streaming")
+            return
 
-        else:
-            # self.__init_camera(0) # this is temp
-            server_thread = threading.Thread(target=self.__server_listen, args=(device, ))
-            server_thread.start()
+        server_thread = threading.Thread(target=self.__server_listen)
+        server_thread.start()
 
     ## \brief Listen to streaming requisitions.
     #
     #  Listens for an incoming connection and starts a thread that handles the sending of
     #  camera frames for each connection that is established
-    def __server_listen(self, device):
+    def __server_listen(self):
 
         self.__streaming = True
 
         while self.__streaming:
             self.__socket.listen()
             conn, addr = self.__socket.accept()
-            if not self.connections:
-                thread = threading.Thread(target=self.__stream)
-                thread.start()
-            self.connections.append(conn)
+
+            ''' if we are closing the server (self.__streaming was set to False while accept() was waiting)
+                we don't want to start anything else '''
+            if self.__streaming:
+
+                if self.connections == []:
+                    thread = threading.Thread(target=self.__stream)
+                    thread.start()
+
+                self.connections.append(conn)
 
 
     ## \brief Encode and stream video.
@@ -478,23 +471,36 @@ class Server(LanCamera):
 
         while self.__streaming:
 
-            try:
+            if self.__cam:
                 ret, frame = self.__cam.read()
-                ret, frame = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
-                data = pickle.dumps(frame, 0)
-                size = len(data)
 
-                try:
-                    # if one connection fails, closes all of them
-                    for i in range(len(self.connections)):
-                        self.connections[i].sendall(struct.pack('>L', size) + data)
+                if ret:
+                    ret, frame = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
+                    data = pickle.dumps(frame, 0)
+                    size = len(data)
 
-                except:
-                    self.stop_stream()  
-            except:
+                    try:
+                        # if one connection fails, stops the server entirely
+                        if self.__streaming:
+                            for conn in self.connections:
+
+                                '''
+                                    don't send data when the connection is closed
+                                    nor close the connection on the side of the server
+                                    to avoid TIME_WAIT state on serverside socket
+                                    (client has to close the connection)
+                                ''' 
+                                ready = conn.recv(1024)
+                                if ready == b'READY':
+                                    conn.sendall(struct.pack('>L', size) + data)
+
+                    except:
+                        break
+
+                else:
+                    break
+            else:
                 time.sleep(0.1)
-
-        self.__cleanup()
 
     ## \brief Stop streaming.
     #
@@ -502,18 +508,20 @@ class Server(LanCamera):
     def stop_stream(self):
 
         if self.__streaming:
+
             self.__streaming = False
+
             closer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             closer.connect((self.__host, self.__port))
             closer.close()
-            self.__cleanup()
-
-            for conn in self.connections:
-                conn.close()
-
-            self.connections = []
 
             self.__socket.close()
+            print(self.connections)
+            self.connections = []
+
+            self.__cleanup()
+
+            # init_server again (?)
 
         else:
             print("O servidor não está realizando o streaming")

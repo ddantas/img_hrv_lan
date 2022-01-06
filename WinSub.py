@@ -12,6 +12,7 @@ import math as m
 import os
 import threading
 import time
+import sys
 
 from PIL import Image
 from PIL import ImageTk
@@ -25,20 +26,23 @@ class WinSub(tk.Frame):
     ## Object constructor.
     #  @param self The object pointer.
     #  @param root The object root, usualy created by calling tkinter.Tk().
-    def __init__(self, root):
+    def __init__(self, root, host, port):
 
         self.frame = tk.Frame.__init__(self, root)
 
         self.root = root
+        self.host = host
+        self.port = port
         self.videoCap = None
         self.__streaming = False
         self.__playing_video = False
         # self.root.attributes('-fullscreen', 1)
 
         self.server = Server()
-        self.client = Client()
+        self.client = Client(HOST=self.host, PORT=self.port)
 
-        self.init_server(0)
+        self.init_server()
+        # self.init_connection()
 
         self.create_frame_main()
         
@@ -48,7 +52,7 @@ class WinSub(tk.Frame):
         self.frame_main = tk.Frame(self.root)
         self.frame_main.grid(row=0, column=0, sticky='')
 
-        self.screen_frame = tk.Frame(self.frame_main, width=600, height=400, bg='black')
+        self.screen_frame = tk.Frame(self.frame_main, width=600, height=480, bg='black')
         self.screen_frame.pack_propagate(False)
         self.screen = tk.Label(self.screen_frame, bg='black')
         self.screen.pack()
@@ -67,10 +71,14 @@ class WinSub(tk.Frame):
 
         # self.width, self.height = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
 
-    def init_server(self, device):
+    def init_server(self):
         # set device dinamically
-        self.server.start_stream_server(device)
+        self.server.start_stream_server()
         self.server.start_commands_server(routine_handler=self.execute_command)
+
+    def init_connection(self):
+        self.client.start_connection()
+        self.client.start_commands_connection()
 
     def execute_command(self, cmd, instruction):
 
@@ -80,8 +88,16 @@ class WinSub(tk.Frame):
 
         elif cmd == 'clear':
             # clear the message screen; instruction: camera (int)
-            self.msg.set('')
-            self.message.configure(bg=instruction)
+            # self.msg.set('')
+            # self.message.configure(bg=instruction)
+            if self.__streaming:
+                
+                self.__streaming = False
+
+            if self.__playing_video:
+                self.__playing_video = False
+
+            self.screen.config(bg=instruction)
 
         elif cmd == 'play': 
             # show video stream; instruction: color (string)
@@ -166,13 +182,21 @@ class WinSub(tk.Frame):
 
 if __name__ == "__main__":
 
-  root = tk.Tk()
-  root.rowconfigure(0, weight=1)
-  root.columnconfigure(0, weight=1)
-  root.title(WIN_TITLE)
-  root.minsize(300,300)
-  
-  app = WinSub(root)
-  app.mainloop()
-  app.cleanup()
+    if len(sys.argv) < 3:
+        print("Please specify HOST and PORT for connection.")
+        print("Usage: python WinSub.py <HOST> <PORT>")
+        exit(1)
+
+    host = sys.argv[1]
+    port = int(sys.argv[2])
+
+    root = tk.Tk()
+    root.rowconfigure(0, weight=1)
+    root.columnconfigure(0, weight=1)
+    root.title(WIN_TITLE)
+    root.minsize(300,300)
+
+    app = WinSub(root)
+    app.mainloop()
+    app.cleanup()
 
