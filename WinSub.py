@@ -78,7 +78,6 @@ class WinSub(tk.Frame):
 
     def init_connection(self):
         self.client.start_connection()
-        self.client.start_commands_connection()
 
     def execute_command(self, cmd, instruction):
 
@@ -87,9 +86,7 @@ class WinSub(tk.Frame):
             self.msg.set(instruction)
 
         elif cmd == 'clear':
-            # clear the message screen; instruction: camera (int)
-            # self.msg.set('')
-            # self.message.configure(bg=instruction)
+            # clear the canvas; instruction: camera (int)
             if self.__streaming:
                 
                 self.__streaming = False
@@ -131,7 +128,7 @@ class WinSub(tk.Frame):
                 self.__playing_video = False
                 self.videoCap.release()
 
-            self.screen.config(image='')
+            self.screen.config(image='', bg='black')
 
 
     def show_video(self):
@@ -196,7 +193,7 @@ if __name__ == "__main__":
     root.title(WIN_TITLE)
     root.minsize(300,300)
 
-    app = WinSub(root)
+    app = WinSub(root, host, port)
     app.mainloop()
     app.cleanup()
 
