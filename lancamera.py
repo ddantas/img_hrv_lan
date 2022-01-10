@@ -57,6 +57,7 @@ class LanCamera:
 
         ips = self.__get_ips()
         ips.append("127.0.0.1")
+        print(ips)
         hosts = {}
         for ip in ips:
             ports = []
@@ -90,7 +91,7 @@ class LanCamera:
     #
     #  Pings via ARP protocol all hosts in the network to obtain the IPs of available hosts in the network
     #  (MUST RUN AS ROOT TO PING VIA ARP)
-    def __get_ips(self, network='192.168.1.0/24'):
+    def __get_ips(self, network='192.168.0.0/24'):
 
         ans,unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=network),timeout=2)
         ips = []
@@ -123,7 +124,7 @@ class LanCamera:
 #  Class with functionalities to query and connect to camera servers.
 class Client(LanCamera):
 
-    def __init__(self, HOST='127.0.0.1', PORT=9000):
+    def __init__(self, HOST='0.0.0.0', PORT=9000):
 
         self.__running = False
         self.__streaming = False
@@ -195,6 +196,7 @@ class Client(LanCamera):
         else:
             self.__streaming = True
             self.__socket.connect((self.__host, self.__port))
+            print("conectei mano sei la")
 
     def start_commands_connection(self):
 
@@ -275,7 +277,7 @@ class Client(LanCamera):
 #  Class with functionalities to share the camera and stream video.
 class Server(LanCamera):
 
-    def __init__(self, HOST='127.0.0.1', PORT=9000, device=0):
+    def __init__(self, HOST='', PORT=9000, device=0):
     
         self.__running = False
         self.__streaming = False
@@ -299,6 +301,7 @@ class Server(LanCamera):
     #  Initializes video capture device
     def __init_camera(self, device):
         self.__cam = cv2.VideoCapture(device)
+        # self.__cam = cv2.VideoCapture('john-mayer2.mp4')
 
     ## \brief Destroy camera
     #
@@ -396,10 +399,8 @@ class Server(LanCamera):
 
             if b'SELECT' in data:
 
-                print(data, type(data))
                 device = int(data.split(b' ')[1])
 
-                print(device, type(device))
                 try:
                     self.__init_camera(device)
 
@@ -452,6 +453,7 @@ class Server(LanCamera):
         while self.__streaming:
             self.__socket.listen()
             conn, addr = self.__socket.accept()
+            print('aceitei bruh')
 
             ''' if we are closing the server (self.__streaming was set to False while accept() was waiting)
                 we don't want to start anything else '''

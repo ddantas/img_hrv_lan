@@ -42,13 +42,13 @@ class WinSub(tk.Frame):
         self.client = Client(HOST=self.host, PORT=self.port)
 
         self.init_server()
-        # self.init_connection()
 
         self.create_frame_main()
         
     ## Create main frame, composed by an ImgCanvas object.
     #  @param self The object pointer.
     def create_frame_main(self):
+
         self.frame_main = tk.Frame(self.root)
         self.frame_main.grid(row=0, column=0, sticky='')
 
@@ -64,20 +64,16 @@ class WinSub(tk.Frame):
         self.message = tk.Label(self.message_frame, textvariable=self.msg, font=50, relief=tk.RIDGE,
                         bg='white', padx=10, pady=10, width=50, height=5, wraplength=500)
 
-
         self.screen_frame.grid(row=0, column=0, padx=50, pady=(50,0))
         self.message_frame.grid(row=1, column=0, padx=50, pady=(50,0))
         self.message.pack()
 
-        # self.width, self.height = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
+        self.width, self.height = self.root.winfo_screenwidth()/2, self.root.winfo_screenheight()/2
 
     def init_server(self):
-        # set device dinamically
+
         self.server.start_stream_server()
         self.server.start_commands_server(routine_handler=self.execute_command)
-
-    def init_connection(self):
-        self.client.start_connection()
 
     def execute_command(self, cmd, instruction):
 
@@ -95,6 +91,7 @@ class WinSub(tk.Frame):
                 self.__playing_video = False
 
             self.screen.config(bg=instruction)
+            self.screen_frame.config(bg=instruction)
 
         elif cmd == 'play': 
             # show video stream; instruction: color (string)
@@ -102,6 +99,9 @@ class WinSub(tk.Frame):
                 self.__streaming = False
 
             self.__playing_video = True
+            
+            if self.videoCap:
+                self.videoCap.release()
 
             self.videoCap = cv2.VideoCapture(instruction)
             video_thread = threading.Thread(target=self.show_video)
@@ -161,13 +161,13 @@ class WinSub(tk.Frame):
 
 
     def cleanup(self):
+
         self.__streaming = False
         self.__playing_video = False
         
         self.server.stop_commands_server()
         self.server.stop_stream()
 
-        self.client.stop_commands_client()
         self.client.stop_streaming_client()
 
 """#########################################################
