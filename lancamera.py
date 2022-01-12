@@ -124,7 +124,7 @@ class LanCamera:
 #  Class with functionalities to query and connect to camera servers.
 class Client(LanCamera):
 
-    def __init__(self, HOST='0.0.0.0', PORT=9000):
+    def __init__(self, HOST='0.0.0.0', PORT=9000, name=''):
 
         self.__running = False
         self.__streaming = False
@@ -137,7 +137,6 @@ class Client(LanCamera):
     def set_host(self, host, port):
         self.__host = host
         self.__port = port
-
 
     def list_cams_at(self, ip, port_range):
         if len(port_range) > 1:
@@ -196,7 +195,6 @@ class Client(LanCamera):
         else:
             self.__streaming = True
             self.__socket.connect((self.__host, self.__port))
-            print("conectei mano sei la")
 
     def start_commands_connection(self):
 
@@ -222,7 +220,7 @@ class Client(LanCamera):
     #  Receives, decodes and displays a single streaming frame that was received from the server
     #  This method is designed to be accessed by the GUI interface in order to display
     #  the frame on the application window
-    def recv_frame(self, img_data_size):
+    def recv_frame(self, img_data_size, record=False):
 
         self.__socket.send(b'READY')
         while len(self.data) < img_data_size:
@@ -453,7 +451,6 @@ class Server(LanCamera):
         while self.__streaming:
             self.__socket.listen()
             conn, addr = self.__socket.accept()
-            print('aceitei bruh')
 
             ''' if we are closing the server (self.__streaming was set to False while accept() was waiting)
                 we don't want to start anything else '''

@@ -41,11 +41,13 @@ IMG_DATA_SIZE = struct.calcsize('>L')
 
 class CamScreen(tk.Frame):
 
-    def __init__(self, window, client, vid='john-mayer.mp4'):
+    def __init__(self, window, client, vid='john-mayer.mp4', name=''):
         super().__init__(window)
         self.client = client
         self.window = window
-        self.width = 600
+        self.name = name
+        self.cap = cv2.VideoWriter('media/' + self.name + '.mp4', cv2.VideoWriter_fourcc(*'MP4V'), 15.0, (640,480))
+        self.width = 640
         self.height = 480
         self.screen = tk.Label(window, width=self.width, height=self.height, bg='black')
         self.screen.pack()
@@ -66,8 +68,13 @@ class CamScreen(tk.Frame):
         imgtk = ImageTk.PhotoImage(image=img)
         self.screen.imgtk = imgtk
         self.screen.config(image=imgtk)
+        self.cap.write(frame)  
 
-        self.window.after(self.delay, self.display_frames)      
+        self.window.after(self.delay, self.display_frames) 
+
+    def __del__(self):
+        self.cap.release()
+
 
 class WinMainTk(tk.Frame):
 
@@ -103,9 +110,9 @@ class WinMainTk(tk.Frame):
         self.frame1.grid(row=0, column=0, padx=50, pady=100)
         self.frame2.grid(row=0, column=1, padx=50, pady=100)
 
-        self.screen1 = CamScreen(self.frame1, self.client1)
+        self.screen1 = CamScreen(self.frame1, self.client1, name='client1')
         self.screen1.pack()
-        self.screen2 = CamScreen(self.frame2, self.client2)
+        self.screen2 = CamScreen(self.frame2, self.client2, name='client2')
         self.screen2.pack()
 
     ## Create toolbox frame, with buttons to access tools.
@@ -305,7 +312,6 @@ class WinMainTk(tk.Frame):
         self.client2.send_command("ROUTINEEND")
 
     def cleanup(self):
-
         self.client1.stop_commands_client()
         self.client1.stop_streaming_client()
         self.client2.stop_commands_client()

@@ -59,7 +59,7 @@ class WinSub(tk.Frame):
         self.message_frame = tk.Frame(self.frame_main)
 
         self.msg = tk.StringVar()
-        self.msg.set("MENSAGENS")
+        self.msg.set("")
 
         self.message = tk.Label(self.message_frame, textvariable=self.msg, font=50, relief=tk.RIDGE,
                         bg='white', padx=10, pady=10, width=50, height=5, wraplength=500)
@@ -179,14 +179,15 @@ class WinSub(tk.Frame):
 
 if __name__ == "__main__":
 
-    if len(sys.argv) < 3:
-        print("Please specify HOST and PORT for connection.")
-        print("Usage: python WinSub.py <HOST> <PORT>")
-        exit(1)
+    # if len(sys.argv) < 3:
+    #     print("Please specify HOST and PORT for connection.")
+    #     "Usage: python WinSub.py <HOST> <PORT>")
+    #     exit(1)
 
-    host = sys.argv[1]
-    port = int(sys.argv[2])
-
+    # host = sys.argv[1]
+    # port = int(sys.argv[2])
+    host=''
+    port=''
     root = tk.Tk()
     root.rowconfigure(0, weight=1)
     root.columnconfigure(0, weight=1)
