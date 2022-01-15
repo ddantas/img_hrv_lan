@@ -15,6 +15,7 @@ from PIL import ImageTk
 
 PORT_CAM   = 9000
 PORT_POLAR = 9001
+PORT_COMMANDS = 9002
 
 ## \brief Class LanCamera
 #
@@ -44,6 +45,18 @@ class LanCamera:
 
         return hosts
 
+    def list_host_at(self, ip, port_range):
+
+        ports = []
+        for port in port_range:
+            if self.__scan_port(ip, port):
+                ports.append(port)
+
+        if len(ports) == len(port_range):
+            return ports
+
+        return []
+
     ## \brief List open ports of the hosts in the LAN.
     #
     # For each ip obtained through __get_ips(), determines which port, in 'port_range' is open.
@@ -51,23 +64,26 @@ class LanCamera:
 
         if type(port_range) is int:
             start = port_range
-            end = start+1
+            end = start
         else:
             start = port_range[0]
             end  = port_range[1]
 
+        end += 1
         ips = self.__get_ips()
         ips.append("127.0.0.1")
-        print(ips)
         hosts = {}
         for ip in ips:
             ports = []
             print(f"Scaneando portas {start}-{end-1} do host {ip}")
+            print(start, end)
             for port in range(start, end):
+                print(port)
                 if self.__scan_port(ip, port):
                     ports.append(port)
 
-            if len(ports) > 0:
+            print(ports, port_range)
+            if len(ports) == len(port_range):
                 hosts[ip] = ports
 
         return hosts
@@ -81,7 +97,7 @@ class LanCamera:
         s.settimeout(timeout)
 
         if s.connect_ex((ip, port)) == 0:
-            s.sendall(b'END')
+            # s.sendall(b'END')
             s.close()
             return True
 
@@ -93,7 +109,7 @@ class LanCamera:
     #  Pings via ARP protocol all hosts in the network to obtain the IPs of available hosts in the network
     #  (MUST RUN AS ROOT TO PING VIA ARP)
     #
-    #  Uncomment this to debug.
+        #  Uncomment this to debug.
     #def get_ips(self, network='192.168.0.0/24'):
     #    return self.__get_ips(network)
     def __get_ips(self, network='192.168.0.0/24'):
@@ -140,27 +156,32 @@ class Client(LanCamera):
         self.__host = host
         self.__port = port
 
-    def list_cams_at(self, ip, port_range):
-        if len(port_range) > 1:
+    def list_cams_at(self, ip, port_range : list):
+
+        if type(port_range) == list and len(port_range) > 1:
             start = port_range[0]
             end = port_range[1]
 
         else:
-            start = end = port_range
+            start = port_range
+            end = port_range+1
 
         devices = []
-        for port in range(start, end):
-            if self.__scan_port(ip, port):
-                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                    s.connect((ip, port))
-                    s.sendall(b"LIST")
-                    cams = s.recv(1024).decode()
-                    cams = cams.replace('[','')
-                    cams = cams.replace(']','')
-                    cams = cams.split(',')
-                    devices.append(cams)
-                    print(f'Cameras do servidor {ip}:{port} -> {cams}')
-                    s.sendall(b"END")
+        ports = self.list_host_at(ip, port_range)
+        if ports:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.connect((ip, PORT_COMMANDS))
+                s.sendall(b"LIST")
+                cams = s.recv(1024).decode()
+                cams = cams.replace(' ', '')
+                cams = cams.replace('[','')
+                cams = cams.replace(']','')
+                cams = cams.split(',')
+                for cam in cams:
+                    devices.append(cam)
+                print(cams)
+                print(f'Cameras do servidor {ip}:9000 -> {cams}')
+                s.sendall(b"END")
 
         return devices
     ## \brief List cameras from available hosts in the network.
@@ -168,21 +189,21 @@ class Client(LanCamera):
     #  List all cameras and hosts with available cameras in the LAN.
     def list_cams_lan(self):
 
-        hosts = self.list_servers(9001)
+        hosts = self.list_servers([9000, 9002])
         devices = {}
         for ip, ports in hosts.items():
-            for port in ports:
-                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                    s.connect((ip, port))
-                    s.sendall(b"LIST")
-
-                    cams = s.recv(1024).decode()
-                    cams = cams.replace('[','')
-                    cams = cams.replace(']','')
-                    cams = cams.split(',')
-                    devices[ip] = cams
-                    print(f'Cameras do servidor {ip}:{port} -> {cams}')
-                    s.sendall(b"END")
+            # for port in ports:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.connect((ip, PORT_COMMANDS))
+                s.sendall(b"LIST")
+                cams = s.recv(1024).decode()
+                cams = cams.replace(' ', '')
+                cams = cams.replace('[','')
+                cams = cams.replace(']','')
+                cams = cams.split(',')
+                devices[ip] = cams
+                print(f'Cameras do servidor {ip}:9000 -> {cams}')
+                s.sendall(b"END")
 
         return devices
 
@@ -204,7 +225,7 @@ class Client(LanCamera):
             print("O cliente já está conectado")
         else:
             self.__running = True
-            self.__socket_commands.connect((self.__host, self.__port+1))
+            self.__socket_commands.connect((self.__host, self.__port + 2))
 
     ## \brief Sends a command to the server.
     #
@@ -222,9 +243,9 @@ class Client(LanCamera):
     #  Receives, decodes and displays a single streaming frame that was received from the server
     #  This method is designed to be accessed by the GUI interface in order to display
     #  the frame on the application window
-    def recv_frame(self, img_data_size, record=False):
+    def recv_frame(self, img_data_size):
 
-        self.__socket.send(b'READY')
+        # self.__socket.send(b'READY')
         while len(self.data) < img_data_size:
             recv = self.__socket.recv(4096)
             self.data += recv
@@ -294,7 +315,7 @@ class Server(LanCamera):
     #  Initializes all sockets binding them to specific ports
     def __init_socket(self):
         self.__socket.bind((self.__host, self.__port))
-        self.__socket_commands.bind((self.__host, self.__port+1))
+        self.__socket_commands.bind((self.__host, self.__port + 2))
 
     ## \brief Initialize camera
     #
@@ -420,7 +441,7 @@ class Server(LanCamera):
             self.__running = False
 
             closer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            closer.connect((self.__host, self.__port+1))
+            closer.connect((self.__host, self.__port + 2))
             closer.close()
             self.__socket_commands.close()
 
@@ -490,12 +511,12 @@ class Server(LanCamera):
                                     to avoid TIME_WAIT state on serverside socket
                                     (client has to close the connection)
                                 ''' 
-                                ready = conn.recv(1024)
-                                if ready == b'READY':
-                                    conn.sendall(struct.pack('>L', size) + data)
+                                # ready = conn.recv(1024)
+                                # if ready == b'READY':
+                                conn.sendall(struct.pack('>L', size) + data)
 
                     except:
-                        break
+                        self.connections.remove(conn)
 
                 else:
                     break

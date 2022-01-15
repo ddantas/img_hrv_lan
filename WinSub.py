@@ -122,14 +122,14 @@ class WinSub(tk.Frame):
 
             if self.__streaming:
                 self.__streaming = False
-                self.client.stop_client()
+                self.client.stop_streaming_client()
 
             elif self.__playing_video:
                 self.__playing_video = False
                 self.videoCap.release()
 
             self.screen.config(image='', bg='black')
-
+            self.screen_frame.config(bg='black')
 
     def show_video(self):
 
@@ -187,7 +187,7 @@ if __name__ == "__main__":
     # host = sys.argv[1]
     # port = int(sys.argv[2])
     host=''
-    port=''
+    port=9000
     root = tk.Tk()
     root.rowconfigure(0, weight=1)
     root.columnconfigure(0, weight=1)

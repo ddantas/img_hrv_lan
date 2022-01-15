@@ -46,7 +46,8 @@ class CamScreen(tk.Frame):
         self.client = client
         self.window = window
         self.name = name
-        self.cap = cv2.VideoWriter('media/' + self.name + '.mp4', cv2.VideoWriter_fourcc(*'MP4V'), 15.0, (640,480))
+        self.__streaming = False
+        self.cap = cv2.VideoWriter('media/' + self.name + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 15.0, (640,480))
         self.width = 640
         self.height = 480
         self.screen = tk.Label(window, width=self.width, height=self.height, bg='black')
@@ -70,7 +71,7 @@ class CamScreen(tk.Frame):
         self.screen.config(image=imgtk)
         self.cap.write(frame)  
 
-        self.window.after(self.delay, self.display_frames) 
+        self.window.after(self.delay, self.display_frames)
 
     def __del__(self):
         self.cap.release()
@@ -131,6 +132,11 @@ class WinMainTk(tk.Frame):
         self.btn_scan = tk.Button(self.frame_right, text="Scan the network", padx=3, width=BUTTON_WIDTH,
                                     command=self.scan_network)
 
+        self.scan_at = tk.Label(self.frame_right,text="\nScan specific host", padx=3)
+        self.btn_scan_at = tk.Button(self.frame_right, text="Scan host", padx=3, width=BUTTON_WIDTH,
+                                    command=self.scan_host_at)
+        self.scan_entry = tk.Entry(self.frame_right, width=BUTTON_WIDTH)
+
         self.select_cam1_label = tk.Label(self.frame_right,text="\nCAM 1", padx=3)
         self.select_cam2_label = tk.Label(self.frame_right,text="\nCAM 2", padx=3)
 
@@ -159,20 +165,24 @@ class WinMainTk(tk.Frame):
 
         self.btn_scan.grid(row=0, column=0, ipady=10, pady=(100,0))
 
-        self.select_cam1_label.grid(row=1, column=0, ipady=10)
-        self.combo_box_cam1.grid(row=2, column=0, ipady=10)
-        self.btn_select_cam1.grid(row=3, column=0, ipady=10)
+        self.scan_at.grid(row=1, column=0, ipady=10)
+        self.scan_entry.grid(row=2, column=0, ipady=10)
+        self.btn_scan_at.grid(row=3, column=0, ipady=10)
 
-        self.select_cam2_label.grid(row=4, column=0, ipady=10)
-        self.combo_box_cam2.grid(row=5, column=0, ipady=10)
-        self.btn_select_cam2.grid(row=6, column=0, ipady=10)
+        self.select_cam1_label.grid(row=4, column=0, ipady=10)
+        self.combo_box_cam1.grid(row=5, column=0, ipady=10)
+        self.btn_select_cam1.grid(row=6, column=0, ipady=10)
 
-        self.select_routine_label.grid(row=7, column=0, ipady=10)
-        self.btn_routine.grid(row=8, column=0, ipady=10)
+        self.select_cam2_label.grid(row=7, column=0, ipady=10)
+        self.combo_box_cam2.grid(row=8, column=0, ipady=10)
+        self.btn_select_cam2.grid(row=9, column=0, ipady=10)
 
-        self.schedule_time_label.grid(row=9, column=0, ipady=10)
-        self.schedule_time.grid(row=10, column=0, ipady=10)
-        self.btn_schedule.grid(row=11, column=0, ipady=10, pady=(0,100))
+        self.select_routine_label.grid(row=10, column=0, ipady=10)
+        self.btn_routine.grid(row=11, column=0, ipady=10)
+
+        self.schedule_time_label.grid(row=12, column=0, ipady=10)
+        self.schedule_time.grid(row=13, column=0, ipady=10)
+        self.btn_schedule.grid(row=14, column=0, ipady=10, pady=(0,100))
 
     def scan_network(self):
 
@@ -192,6 +202,37 @@ class WinMainTk(tk.Frame):
         self.combo_box_cam1['values'] = values
         self.combo_box_cam2['values'] = values
 
+    def scan_host_at(self):
+
+        try:
+            ip = self.scan_entry.get()
+        except:
+            tk.messagebox.showerror(title="Error Scheduling Routine", message="The specified time is not a number")
+            return
+
+        devices = self.client1.list_cams_at(ip, [9000,9002])
+
+        if not devices:
+            tk.messagebox.showwarning(title="Scanning complete", message="No devices found")  
+            return
+
+        tk.messagebox.showinfo(title="Scanning complete", message="HOSTS updated")  
+
+        values = []
+        for dev in devices: 
+            values.append(f'{ip}; #{dev}')
+
+        for v in values:
+            if v in self.combo_box_cam1['values'] or v in self.combo_box_cam2['values']:
+                values = values.remove(v)
+
+        if values:
+            values = [*self.combo_box_cam1['values'], *values]
+        else:
+            values = self.combo_box_cam1['values']
+
+        self.combo_box_cam1['values'] = values
+        self.combo_box_cam2['values'] = values
 
     def select_host_cam1(self):
 
@@ -200,17 +241,24 @@ class WinMainTk(tk.Frame):
             tk.messagebox.showerror(title="Error Connecting to HOST 1", message="Select HOST 1 first")  
             return    
 
-        self.combo_box_cam1['values'] = list(self.combo_box_cam1['values']).remove(host) 
-        self.combo_box_cam2['values'] = list(self.combo_box_cam2['values']).remove(host) 
+        values = list(self.combo_box_cam1['values']).remove(host)
+        self.combo_box_cam1['values'] = ''
+        self.combo_box_cam2['values'] = ''
+
+        if values:
+            self.combo_box_cam1['values'] = values
+            self.combo_box_cam2['values'] = values
+
         host = host.split('#')
         device = host[1]
         split_host = host[0].split(';')
         host = split_host[0]
-        port = 9000
+        port = 9000 
 
         # should send message to server to record its screen, because the server won't be able to capture the
         # device that is being used to record the subjects camera
 
+        print(host)
         self.client1.set_host(host, port)
         self.client1.start_commands_connection()
 
@@ -227,8 +275,13 @@ class WinMainTk(tk.Frame):
             tk.messagebox.showerror(title="Error Connecting to HOST 2", message="Select HOST 2 first")  
             return    
 
-        self.combo_box_cam1['values'] = list(self.combo_box_cam1['values']).remove(host) 
-        self.combo_box_cam2['values'] = list(self.combo_box_cam2['values']).remove(host) 
+        values = list(self.combo_box_cam2['values']).remove(host)
+        self.combo_box_cam1['values'] = ''
+        self.combo_box_cam2['values'] = ''
+
+        if values:
+            self.combo_box_cam1['values'] = values
+            self.combo_box_cam2['values'] = values
 
         host = host.split('#')
         device = host[1]
@@ -279,7 +332,7 @@ class WinMainTk(tk.Frame):
         time.sleep(delay)
         cur_time = 0.0
         self.client1.send_command("ROUTINE")
-        self.client2.send_command("ROUTINE")
+        # self.client2.send_command("ROUTINE")
         lines = routine.split('\n')
         
         for line in lines:
@@ -309,7 +362,7 @@ class WinMainTk(tk.Frame):
                     self.client2.send_command(cmd + ';' + instruction)
 
         self.client1.send_command("ROUTINEEND")
-        self.client2.send_command("ROUTINEEND")
+        # self.client2.send_command("ROUTINEEND")
 
     def cleanup(self):
         self.client1.stop_commands_client()
