@@ -3,24 +3,25 @@ import threading
 import socket
 import pickle
 import struct
-from scapy.all import *
+import scapy.all as sp
 import time
 from PIL import Image
 from PIL import ImageTk
-
 
 ## @package lancamera
 #  This package exposes the finctionalities of the cameras
 #  available in the LAN.
 #
 
+PORT_CAM   = 9000
+PORT_POLAR = 9001
 
 ## \brief Class LanCamera
 #
 #  Main class of the package lancamera, with functionalities to list camera servers and their cameras.
 class LanCamera:
 
-    def __init__(self, HOST='127.0.0.1', PORT=9000):
+    def __init__(self, HOST='127.0.0.1', PORT=PORT_CAM):
     
         self.__running = False
         self.__host = HOST
@@ -91,9 +92,13 @@ class LanCamera:
     #
     #  Pings via ARP protocol all hosts in the network to obtain the IPs of available hosts in the network
     #  (MUST RUN AS ROOT TO PING VIA ARP)
+    #
+    #  Uncomment this to debug.
+    #def get_ips(self, network='192.168.0.0/24'):
+    #    return self.__get_ips(network)
     def __get_ips(self, network='192.168.0.0/24'):
 
-        ans,unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=network),timeout=2)
+        ans,unans = sp.srp(sp.Ether(dst="ff:ff:ff:ff:ff:ff")/sp.ARP(pdst=network),timeout=2)
         ips = []
         for res in ans.res:
             ips.append(res.answer.psrc)
@@ -103,19 +108,16 @@ class LanCamera:
     ## \brief List all cameras in localhost.
     #
     #  List all the available capture devices with index up to 'num' in localhost .
-    def list_cams_local(self, num):
+    def list_cams_local(self, num=5):
 
-        index = 0
         v = []
-        i = num
-        while i > 0:
-            cap = cv2.VideoCapture(index)
+        i = 0
+        while i < num:
+            cap = cv2.VideoCapture(i)
             if cap.isOpened():
-                v.append(index)
+                v.append(i)
                 cap.release()
-                
-            index += 1
-            i -= 1
+            i += 1
         return v
 
 
@@ -124,7 +126,7 @@ class LanCamera:
 #  Class with functionalities to query and connect to camera servers.
 class Client(LanCamera):
 
-    def __init__(self, HOST='0.0.0.0', PORT=9000, name=''):
+    def __init__(self, HOST='0.0.0.0', PORT=PORT_CAM, name=''):
 
         self.__running = False
         self.__streaming = False
@@ -275,7 +277,7 @@ class Client(LanCamera):
 #  Class with functionalities to share the camera and stream video.
 class Server(LanCamera):
 
-    def __init__(self, HOST='', PORT=9000, device=0):
+    def __init__(self, HOST='', PORT=PORT_CAM, device=0):
     
         self.__running = False
         self.__streaming = False
@@ -396,7 +398,6 @@ class Server(LanCamera):
                     routine_handler(cmd, instruction)   
 
             if b'SELECT' in data:
-
                 device = int(data.split(b' ')[1])
 
                 try:
@@ -524,3 +525,18 @@ class Server(LanCamera):
 
         else:
             print("O servidor não está realizando o streaming")
+
+
+"""#########################################################
+############################################################
+### Main function                                        ###
+############################################################
+#########################################################"""
+
+
+if __name__ == "__main__":
+  c = LanCamera()
+  cams = c.list_cams_local()
+  print("Local cameras: %s" % cams)
+  c.list_servers((PORT_CAM))
+  

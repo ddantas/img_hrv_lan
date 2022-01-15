@@ -19,7 +19,7 @@ from PIL import ImageTk
 
 from lancamera import *
 
-WIN_TITLE = "GUIIMP"
+WIN_TITLE = "Server Window"
 
 class WinSub(tk.Frame):
 

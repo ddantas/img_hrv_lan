@@ -36,7 +36,7 @@ from lancamera import *
 # import WinThresh
 # import WinContrast
 
-WIN_TITLE = "GUIIMP"
+WIN_TITLE = "Operator Window"
 IMG_DATA_SIZE = struct.calcsize('>L')
 
 class CamScreen(tk.Frame):
