@@ -547,4 +547,6 @@ if __name__ == "__main__":
   cams = c.list_cams_local()
   print("Local cameras: %s" % cams)
   c.list_servers((PORT_CAM))
-  
+    
+  server = Server(HOST='127.0.0.1', PORT=9000)
+  client = Client(HOST='127.0.0.1', PORT=9000)
