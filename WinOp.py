@@ -232,7 +232,7 @@ class WinMainTk(tk.Frame):
             tk.messagebox.showerror(title="Error Scheduling Routine", message="The specified time is not a number")
             return
 
-        devices = self.client1.list_cams_at(ip, [9000,9002])
+        devices = self.client1.list_cams_at(ip)
 
         if not devices:
             tk.messagebox.showwarning(title="Scanning complete", message="No devices found")  

@@ -33,9 +33,10 @@ class LanCamera:
     #
     #  List all available servers on LAN that have certain ports open.
     #  The opened ports should belong to the list 'ports_to_scan'.
-    def list_servers(self, port_to_scan: list):
+    def list_servers(self, ports_to_scan):
 
-        hosts = self.__scan_ports(port_to_scan)
+        hosts = self.__list_lan_ports(ports_to_scan)
+
         if len(hosts) > 0:
             print("Servidores encontrados: ")
             for host, ports in hosts.items():
@@ -45,47 +46,44 @@ class LanCamera:
 
         return hosts
 
+    ## \brief List specific host listening to a given port.
+    #
+    #  Check if the specified host has certain ports open.
     def list_host_at(self, ip, ports_to_scan):
+        return self.__list_server_ports(ip, ports_to_scan)
+
+    ## \brief List open ports of the hosts in the LAN.
+    #
+    # For each ip obtained through __get_ips(), determines which port, in 'ports_to_scan' is open.
+    def __list_lan_ports(self, ports_to_scan):
+
+        ips = self.__get_ips()
+        ips.append("127.0.0.1")
+        hosts = {}
+        for ip in ips:
+            ports = self.__list_server_ports(ip, ports_to_scan)
+            print(f"Scaneando portas {ports_to_scan} do host {ip}")
+
+            if ports:
+                hosts[ip] = ports
+
+        return hosts
+
+
+    ## \brief List open ports of a specific host.
+    #
+    # For a single ip, determines which port, in 'ports_to_scan' is open.
+    def __list_server_ports(self, ip, ports_to_scan):
+
+        if type(ports_to_scan) is int:
+            ports_to_scan = [ports_to_scan]
 
         ports = []
         for port in ports_to_scan:
             if self.__scan_port(ip, port):
                 ports.append(port)
 
-        if len(ports) == len(ports_to_scan):
-            return ports
-
-        return []
-
-    ## \brief List open ports of the hosts in the LAN.
-    #
-    # For each ip obtained through __get_ips(), determines which port, in 'ports_to_scan' is open.
-    def __scan_ports(self, ports_to_scan: list):
-
-        if type(ports_to_scan) is int:
-            start = ports_to_scan
-            end = start
-            ports_to_scan = [ports_to_scan]
-
-        else:
-            start = ports_to_scan[0]
-            end  = ports_to_scan[1]
-
-        end += 1
-        ips = self.__get_ips()
-        ips.append("127.0.0.1")
-        hosts = {}
-        for ip in ips:
-            ports = []
-            print(f"Scaneando portas {start}-{end-1} do host {ip}")
-            for port in range(start, end):
-                if self.__scan_port(ip, port):
-                    ports.append(port)
-
-            if len(ports) == len(ports_to_scan):
-                hosts[ip] = ports
-
-        return hosts
+        return ports
 
     ## \brief Tries to connect to a port of an IP address.
     #
@@ -155,53 +153,48 @@ class Client(LanCamera):
         self.__host = host
         self.__port = port
 
-    def list_cams_at(self, ip, ports_to_scan : list):
+    ## \brief Receive a list of all open cameras on a host.
+    #
+    #  Queries the host for its open cameras and parses the response to group them in a list.
+    def recv_cameras(self, ip, port):
 
-        if type(ports_to_scan) == list and len(ports_to_scan) > 1:
-            start = ports_to_scan[0]
-            end = ports_to_scan[1]
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((ip, PORT_COMMANDS))
+            s.sendall(b"LIST")
+            cams = s.recv(1024).decode()
+            cams = cams.replace(' ', '')
+            cams = cams.replace('[','')
+            cams = cams.replace(']','')
+            cams = cams.split(',')
+            # for cam in cams:
+            #     devices.append(cam)
+            print(f'Cameras do servidor {ip}:9000 -> {cams}')
+            s.sendall(b"END")
 
-        else:
-            start = ports_to_scan
-            end = ports_to_scan+1
+        return cams
 
-        devices = []
+    ## \brief List cameras from a single host.
+    #
+    #  List all cameras from a specified host.
+    def list_cams_at(self, ip, ports_to_scan=[9000,9002]):
+
         ports = self.list_host_at(ip, ports_to_scan)
-        if ports:
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.connect((ip, PORT_COMMANDS))
-                s.sendall(b"LIST")
-                cams = s.recv(1024).decode()
-                cams = cams.replace(' ', '')
-                cams = cams.replace('[','')
-                cams = cams.replace(']','')
-                cams = cams.split(',')
-                for cam in cams:
-                    devices.append(cam)
-                print(f'Cameras do servidor {ip}:9000 -> {cams}')
-                s.sendall(b"END")
+        if set(ports) == set(ports_to_scan):
+            devices = self.recv_cameras(ip, PORT_COMMANDS)
 
         return devices
+
     ## \brief List cameras from available hosts in the network.
     #
     #  List all cameras and hosts with available cameras in the LAN.
-    def list_cams_lan(self):
+    def list_cams_lan(self, ports_to_scan=[9000, 9002]):
 
-        hosts = self.list_servers([9000, 9002])
+        hosts = self.list_servers(ports_to_scan)
         devices = {}
         for ip, ports in hosts.items():
-            # for port in ports:
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.connect((ip, PORT_COMMANDS))
-                s.sendall(b"LIST")
-                cams = s.recv(1024).decode()
-                cams = cams.replace(' ', '')
-                cams = cams.replace('[','')
-                cams = cams.replace(']','')
-                cams = cams.split(',')
+            if set(ports) == set(ports_to_scan):
+                cams = self.recv_cameras(ip, PORT_COMMANDS)
                 devices[ip] = cams
-                print(f'Cameras do servidor {ip}:9000 -> {cams}')
-                s.sendall(b"END")
 
         return devices
 
@@ -547,6 +540,6 @@ if __name__ == "__main__":
   cams = c.list_cams_local()
   print("Local cameras: %s" % cams)
   c.list_servers((PORT_CAM))
-    
-  server = Server(HOST='127.0.0.1', PORT=9000)
+
+  server = Server(HOST='0.0.0.0', PORT=9000)
   client = Client(HOST='127.0.0.1', PORT=9000)
