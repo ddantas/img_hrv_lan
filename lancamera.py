@@ -32,10 +32,10 @@ class LanCamera:
     ## \brief List servers listening to a given port.
     #
     #  List all available servers on LAN that have certain ports open.
-    #  The opened ports should belong to the interval 'port_range'.
-    def list_servers(self, port_range: list):
+    #  The opened ports should belong to the list 'ports_to_scan'.
+    def list_servers(self, port_to_scan: list):
 
-        hosts = self.__scan_ports(port_range)
+        hosts = self.__scan_ports(port_to_scan)
         if len(hosts) > 0:
             print("Servidores encontrados: ")
             for host, ports in hosts.items():
@@ -45,29 +45,31 @@ class LanCamera:
 
         return hosts
 
-    def list_host_at(self, ip, port_range):
+    def list_host_at(self, ip, ports_to_scan):
 
         ports = []
-        for port in port_range:
+        for port in ports_to_scan:
             if self.__scan_port(ip, port):
                 ports.append(port)
 
-        if len(ports) == len(port_range):
+        if len(ports) == len(ports_to_scan):
             return ports
 
         return []
 
     ## \brief List open ports of the hosts in the LAN.
     #
-    # For each ip obtained through __get_ips(), determines which port, in 'port_range' is open.
-    def __scan_ports(self, port_range: list):
+    # For each ip obtained through __get_ips(), determines which port, in 'ports_to_scan' is open.
+    def __scan_ports(self, ports_to_scan: list):
 
-        if type(port_range) is int:
-            start = port_range
+        if type(ports_to_scan) is int:
+            start = ports_to_scan
             end = start
+            ports_to_scan = [ports_to_scan]
+
         else:
-            start = port_range[0]
-            end  = port_range[1]
+            start = ports_to_scan[0]
+            end  = ports_to_scan[1]
 
         end += 1
         ips = self.__get_ips()
@@ -76,14 +78,11 @@ class LanCamera:
         for ip in ips:
             ports = []
             print(f"Scaneando portas {start}-{end-1} do host {ip}")
-            print(start, end)
             for port in range(start, end):
-                print(port)
                 if self.__scan_port(ip, port):
                     ports.append(port)
 
-            print(ports, port_range)
-            if len(ports) == len(port_range):
+            if len(ports) == len(ports_to_scan):
                 hosts[ip] = ports
 
         return hosts
@@ -156,18 +155,18 @@ class Client(LanCamera):
         self.__host = host
         self.__port = port
 
-    def list_cams_at(self, ip, port_range : list):
+    def list_cams_at(self, ip, ports_to_scan : list):
 
-        if type(port_range) == list and len(port_range) > 1:
-            start = port_range[0]
-            end = port_range[1]
+        if type(ports_to_scan) == list and len(ports_to_scan) > 1:
+            start = ports_to_scan[0]
+            end = ports_to_scan[1]
 
         else:
-            start = port_range
-            end = port_range+1
+            start = ports_to_scan
+            end = ports_to_scan+1
 
         devices = []
-        ports = self.list_host_at(ip, port_range)
+        ports = self.list_host_at(ip, ports_to_scan)
         if ports:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.connect((ip, PORT_COMMANDS))
@@ -179,7 +178,6 @@ class Client(LanCamera):
                 cams = cams.split(',')
                 for cam in cams:
                     devices.append(cam)
-                print(cams)
                 print(f'Cameras do servidor {ip}:9000 -> {cams}')
                 s.sendall(b"END")
 
@@ -322,7 +320,6 @@ class Server(LanCamera):
     #  Initializes video capture device
     def __init_camera(self, device):
         self.__cam = cv2.VideoCapture(device)
-        # self.__cam = cv2.VideoCapture('john-mayer2.mp4')
 
     ## \brief Destroy camera
     #
@@ -409,12 +406,9 @@ class Server(LanCamera):
                     command = command.replace("\"", "")
 
                     if command == 'ROUTINEEND':
-                        print(command)
                         break
 
-                    print(command)
                     cmd, instruction = command.split(';')
-                    # data = conn.recv(1024)
 
                     routine_handler(cmd, instruction)   
 
@@ -504,13 +498,6 @@ class Server(LanCamera):
                         # if one connection fails, stops the server entirely
                         if self.__streaming:
                             for conn in self.connections:
-
-                                '''
-                                    don't send data when the connection is closed
-                                    nor close the connection on the side of the server
-                                    to avoid TIME_WAIT state on serverside socket
-                                    (client has to close the connection)
-                                ''' 
                                 # ready = conn.recv(1024)
                                 # if ready == b'READY':
                                 conn.sendall(struct.pack('>L', size) + data)
@@ -533,11 +520,11 @@ class Server(LanCamera):
             self.__streaming = False
 
             closer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
             closer.connect((self.__host, self.__port))
             closer.close()
 
             self.__socket.close()
-            print(self.connections)
             self.connections = []
 
             self.__cleanup()

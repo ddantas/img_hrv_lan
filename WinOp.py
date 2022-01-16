@@ -54,7 +54,7 @@ class CamScreen(tk.Frame):
         self.screen.pack()
         self.delay = 15
 
-    def display_frames(self):
+    def display_frames_(self):
 
         try:
             frame = self.client.recv_frame(IMG_DATA_SIZE)
@@ -73,7 +73,27 @@ class CamScreen(tk.Frame):
 
         self.window.after(self.delay, self.display_frames)
 
-    def __del__(self):
+    def display_frames(self):
+
+        self.__streaming = True
+        while self.__streaming:
+            try:
+                frame = self.client.recv_frame(IMG_DATA_SIZE)
+                cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+            except:
+                self.client.stop_streaming_client()
+                self.client.stop_commands_client()
+                self.screen.config(image='', bg='black')
+                return
+
+            img = Image.fromarray(cv2image)
+            imgtk = ImageTk.PhotoImage(image=img)
+            self.screen.config(image=imgtk)
+            self.screen.imgtk = imgtk
+            self.cap.write(frame)  
+
+    def cleanup(self):
+        self.__streaming = False
         self.cap.release()
 
 
@@ -93,11 +113,13 @@ class WinMainTk(tk.Frame):
         self.create_frame_main()
 
         self.create_frame_toolbox()
+        self.running_threads = []
         
     ## Create main frame, composed by an ImgCanvas object.
     #  @param self The object pointer.
     def create_frame_main(self):
         self.frame_main = tk.Frame(self.root)
+
         self.frame_main.grid(row=0, column=0, stick='nsew')
 
         self.frame1 = tk.Frame(self.frame_main, bg='black', height=480, width=600)
@@ -242,12 +264,8 @@ class WinMainTk(tk.Frame):
             return    
 
         values = list(self.combo_box_cam1['values']).remove(host)
-        self.combo_box_cam1['values'] = ''
-        self.combo_box_cam2['values'] = ''
-
-        if values:
-            self.combo_box_cam1['values'] = values
-            self.combo_box_cam2['values'] = values
+        self.combo_box_cam1['values'] = values
+        self.combo_box_cam2['values'] = values
 
         host = host.split('#')
         device = host[1]
@@ -255,10 +273,6 @@ class WinMainTk(tk.Frame):
         host = split_host[0]
         port = 9000 
 
-        # should send message to server to record its screen, because the server won't be able to capture the
-        # device that is being used to record the subjects camera
-
-        print(host)
         self.client1.set_host(host, port)
         self.client1.start_commands_connection()
 
@@ -267,6 +281,7 @@ class WinMainTk(tk.Frame):
         self.client1.start_connection()
         client1_thread = threading.Thread(target=lambda : self.screen1.display_frames())
         client1_thread.start()
+        self.running_threads.append(client1_thread)
         
     def select_host_cam2(self):
 
@@ -276,21 +291,14 @@ class WinMainTk(tk.Frame):
             return    
 
         values = list(self.combo_box_cam2['values']).remove(host)
-        self.combo_box_cam1['values'] = ''
-        self.combo_box_cam2['values'] = ''
-
-        if values:
-            self.combo_box_cam1['values'] = values
-            self.combo_box_cam2['values'] = values
+        self.combo_box_cam1['values'] = values
+        self.combo_box_cam2['values'] = values
 
         host = host.split('#')
         device = host[1]
         split_host = host[0].split(';')
         host = split_host[0]
         port = 9000
-
-        # should send message to server to record its screen, because the server won't be able to capture the
-        # device that is being used to record the subjects camera
 
         self.client2.set_host(host, port)
         self.client2.start_commands_connection()
@@ -300,6 +308,7 @@ class WinMainTk(tk.Frame):
         self.client2.start_connection()
         client2_thread = threading.Thread(target=lambda : self.screen2.display_frames())
         client2_thread.start()
+        self.running_threads.append(client2_thread)
 
     def select_routine_file(self):
         self.routine_filename = tk.filedialog.askopenfilename()
@@ -365,6 +374,13 @@ class WinMainTk(tk.Frame):
         # self.client2.send_command("ROUTINEEND")
 
     def cleanup(self):
+
+        self.screen1.cleanup()
+        self.screen2.cleanup()
+
+        for thread in self.running_threads:
+            thread.join()
+
         self.client1.stop_commands_client()
         self.client1.stop_streaming_client()
         self.client2.stop_commands_client()
@@ -379,13 +395,13 @@ class WinMainTk(tk.Frame):
 
 if __name__ == "__main__":
 
-  root = tk.Tk()
-  root.rowconfigure(0, weight=1)
-  root.columnconfigure(0, weight=1)
-  root.title(WIN_TITLE)
-  root.minsize(300,300)
-  
-  app = WinMainTk(root)
-  app.mainloop()
-  app.cleanup()
+    root = tk.Tk()
+    root.rowconfigure(0, weight=1)
+    root.columnconfigure(0, weight=1)
+    root.title(WIN_TITLE)
+    root.minsize(300,300)
+
+    app = WinMainTk(root)
+    app.mainloop()
+    app.cleanup()
 
