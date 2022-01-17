@@ -9,9 +9,8 @@ from PIL import Image
 from PIL import ImageTk
 
 ## @package lancamera
-#  This package exposes the finctionalities of the cameras
+#  This package exposes the functionalities of the cameras
 #  available in the LAN.
-#
 
 PORT_CAM   = 9000
 PORT_POLAR = 9001
@@ -22,12 +21,56 @@ PORT_COMMANDS = 9002
 #  Main class of the package lancamera, with functionalities to list camera servers and their cameras.
 class LanCamera:
 
-    def __init__(self, HOST='127.0.0.1', PORT=PORT_CAM):
-    
+    def __init__(self):    
+        self.cam = None
+
+    ## \brief Initialize camera
+    #
+    #  Initializes video capture device
+    def init_camera(self, device):
+        self.cam = cv2.VideoCapture(device)
+
+    ## \brief Destroy camera
+    #
+    #  Destroy video capture device and window data structures
+    def cleanup(self):
+        if self.cam:
+            self.cam.release()
+            cv2.destroyAllWindows()
+
+    ## \brief List all cameras in localhost.
+    #
+    #  List all the available capture devices with index up to 'num' in localhost .
+    def list_cams_local(self, num=5):
+
+        v = []
+        i = 0
+        while i < num:
+            cap = cv2.VideoCapture(i)
+            if cap.isOpened():
+                v.append(i)
+                cap.release()
+            i += 1
+        return v
+
+## \brief Class Client
+#
+#  Class with functionalities to query and connect to camera servers.
+class Client(LanCamera):
+
+    def __init__(self, HOST='0.0.0.0', PORT=PORT_CAM, name=''):
+
         self.__running = False
+        self.__streaming = False
         self.__host = HOST
         self.__port = PORT
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__socket_commands = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.data = b''
+
+    def set_host(self, host, port):
+        self.__host = host
+        self.__port = port
 
     ## \brief List servers listening to a given port.
     #
@@ -68,7 +111,6 @@ class LanCamera:
                 hosts[ip] = ports
 
         return hosts
-
 
     ## \brief List open ports of a specific host.
     #
@@ -118,49 +160,15 @@ class LanCamera:
 
         return ips
 
-    ## \brief List all cameras in localhost.
-    #
-    #  List all the available capture devices with index up to 'num' in localhost .
-    def list_cams_local(self, num=5):
-
-        v = []
-        i = 0
-        while i < num:
-            cap = cv2.VideoCapture(i)
-            if cap.isOpened():
-                v.append(i)
-                cap.release()
-            i += 1
-        return v
-
-
-## \brief Class Client
-#
-#  Class with functionalities to query and connect to camera servers.
-class Client(LanCamera):
-
-    def __init__(self, HOST='0.0.0.0', PORT=PORT_CAM, name=''):
-
-        self.__running = False
-        self.__streaming = False
-        self.__host = HOST
-        self.__port = PORT
-        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.__socket_commands = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.data = b''
-
-    def set_host(self, host, port):
-        self.__host = host
-        self.__port = port
-
     ## \brief Receive a list of all open cameras on a host.
     #
     #  Queries the host for its open cameras and parses the response to group them in a list.
     def recv_cameras(self, ip, port):
 
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((ip, PORT_COMMANDS))
-            s.sendall(b"LIST")
+            s.connect((ip, port))
+            msg_len = struct.pack('i', len('LIST'))
+            s.sendall(msg_len + b"LIST")
             cams = s.recv(1024).decode()
             cams = cams.replace(' ', '')
             cams = cams.replace('[','')
@@ -169,16 +177,19 @@ class Client(LanCamera):
             # for cam in cams:
             #     devices.append(cam)
             print(f'Cameras do servidor {ip}:9000 -> {cams}')
-            s.sendall(b"END")
+            msg_len = struct.pack('i', len('END'))
+            s.sendall(msg_len + b"END")
 
         return cams
 
     ## \brief List cameras from a single host.
     #
     #  List all cameras from a specified host.
+    #  list devs, specify only the type of device
     def list_cams_at(self, ip, ports_to_scan=[9000,9002]):
 
         ports = self.list_host_at(ip, ports_to_scan)
+        devices = []
         if set(ports) == set(ports_to_scan):
             devices = self.recv_cameras(ip, PORT_COMMANDS)
 
@@ -187,7 +198,7 @@ class Client(LanCamera):
     ## \brief List cameras from available hosts in the network.
     #
     #  List all cameras and hosts with available cameras in the LAN.
-    def list_cams_lan(self, ports_to_scan=[9000, 9002]):
+    def list_cams_lan(self, ports_to_scan=[9000,9002]):
 
         hosts = self.list_servers(ports_to_scan)
         devices = {}
@@ -201,8 +212,7 @@ class Client(LanCamera):
     ## \brief Connects to a streaming server.
     #
     #  Starts a thread that does the connection with the streaming server
-    #  If record=True, __handle_conn will save the frames to the hard drive
-    def start_connection(self, record=False):
+    def start_connection(self):
 
         if self.__streaming: 
             print("O cliente já está rodando")
@@ -225,9 +235,6 @@ class Client(LanCamera):
 
         msg_len = struct.pack('i', len(command))
         self.__socket_commands.sendall(msg_len + command.encode())
-
-    def recv_response(self):
-        return self.__socket_commands.recv(1024)
 
     ## \brief Receives frame from the server.
     #
@@ -297,7 +304,7 @@ class Server(LanCamera):
         self.__port = PORT
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket_commands = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.__cam = None
+        self.cam = None
         self.connections = []
         self.__init_socket()
 
@@ -308,36 +315,9 @@ class Server(LanCamera):
         self.__socket.bind((self.__host, self.__port))
         self.__socket_commands.bind((self.__host, self.__port + 2))
 
-    ## \brief Initialize camera
-    #
-    #  Initializes video capture device
-    def __init_camera(self, device):
-        self.__cam = cv2.VideoCapture(device)
-
-    ## \brief Destroy camera
-    #
-    #  Destroy video capture device and window data structures
-    def __cleanup(self):
-        if self.__cam:
-            self.__cam.release()
-            cv2.destroyAllWindows()
-
-    def list_cams_local(self, num):
-
-        index = 0
-        v = []
-        i = num
-        while i > 0:
-
-            cap = cv2.VideoCapture(index)
-
-            if cap.isOpened():
-                v.append(index)
-                cap.release()
-                
-            index += 1
-            i -= 1
-        return v
+    def recv_command(self, conn):
+        size = struct.unpack('i', conn.recv(struct.calcsize ('i')))[0]
+        return conn.recv(size)
 
     ## \brief Start command server thread
     #
@@ -377,7 +357,7 @@ class Server(LanCamera):
         while self.__running:
 
             try:
-                data = conn.recv(1024)
+                data = self.recv_command(conn)
             except:
                 break
 
@@ -390,26 +370,39 @@ class Server(LanCamera):
                     break
 
             if b'ROUTINE' in data:
+                host = data.split(b';')[1].decode()
+                print(host)
+                cur_time = 0
 
-                while True:
-                    size = struct.unpack('i', conn.recv(struct.calcsize ('i')))[0]
-                    command = ''
-                    msg = conn.recv(size)
-                    command += msg.decode()
-                    command = command.replace("\"", "")
+                size = struct.unpack('i', conn.recv(struct.calcsize ('i')))[0]
+                routine = conn.recv(size).decode()
+                lines = routine.split('\n')
 
-                    if command == 'ROUTINEEND':
-                        break
+                for line in lines:
+                    cmds = line.split(';')
+                    instant, cmd, hosts, instruction = cmds
+                    instant = instant.strip()
+                    cmd = cmd.strip()
+                    hosts = hosts.strip()
+                    instruction = instruction.strip()
+                    instruction = instruction.replace('“', '')
+                    instruction = instruction.replace('”', '')
+                    instant = float(instant)
 
-                    cmd, instruction = command.split(';')
+                    if instant - cur_time > 0:
+                        time.sleep(instant - cur_time)
+                        cur_time += instant - cur_time
 
-                    routine_handler(cmd, instruction)   
+                    if hosts == 'all':
+                        hosts = ['s1', 's2']
+
+                    if host in hosts:
+                        routine_handler(cmd, instruction)
 
             if b'SELECT' in data:
                 device = int(data.split(b' ')[1])
-
                 try:
-                    self.__init_camera(device)
+                    self.init_camera(device)
 
                 except:
                     print("Erro ao selecionar camera")
@@ -431,8 +424,6 @@ class Server(LanCamera):
             closer.connect((self.__host, self.__port + 2))
             closer.close()
             self.__socket_commands.close()
-
-            # init_server again (?)
 
         else:
             print("O servidor não está realizando o streaming")
@@ -479,8 +470,8 @@ class Server(LanCamera):
 
         while self.__streaming:
 
-            if self.__cam:
-                ret, frame = self.__cam.read()
+            if self.cam:
+                ret, frame = self.cam.read()
 
                 if ret:
                     ret, frame = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
@@ -520,9 +511,7 @@ class Server(LanCamera):
             self.__socket.close()
             self.connections = []
 
-            self.__cleanup()
-
-            # init_server again (?)
+            self.cleanup()
 
         else:
             print("O servidor não está realizando o streaming")

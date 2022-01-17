@@ -54,25 +54,6 @@ class CamScreen(tk.Frame):
         self.screen.pack()
         self.delay = 15
 
-    def display_frames_(self):
-
-        try:
-            frame = self.client.recv_frame(IMG_DATA_SIZE)
-            cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-        except:
-            self.client.stop_streaming_client()
-            self.client.stop_commands_client()
-            self.screen.config(image='', bg='black')
-            return
-
-        img = Image.fromarray(cv2image)
-        imgtk = ImageTk.PhotoImage(image=img)
-        self.screen.imgtk = imgtk
-        self.screen.config(image=imgtk)
-        self.cap.write(frame)  
-
-        self.window.after(self.delay, self.display_frames)
-
     def display_frames(self):
 
         self.__streaming = True
@@ -84,6 +65,7 @@ class CamScreen(tk.Frame):
                 self.client.stop_streaming_client()
                 self.client.stop_commands_client()
                 self.screen.config(image='', bg='black')
+                print('deu errado')
                 return
 
             img = Image.fromarray(cv2image)
@@ -339,36 +321,11 @@ class WinMainTk(tk.Frame):
             return
 
         time.sleep(delay)
-        cur_time = 0.0
-        self.client1.send_command("ROUTINE")
-        # self.client2.send_command("ROUTINE")
-        lines = routine.split('\n')
-        
-        for line in lines:
+        self.client1.send_command("ROUTINE;s1")
+        # self.client2.send_command("ROUTINE;s2")
 
-            if line:
-                cmds = line.split(';')
-                instant, cmd, hosts, instruction = cmds
-                instant = instant.strip()
-                cmd = cmd.strip()
-                hosts = hosts.strip()
-                instruction = instruction.lstrip()
-                instruction = instruction.rstrip()
-                instant = float(instant)
-                print(cur_time, instant, cmd, hosts, instruction)
-
-                if instant - cur_time > 0:
-                    time.sleep(instant - cur_time)
-                    cur_time += instant - cur_time
-
-                if hosts == 'all':
-                    hosts = ['s1', 's2']
-
-                if 's1' in hosts:
-                    self.client1.send_command(cmd + ';' + instruction)
-
-                if 's2' in hosts:
-                    self.client2.send_command(cmd + ';' + instruction)
+        self.client1.send_command(routine)
+        # self.client2.send_command(routine)
 
         self.client1.send_command("ROUTINEEND")
         # self.client2.send_command("ROUTINEEND")
