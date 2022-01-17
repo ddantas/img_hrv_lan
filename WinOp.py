@@ -145,9 +145,9 @@ class WinMainTk(tk.Frame):
         self.select_cam2_label = tk.Label(self.frame_right,text="\nCAM 2", padx=3)
 
         self.btn_select_cam1 = tk.Button(self.frame_right, text="Select host", padx=3, width=BUTTON_WIDTH, 
-                                            command=self.select_host_cam1)
+                                            command=lambda : self.select_host_cam(1))
         self.btn_select_cam2 = tk.Button(self.frame_right, text="Select host", padx=3, width=BUTTON_WIDTH, 
-                                            command=self.select_host_cam2)
+                                            command=lambda : self.select_host_cam(2))
 
         self.select_routine_label = tk.Label(self.frame_right,text="\nRoutine\nNo file selected", padx=3)
         self.btn_routine = tk.Button(self.frame_right, text="Select routine file", padx=3, width=BUTTON_WIDTH, 
@@ -238,9 +238,19 @@ class WinMainTk(tk.Frame):
         self.combo_box_cam1['values'] = values
         self.combo_box_cam2['values'] = values
 
-    def select_host_cam1(self):
 
-        host = self.selected_host_cam1.get()
+    def select_host_cam(self, slot):
+
+        if slot == 1:
+            client = self.client1
+            screen = self.screen1
+            host = self.selected_host_cam1.get()
+
+        else:
+            client = self.client2
+            screen = self.screen2
+            host = self.selected_host_cam2.get()
+
         if not host:
             tk.messagebox.showerror(title="Error Connecting to HOST 1", message="Select HOST 1 first")  
             return    
@@ -255,42 +265,15 @@ class WinMainTk(tk.Frame):
         host = split_host[0]
         port = 9000 
 
-        self.client1.set_host(host, port)
-        self.client1.start_commands_connection()
+        client.set_host(host, port)
+        client.start_commands_connection()
 
-        self.client1.send_command(f'SELECT {device}')
+        client.send_command(f'SELECT {device}')
 
-        self.client1.start_connection()
-        client1_thread = threading.Thread(target=lambda : self.screen1.display_frames())
-        client1_thread.start()
-        self.running_threads.append(client1_thread)
-        
-    def select_host_cam2(self):
-
-        host = self.selected_host_cam2.get()
-        if not host:
-            tk.messagebox.showerror(title="Error Connecting to HOST 2", message="Select HOST 2 first")  
-            return    
-
-        values = list(self.combo_box_cam2['values']).remove(host)
-        self.combo_box_cam1['values'] = values
-        self.combo_box_cam2['values'] = values
-
-        host = host.split('#')
-        device = host[1]
-        split_host = host[0].split(';')
-        host = split_host[0]
-        port = 9000
-
-        self.client2.set_host(host, port)
-        self.client2.start_commands_connection()
-
-        self.client2.send_command(f'SELECT {device}')
-
-        self.client2.start_connection()
-        client2_thread = threading.Thread(target=lambda : self.screen2.display_frames())
-        client2_thread.start()
-        self.running_threads.append(client2_thread)
+        client.start_connection()
+        client_thread = threading.Thread(target=lambda : screen.display_frames())
+        client_thread.start()
+        self.running_threads.append(client_thread)
 
     def select_routine_file(self):
         self.routine_filename = tk.filedialog.askopenfilename()
