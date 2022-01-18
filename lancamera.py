@@ -68,6 +68,16 @@ class Client(LanCamera):
         self.__socket_commands = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.data = b''
 
+    """#########################################################
+    ############################################################
+    ###              NETWORK FUNCTIONALITIES                 ###
+    ############################################################
+    #########################################################"""
+
+    ## \brief Set the internal host ip and port.
+    #
+    #  Set the internal host ip and port that the client will use 
+    #  to connect to the server.
     def set_host(self, host, port):
         self.__host = host
         self.__port = port
@@ -94,6 +104,33 @@ class Client(LanCamera):
     #  Check if the specified host has certain ports open.
     def list_host_at(self, ip, ports_to_scan):
         return self.__list_server_ports(ip, ports_to_scan)
+
+    ## \brief List cameras from a single host.
+    #
+    #  List all cameras from a specified host.
+    #  list devs, specify only the type of device
+    def list_cams_at(self, ip, ports_to_scan=[9000,9002]):
+
+        ports = self.list_host_at(ip, ports_to_scan)
+        devices = []
+        if set(ports) == set(ports_to_scan):
+            devices = self.recv_cameras(ip, PORT_COMMANDS)
+
+        return devices
+
+    ## \brief List cameras from available hosts in the network.
+    #
+    #  List all cameras and hosts with available cameras in the LAN.
+    def list_cams_lan(self, ports_to_scan=[9000,9002]):
+
+        hosts = self.list_servers(ports_to_scan)
+        devices = {}
+        for ip, ports in hosts.items():
+            if set(ports) == set(ports_to_scan):
+                cams = self.recv_cameras(ip, PORT_COMMANDS)
+                devices[ip] = cams
+
+        return devices
 
     ## \brief List open ports of the hosts in the LAN.
     #
@@ -182,44 +219,15 @@ class Client(LanCamera):
 
         return cams
 
-    ## \brief List cameras from a single host.
+    """#########################################################
+    ############################################################
+    ###             COMMANDS FUNCTIONALITIES                 ###
+    ############################################################
+    #########################################################"""
+
+    ## \brief Connects to a commands server.
     #
-    #  List all cameras from a specified host.
-    #  list devs, specify only the type of device
-    def list_cams_at(self, ip, ports_to_scan=[9000,9002]):
-
-        ports = self.list_host_at(ip, ports_to_scan)
-        devices = []
-        if set(ports) == set(ports_to_scan):
-            devices = self.recv_cameras(ip, PORT_COMMANDS)
-
-        return devices
-
-    ## \brief List cameras from available hosts in the network.
-    #
-    #  List all cameras and hosts with available cameras in the LAN.
-    def list_cams_lan(self, ports_to_scan=[9000,9002]):
-
-        hosts = self.list_servers(ports_to_scan)
-        devices = {}
-        for ip, ports in hosts.items():
-            if set(ports) == set(ports_to_scan):
-                cams = self.recv_cameras(ip, PORT_COMMANDS)
-                devices[ip] = cams
-
-        return devices
-
-    ## \brief Connects to a streaming server.
-    #
-    #  Starts a thread that does the connection with the streaming server
-    def start_connection(self):
-
-        if self.__streaming: 
-            print("O cliente já está rodando")
-        else:
-            self.__streaming = True
-            self.__socket.connect((self.__host, self.__port))
-
+    #  Starts a thread that does the connection with the commands server
     def start_commands_connection(self):
 
         if self.__running:
@@ -235,6 +243,35 @@ class Client(LanCamera):
 
         msg_len = struct.pack('i', len(command))
         self.__socket_commands.sendall(msg_len + command.encode())
+
+    ## \brief Stop connection.
+    #
+    #  Stop the client connection to the commands server
+    def stop_commands_client(self):
+
+        if self.__running:
+            self.__running = False
+            self.__socket_commands.close()
+
+        else:
+            print("Não tem clientes rodando")
+
+    """#########################################################
+    ############################################################
+    ###         CAMERA STREAMING FUNCTIONALITIES             ###
+    ############################################################
+    #########################################################"""
+
+    ## \brief Connects to a streaming server.
+    #
+    #  Starts a thread that does the connection with the streaming server
+    def start_streaming_connection(self):
+
+        if self.__streaming: 
+            print("O cliente já está rodando")
+        else:
+            self.__streaming = True
+            self.__socket.connect((self.__host, self.__port))
 
     ## \brief Receives frame from the server.
     #
@@ -273,15 +310,6 @@ class Client(LanCamera):
     ## \brief Stop connection.
     #
     #  Stop the client connection to the streaming server
-    def stop_commands_client(self):
-
-        if self.__running:
-            self.__running = False
-            self.__socket_commands.close()
-
-        else:
-            print("Não tem clientes rodando")
-
     def stop_streaming_client(self):
 
         if self.__streaming:
@@ -291,13 +319,15 @@ class Client(LanCamera):
         else:
             print("Não tem clientes rodando")
 
+
 ## \brief Class Server.
 #
 #  Class with functionalities to share the camera and stream video.
 class Server(LanCamera):
 
     def __init__(self, HOST='', PORT=PORT_CAM, device=0):
-    
+        
+        super().__init__()
         self.__running = False
         self.__streaming = False
         self.__host = HOST
@@ -315,8 +345,19 @@ class Server(LanCamera):
         self.__socket.bind((self.__host, self.__port))
         self.__socket_commands.bind((self.__host, self.__port + 2))
 
+    """#########################################################
+    ############################################################
+    ###             COMMANDS FUNCTIONALITIES                 ###
+    ############################################################
+    #########################################################"""
+
+    ## \brief Receives command
+    #
+    #  First, receives the number of bytes of that command (size), 
+    #  then receives the proper command
     def recv_command(self, conn):
-        size = struct.unpack('i', conn.recv(struct.calcsize ('i')))[0]
+        n_bytes = conn.recv(struct.calcsize ('i'))
+        size = struct.unpack('i', n_bytes)[0]
         return conn.recv(size)
 
     ## \brief Start command server thread
@@ -370,6 +411,7 @@ class Server(LanCamera):
                     break
 
             if b'ROUTINE' in data:
+
                 host = data.split(b';')[1].decode()
                 print(host)
                 cur_time = 0
@@ -427,7 +469,13 @@ class Server(LanCamera):
 
         else:
             print("O servidor não está realizando o streaming")
-  
+
+    """#########################################################
+    ############################################################
+    ###           CAMERA STREAMING FUNCTIONALITIES           ###
+    ############################################################
+    #########################################################"""
+
     ## \brief Start video streaming thread.
     #
     #  Starts a thread to listen for connections for video streaming
