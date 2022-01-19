@@ -5,6 +5,7 @@ import pickle
 import struct
 import scapy.all as sp
 import time
+import datetime
 from PIL import Image
 from PIL import ImageTk
 
@@ -197,6 +198,12 @@ class Client(LanCamera):
 
         return ips
 
+    """#########################################################
+    ############################################################
+    ###             COMMANDS FUNCTIONALITIES                 ###
+    ############################################################
+    #########################################################"""
+
     ## \brief Receive a list of all open cameras on a host.
     #
     #  Queries the host for its open cameras and parses the response to group them in a list.
@@ -219,12 +226,6 @@ class Client(LanCamera):
 
         return cams
 
-    """#########################################################
-    ############################################################
-    ###             COMMANDS FUNCTIONALITIES                 ###
-    ############################################################
-    #########################################################"""
-
     ## \brief Connects to a commands server.
     #
     #  Starts a thread that does the connection with the commands server
@@ -242,6 +243,7 @@ class Client(LanCamera):
     def send_command(self, command):
 
         msg_len = struct.pack('i', len(command))
+        print('printei', msg_len, len(command), command)
         self.__socket_commands.sendall(msg_len + command.encode())
 
     ## \brief Stop connection.
@@ -265,7 +267,7 @@ class Client(LanCamera):
     ## \brief Connects to a streaming server.
     #
     #  Starts a thread that does the connection with the streaming server
-    def start_streaming_connection(self):
+    def start_stream_connection(self):
 
         if self.__streaming: 
             print("O cliente já está rodando")
@@ -286,7 +288,7 @@ class Client(LanCamera):
             self.data += recv
 
             if self.data == b'':
-                self.stop_streaming_client()
+                self.stop_stream_client()
                 return None
 
         msg_size = self.data[:img_data_size]
@@ -297,7 +299,7 @@ class Client(LanCamera):
         while len(self.data) < msg_size:
             self.data += self.__socket.recv(4096)
             if self.data == b'':
-                self.stop_streaming_client()
+                self.stop_stream_client()
                 return None
             
         frame_data = self.data[:msg_size]
@@ -310,7 +312,7 @@ class Client(LanCamera):
     ## \brief Stop connection.
     #
     #  Stop the client connection to the streaming server
-    def stop_streaming_client(self):
+    def stop_stream_client(self):
 
         if self.__streaming:
             self.__streaming = False
@@ -357,6 +359,7 @@ class Server(LanCamera):
     #  then receives the proper command
     def recv_command(self, conn):
         n_bytes = conn.recv(struct.calcsize ('i'))
+        print(n_bytes)
         size = struct.unpack('i', n_bytes)[0]
         return conn.recv(size)
 
@@ -413,33 +416,68 @@ class Server(LanCamera):
             if b'ROUTINE' in data:
 
                 host = data.split(b';')[1].decode()
-                print(host)
                 cur_time = 0
-
                 size = struct.unpack('i', conn.recv(struct.calcsize ('i')))[0]
-                routine = conn.recv(size).decode()
+                routine = ''
+
+                while len(routine) < size:
+                    packet = conn.recv(size-len(routine)).decode()
+                    if not packet:
+                        break
+                    routine += packet
+
                 lines = routine.split('\n')
+                print(lines)
+                time_to_start = lines[0]
+                hour, minutes = [int(i) for i in time_to_start.split(':')]
+                today = datetime.date.today()
+                time_to_start = datetime.time(hour, minutes)
+                time_to_start = datetime.datetime.combine(today, time_to_start).timestamp()
+
+                now = datetime.datetime.now().timestamp()
+
+                delay = abs(time_to_start - now)
+
+                if delay < 0:
+                    delay = 0
+
+                time.sleep(delay)
+
+                lines = lines[1:]
+                print(lines)
 
                 for line in lines:
-                    cmds = line.split(';')
-                    instant, cmd, hosts, instruction = cmds
-                    instant = instant.strip()
-                    cmd = cmd.strip()
-                    hosts = hosts.strip()
-                    instruction = instruction.strip()
-                    instruction = instruction.replace('“', '')
-                    instruction = instruction.replace('”', '')
-                    instant = float(instant)
 
-                    if instant - cur_time > 0:
-                        time.sleep(instant - cur_time)
-                        cur_time += instant - cur_time
+                    if len(line) > 0:
+                        cmds = line.split(';')
+                        print(cmds)
 
-                    if hosts == 'all':
-                        hosts = ['s1', 's2']
+                        if len(cmds) == 4:
+                            instant, cmd, hosts, instruction = cmds                
+                            instruction = instruction.strip()
+                            instruction = instruction.replace('“', '')
+                            instruction = instruction.replace('”', '')
+                            instruction = instruction.replace('"', '')
 
-                    if host in hosts:
-                        routine_handler(cmd, instruction)
+                        else:
+                            instant, cmd, hosts = cmds
+                            instruction = ''
+
+                        instant = instant.strip()
+                        cmd = cmd.strip()
+                        hosts = hosts.strip()
+                        instant = float(instant)
+
+                        if instant - cur_time > 0:
+                            time.sleep(instant - cur_time)
+                            cur_time += instant - cur_time
+
+                        if hosts == 'all':
+                            hosts = ['s1', 's2']
+
+                        if host in hosts:
+                            routine_handler(cmd, instruction)
+
 
             if b'SELECT' in data:
                 device = int(data.split(b' ')[1])
@@ -545,7 +583,7 @@ class Server(LanCamera):
     ## \brief Stop streaming.
     #
     #  Stops and closes the streaming server
-    def stop_stream(self):
+    def stop_stream_server(self):
 
         if self.__streaming:
 

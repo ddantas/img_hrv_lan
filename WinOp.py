@@ -19,10 +19,6 @@ import cv2
 import tkinter.messagebox
 import tkinter.filedialog
 
-# python 2
-# import Tkinter as tk
-
-# import my
 import math as m
 import os
 import threading
@@ -32,9 +28,6 @@ from PIL import Image
 from PIL import ImageTk
 
 from lancamera import *
-# import ImgCanvas as ic
-# import WinThresh
-# import WinContrast
 
 WIN_TITLE = "Operator Window"
 IMG_DATA_SIZE = struct.calcsize('>L')
@@ -62,7 +55,7 @@ class CamScreen(tk.Frame):
                 frame = self.client.recv_frame(IMG_DATA_SIZE)
                 cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
             except:
-                self.client.stop_streaming_client()
+                self.client.stop_stream_client()
                 self.client.stop_commands_client()
                 self.screen.config(image='', bg='black')
                 print('deu errado')
@@ -115,9 +108,9 @@ class WinMainTk(tk.Frame):
         self.frame1.grid(row=0, column=0, padx=50, pady=100)
         self.frame2.grid(row=0, column=1, padx=50, pady=100)
 
-        self.screen1 = CamScreen(self.frame1, self.client1, name='client1')
+        self.screen1 = CamScreen(self.frame1, self.client1, name='subj1')
         self.screen1.pack()
-        self.screen2 = CamScreen(self.frame2, self.client2, name='client2')
+        self.screen2 = CamScreen(self.frame2, self.client2, name='subj2')
         self.screen2.pack()
 
     ## Create toolbox frame, with buttons to access tools.
@@ -153,10 +146,9 @@ class WinMainTk(tk.Frame):
         self.btn_routine = tk.Button(self.frame_right, text="Select routine file", padx=3, width=BUTTON_WIDTH, 
                                         command=self.select_routine_file)
 
-        self.schedule_time_label = tk.Label(self.frame_right, text="\nSelect routine start in seconds", padx=3)
+        self.schedule_time_label = tk.Label(self.frame_right, text="\nSelect routine start in seconds\nHH:MM", padx=3)
 
         self.schedule_time = tk.Entry(self.frame_right, width=BUTTON_WIDTH)
-        self.schedule_time.insert(0, '0')
 
         self.btn_schedule = tk.Button(self.frame_right, text="Schedule routine start", padx=3, width=BUTTON_WIDTH, 
                                         command=self.schedule_routine)
@@ -270,7 +262,7 @@ class WinMainTk(tk.Frame):
 
         client.send_command(f'SELECT {device}')
 
-        client.start_connection()
+        client.start_stream_connection()
         client_thread = threading.Thread(target=lambda : screen.display_frames())
         client_thread.start()
         self.running_threads.append(client_thread)
@@ -287,15 +279,18 @@ class WinMainTk(tk.Frame):
     def schedule_routine(self):
 
         try:
-            delay = int(self.schedule_time.get())
+            time_to_start = self.schedule_time.get()
         except:
             tk.messagebox.showerror(title="Error Scheduling Routine", message="The specified time is not a number")
             return
 
-        thread = threading.Thread(target=self.send_routine, args=(delay, ))
+        if time_to_start == '':
+            return
+
+        thread = threading.Thread(target=self.send_routine, args=(time_to_start, ))
         thread.start()
         
-    def send_routine(self, delay):
+    def send_routine(self, time_to_start):
         try:
             with open(self.routine_filename) as f:
                 routine = f.read()
@@ -303,15 +298,13 @@ class WinMainTk(tk.Frame):
             tk.messagebox.showerror(title="Error Scheduling Routine", message="No file was specified")
             return
 
-        time.sleep(delay)
+        routine = str(time_to_start) + '\n' + routine
+
         self.client1.send_command("ROUTINE;s1")
         # self.client2.send_command("ROUTINE;s2")
 
         self.client1.send_command(routine)
         # self.client2.send_command(routine)
-
-        self.client1.send_command("ROUTINEEND")
-        # self.client2.send_command("ROUTINEEND")
 
     def cleanup(self):
 
@@ -322,9 +315,9 @@ class WinMainTk(tk.Frame):
             thread.join()
 
         self.client1.stop_commands_client()
-        self.client1.stop_streaming_client()
+        self.client1.stop_stream_client()
         self.client2.stop_commands_client()
-        self.client2.stop_streaming_client()
+        self.client2.stop_stream_client()
 
 """#########################################################
 ############################################################

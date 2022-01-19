@@ -90,7 +90,7 @@ class WinSub(tk.Frame):
             if self.__playing_video:
                 self.__playing_video = False
 
-            self.screen.config(bg=instruction)
+            self.screen.config(image='', bg=instruction)
             self.screen_frame.config(bg=instruction)
 
         elif cmd == 'play': 
@@ -114,7 +114,7 @@ class WinSub(tk.Frame):
 
             self.__streaming = True
 
-            self.client.start_connection()
+            self.client.start_stream_connection()
             stream_thread = threading.Thread(target=self.display_frames)
             stream_thread.start()
 
@@ -122,7 +122,7 @@ class WinSub(tk.Frame):
 
             if self.__streaming:
                 self.__streaming = False
-                self.client.stop_streaming_client()
+                self.client.stop_stream_client()
 
             elif self.__playing_video:
                 self.__playing_video = False
@@ -166,9 +166,9 @@ class WinSub(tk.Frame):
         self.__playing_video = False
         
         self.server.stop_commands_server()
-        self.server.stop_stream()
+        self.server.stop_stream_server()
 
-        self.client.stop_streaming_client()
+        self.client.stop_stream_client()
 
 """#########################################################
 ############################################################
