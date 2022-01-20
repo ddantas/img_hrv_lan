@@ -40,12 +40,11 @@ class CamScreen(tk.Frame):
         self.window = window
         self.name = name
         self.__streaming = False
-        self.cap = cv2.VideoWriter('media/' + self.name + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 15.0, (640,480))
+        self.cap = cv2.VideoWriter('data/' + self.name + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (640,480))
         self.width = 640
         self.height = 480
         self.screen = tk.Label(window, width=self.width, height=self.height, bg='black')
         self.screen.pack()
-        self.delay = 15
 
     def display_frames(self):
 
@@ -66,6 +65,9 @@ class CamScreen(tk.Frame):
             self.screen.config(image=imgtk)
             self.screen.imgtk = imgtk
             self.cap.write(frame)  
+
+    def connected(self):
+        return self.__streaming
 
     def cleanup(self):
         self.__streaming = False
@@ -88,6 +90,7 @@ class WinMainTk(tk.Frame):
         self.create_frame_main()
 
         self.create_frame_toolbox()
+
         self.running_threads = []
         
     ## Create main frame, composed by an ImgCanvas object.
@@ -146,9 +149,10 @@ class WinMainTk(tk.Frame):
         self.btn_routine = tk.Button(self.frame_right, text="Select routine file", padx=3, width=BUTTON_WIDTH, 
                                         command=self.select_routine_file)
 
-        self.schedule_time_label = tk.Label(self.frame_right, text="\nSelect routine start in seconds\nHH:MM", padx=3)
+        self.schedule_time_label = tk.Label(self.frame_right, text="\nSelect routine start in seconds", padx=3)
 
         self.schedule_time = tk.Entry(self.frame_right, width=BUTTON_WIDTH)
+        self.schedule_time.insert(0, '0')
 
         self.btn_schedule = tk.Button(self.frame_right, text="Schedule routine start", padx=3, width=BUTTON_WIDTH, 
                                         command=self.schedule_routine)
@@ -258,6 +262,7 @@ class WinMainTk(tk.Frame):
         port = 9000 
 
         client.set_host(host, port)
+
         client.start_commands_connection()
 
         client.send_command(f'SELECT {device}')
@@ -291,6 +296,11 @@ class WinMainTk(tk.Frame):
         thread.start()
         
     def send_routine(self, time_to_start):
+
+        if not (self.screen1.connected() and self.screen2.connected()):
+            tk.messagebox.showerror(title="Error Scheduling Routine", message="HOSTS are not set")
+            return
+
         try:
             with open(self.routine_filename) as f:
                 routine = f.read()
@@ -301,10 +311,10 @@ class WinMainTk(tk.Frame):
         routine = str(time_to_start) + '\n' + routine
 
         self.client1.send_command("ROUTINE;s1")
-        # self.client2.send_command("ROUTINE;s2")
+        self.client2.send_command("ROUTINE;s2")
 
         self.client1.send_command(routine)
-        # self.client2.send_command(routine)
+        self.client2.send_command(routine)
 
     def cleanup(self):
 
@@ -314,6 +324,8 @@ class WinMainTk(tk.Frame):
         for thread in self.running_threads:
             thread.join()
 
+        self.client1.send_command('END')
+        self.client2.send_command('END')
         self.client1.stop_commands_client()
         self.client1.stop_stream_client()
         self.client2.stop_commands_client()

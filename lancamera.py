@@ -338,6 +338,8 @@ class Server(LanCamera):
         self.__socket_commands = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.cam = None
         self.connections = []
+        self.stream_threads = []
+        self.commands_threads = []
         self.__init_socket()
 
     ## \brief Initialize socket
@@ -390,6 +392,8 @@ class Server(LanCamera):
             if self.__running:
                 thread = threading.Thread(target=self.__handle_commands, args=(conn, routine_handler, ))
                 thread.start()
+                self.commands_threads.append(thread)
+
 
     ## \brief Handle received commands.
     #
@@ -427,19 +431,7 @@ class Server(LanCamera):
                     routine += packet
 
                 lines = routine.split('\n')
-                print(lines)
-                time_to_start = lines[0]
-                hour, minutes = [int(i) for i in time_to_start.split(':')]
-                today = datetime.date.today()
-                time_to_start = datetime.time(hour, minutes)
-                time_to_start = datetime.datetime.combine(today, time_to_start).timestamp()
-
-                now = datetime.datetime.now().timestamp()
-
-                delay = abs(time_to_start - now)
-
-                if delay < 0:
-                    delay = 0
+                delay = int(lines[0])   
 
                 time.sleep(delay)
 
@@ -488,6 +480,8 @@ class Server(LanCamera):
                     print("Erro ao selecionar camera")
 
             if data == b'END' or data == b'':
+                print(data)
+                self.cleanup()
                 break
 
         conn.close()
@@ -504,6 +498,10 @@ class Server(LanCamera):
             closer.connect((self.__host, self.__port + 2))
             closer.close()
             self.__socket_commands.close()
+
+            for t in self.commands_threads:
+                t.join()
+
 
         else:
             print("O servidor não está realizando o streaming")
@@ -525,6 +523,7 @@ class Server(LanCamera):
 
         server_thread = threading.Thread(target=self.__server_listen)
         server_thread.start()
+        self.stream_threads.append(server_thread)
 
     ## \brief Listen to streaming requisitions.
     #
@@ -574,6 +573,7 @@ class Server(LanCamera):
 
                     except:
                         self.connections.remove(conn)
+                        conn.close()
 
                 else:
                     break
@@ -595,6 +595,10 @@ class Server(LanCamera):
             closer.close()
 
             self.__socket.close()
+            
+            for t in self.stream_threads:
+                t.join()
+
             self.connections = []
 
             self.cleanup()
