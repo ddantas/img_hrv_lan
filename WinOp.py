@@ -324,8 +324,14 @@ class WinMainTk(tk.Frame):
         for thread in self.running_threads:
             thread.join()
 
-        self.client1.send_command('END')
-        self.client2.send_command('END')
+        try:
+            self.client1.send_command('END')
+        except:
+            pass
+        try:
+            self.client2.send_command('END')
+        except:
+            pass
         self.client1.stop_commands_client()
         self.client1.stop_stream_client()
         self.client2.stop_commands_client()

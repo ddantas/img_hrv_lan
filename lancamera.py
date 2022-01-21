@@ -243,7 +243,6 @@ class Client(LanCamera):
     def send_command(self, command):
 
         msg_len = struct.pack('i', len(command))
-        print('printei', msg_len, len(command), command)
         self.__socket_commands.sendall(msg_len + command.encode())
 
     ## \brief Stop connection.
@@ -595,7 +594,7 @@ class Server(LanCamera):
             closer.close()
 
             self.__socket.close()
-            
+
             for t in self.stream_threads:
                 t.join()
 
