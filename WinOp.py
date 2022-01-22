@@ -23,6 +23,7 @@ import math as m
 import os
 import threading
 import time
+import datetime as dt
 
 from PIL import Image
 from PIL import ImageTk
@@ -34,13 +35,14 @@ IMG_DATA_SIZE = struct.calcsize('>L')
 
 class CamScreen(tk.Frame):
 
-    def __init__(self, window, client, vid='john-mayer.mp4', name=''):
+    def __init__(self, window, client, path, name='subj'):
         super().__init__(window)
+        self.__streaming = False
         self.client = client
         self.window = window
         self.name = name
-        self.__streaming = False
-        self.cap = cv2.VideoWriter('data/' + self.name + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (640,480))
+        self.path = path
+        self.cap = cv2.VideoWriter(self.path + self.name + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (640,480))
         self.width = 640
         self.height = 480
         self.screen = tk.Label(window, width=self.width, height=self.height, bg='black')
@@ -57,7 +59,7 @@ class CamScreen(tk.Frame):
                 self.client.stop_stream_client()
                 self.client.stop_commands_client()
                 self.screen.config(image='', bg='black')
-                print('deu errado')
+                self.__streaming = False
                 return
 
             img = Image.fromarray(cv2image)
@@ -86,13 +88,34 @@ class WinMainTk(tk.Frame):
         self.root = root
         self.client1 = Client()
         self.client2 = Client()
-
+        self.__set_dir_name()
         self.create_frame_main()
 
         self.create_frame_toolbox()
 
         self.running_threads = []
         
+
+    def __set_dir_name(self):
+        if not os.path.isdir('./data'):
+            os.mkdir('./data')
+
+        dirs = os.listdir('./data')
+        dirs.sort()
+        print(dirs)
+        num = 0
+        for d in dirs:
+            dir_num = int(d)
+            if dir_num > num+1:
+                break
+            num+=1
+
+        new_dir = num+1
+        path =f'./data/{new_dir:03d}/'
+        self.path = path 
+        print(f"Log: saving the recordings at {self.path}")
+        os.mkdir(self.path)
+
     ## Create main frame, composed by an ImgCanvas object.
     #  @param self The object pointer.
     def create_frame_main(self):
@@ -111,9 +134,9 @@ class WinMainTk(tk.Frame):
         self.frame1.grid(row=0, column=0, padx=50, pady=100)
         self.frame2.grid(row=0, column=1, padx=50, pady=100)
 
-        self.screen1 = CamScreen(self.frame1, self.client1, name='subj1')
+        self.screen1 = CamScreen(self.frame1, self.client1, self.path, name='subj1')
         self.screen1.pack()
-        self.screen2 = CamScreen(self.frame2, self.client2, name='subj2')
+        self.screen2 = CamScreen(self.frame2, self.client2, self.path, name='subj2')
         self.screen2.pack()
 
     ## Create toolbox frame, with buttons to access tools.
@@ -206,6 +229,8 @@ class WinMainTk(tk.Frame):
 
         try:
             ip = self.scan_entry.get()
+            if ip == '':
+                ip = '0.0.0.0'
         except:
             tk.messagebox.showerror(title="Error Scheduling Routine", message="The specified time is not a number")
             return
@@ -241,11 +266,13 @@ class WinMainTk(tk.Frame):
             client = self.client1
             screen = self.screen1
             host = self.selected_host_cam1.get()
+            print(f"Log: HOST {host} selected at CAM {slot}")
 
         else:
             client = self.client2
             screen = self.screen2
             host = self.selected_host_cam2.get()
+            print(f"Log: HOST {host} selected at CAM {slot}")
 
         if not host:
             tk.messagebox.showerror(title="Error Connecting to HOST 1", message="Select HOST 1 first")  
@@ -297,10 +324,6 @@ class WinMainTk(tk.Frame):
         
     def send_routine(self, time_to_start):
 
-        if not (self.screen1.connected() and self.screen2.connected()):
-            tk.messagebox.showerror(title="Error Scheduling Routine", message="HOSTS are not set")
-            return
-
         try:
             with open(self.routine_filename) as f:
                 routine = f.read()
@@ -308,21 +331,28 @@ class WinMainTk(tk.Frame):
             tk.messagebox.showerror(title="Error Scheduling Routine", message="No file was specified")
             return
 
+        now = dt.datetime.now()
+
+        print(f"Log: routine is schedule to start at {now + dt.timedelta(seconds=int(time_to_start))}")
+
         routine = str(time_to_start) + '\n' + routine
 
-        self.client1.send_command("ROUTINE;s1")
-        self.client2.send_command("ROUTINE;s2")
+        if self.screen1.connected():
+            self.client1.send_command("ROUTINE;s1")
 
-        self.client1.send_command(routine)
-        self.client2.send_command(routine)
+        if self.screen2.connected():
+            self.client2.send_command("ROUTINE;s1")
+
+        if self.screen1.connected():
+            self.client1.send_command(routine)
+
+        if self.screen2.connected():
+            self.client2.send_command(routine)
 
     def cleanup(self):
 
         self.screen1.cleanup()
         self.screen2.cleanup()
-
-        for thread in self.running_threads:
-            thread.join()
 
         try:
             self.client1.send_command('END')
@@ -332,10 +362,18 @@ class WinMainTk(tk.Frame):
             self.client2.send_command('END')
         except:
             pass
+
+        for thread in self.running_threads:
+            thread.join()
+
         self.client1.stop_commands_client()
         self.client1.stop_stream_client()
         self.client2.stop_commands_client()
         self.client2.stop_stream_client()
+
+
+
+
 
 """#########################################################
 ############################################################

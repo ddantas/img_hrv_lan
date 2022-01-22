@@ -74,6 +74,9 @@ class Client(LanCamera):
     ###              NETWORK FUNCTIONALITIES                 ###
     ############################################################
     #########################################################"""
+    def __init_socket(self):
+        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.__socket_commands.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     ## \brief Set the internal host ip and port.
     #
@@ -315,10 +318,12 @@ class Client(LanCamera):
 
         if self.__streaming:
             self.__streaming = False
+            self.__socket.shutdown(socket.SHUT_RDWR)
             self.__socket.close()
 
         else:
             print("Não tem clientes rodando")
+
 
 
 ## \brief Class Server.
@@ -345,6 +350,8 @@ class Server(LanCamera):
     #
     #  Initializes all sockets binding them to specific ports
     def __init_socket(self):
+        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.__socket_commands.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket.bind((self.__host, self.__port))
         self.__socket_commands.bind((self.__host, self.__port + 2))
 
@@ -360,7 +367,6 @@ class Server(LanCamera):
     #  then receives the proper command
     def recv_command(self, conn):
         n_bytes = conn.recv(struct.calcsize ('i'))
-        print(n_bytes)
         size = struct.unpack('i', n_bytes)[0]
         return conn.recv(size)
 
@@ -384,6 +390,7 @@ class Server(LanCamera):
 
         self.__running = True
 
+        self.connections = []
         while self.__running:
             self.__socket_commands.listen()
             conn, addr = self.__socket_commands.accept()
@@ -401,11 +408,14 @@ class Server(LanCamera):
     #  in order to respond the received command properly.
     def __handle_commands(self, conn, routine_handler):
 
+        quit = False
         while self.__running:
 
             try:
                 data = self.recv_command(conn)
+
             except:
+                print('ih rapai')
                 break
 
             if data == b"LIST":
@@ -421,6 +431,7 @@ class Server(LanCamera):
                 host = data.split(b';')[1].decode()
                 cur_time = 0
                 size = struct.unpack('i', conn.recv(struct.calcsize ('i')))[0]
+
                 routine = ''
 
                 while len(routine) < size:
@@ -435,13 +446,11 @@ class Server(LanCamera):
                 time.sleep(delay)
 
                 lines = lines[1:]
-                print(lines)
 
                 for line in lines:
 
                     if len(line) > 0:
                         cmds = line.split(';')
-                        print(cmds)
 
                         if len(cmds) == 4:
                             instant, cmd, hosts, instruction = cmds                
@@ -468,7 +477,11 @@ class Server(LanCamera):
 
                         if host in hosts:
                             routine_handler(cmd, instruction)
-
+                            if cmd == 'stop':
+                                quit = True
+                                break
+                        if quit:
+                            break
 
             if b'SELECT' in data:
                 device = int(data.split(b' ')[1])
@@ -479,7 +492,6 @@ class Server(LanCamera):
                     print("Erro ao selecionar camera")
 
             if data == b'END' or data == b'':
-                print(data)
                 self.cleanup()
                 break
 
@@ -496,10 +508,8 @@ class Server(LanCamera):
             closer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             closer.connect((self.__host, self.__port + 2))
             closer.close()
-            self.__socket_commands.close()
 
-            for t in self.commands_threads:
-                t.join()
+            self.__socket_commands.close()
 
 
         else:
@@ -566,8 +576,6 @@ class Server(LanCamera):
                         # if one connection fails, stops the server entirely
                         if self.__streaming:
                             for conn in self.connections:
-                                # ready = conn.recv(1024)
-                                # if ready == b'READY':
                                 conn.sendall(struct.pack('>L', size) + data)
 
                     except:
@@ -594,6 +602,9 @@ class Server(LanCamera):
             closer.close()
 
             self.__socket.close()
+
+            for conn in self.connections:
+                conn.close()
 
             for t in self.stream_threads:
                 t.join()

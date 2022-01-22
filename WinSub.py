@@ -134,9 +134,7 @@ class WinSub(tk.Frame):
             self.msg.set('')
             self.screen.config(image='', bg='black')
             self.screen_frame.config(bg='black')
-
             self.cleanup()
-            self.root.destroy()
 
     def show_video(self):
 
@@ -167,17 +165,17 @@ class WinSub(tk.Frame):
         self.screen.after(1, self.display_frames)
 
     def cleanup(self):
-
         self.__streaming = False
         self.__playing_video = False
         
         for t in self.threads:
             t.join()
 
-        self.server.stop_commands_server()
         self.server.stop_stream_server()
-
+        self.server.stop_commands_server()
         self.client.stop_stream_client()
+
+
 
 """#########################################################
 ############################################################
