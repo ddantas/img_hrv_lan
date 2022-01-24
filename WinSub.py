@@ -75,6 +75,7 @@ class WinSub(tk.Frame):
 
         self.server.start_stream_server()
         self.server.start_commands_server(routine_handler=self.execute_command)
+        self.server.start_polar_server()
 
     def execute_command(self, cmd, instruction):
 
@@ -168,11 +169,12 @@ class WinSub(tk.Frame):
         self.__streaming = False
         self.__playing_video = False
         
-        for t in self.threads:
-            t.join()
-
+        # for t in self.threads:
+        #     t.join()
+        print(self.threads)
         self.server.stop_stream_server()
         self.server.stop_commands_server()
+
         self.client.stop_stream_client()
 
 

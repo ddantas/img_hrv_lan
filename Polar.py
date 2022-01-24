@@ -155,13 +155,13 @@ class Polar():
         self.data_ecg.timestamp.extend([timestamp])
         self.data_ecg.values_ecg.extend([ecg])
 
-      if(self.data_ecg.time != []):
-        print("data_ecg.time length: %d" % len(self.data_ecg.time))
-        print("data_ecg.time: " + str(self.data_ecg.time))
-        print("data_ecg.timestamp length: %d" % len(self.data_ecg.timestamp))
-        print("data_ecg.timestamp: " + str(self.data_ecg.timestamp))
-        print("data_ecg.values_ecg length: %d" % len(self.data_ecg.values_ecg))
-        print("data_ecg.values_ecg: " + str(self.data_ecg.values_ecg))
+      # if(self.data_ecg.time != []):
+      #   print("data_ecg.time length: %d" % len(self.data_ecg.time))
+      #   print("data_ecg.time: " + str(self.data_ecg.time))
+      #   print("data_ecg.timestamp length: %d" % len(self.data_ecg.timestamp))
+      #   print("data_ecg.timestamp: " + str(self.data_ecg.timestamp))
+      #   print("data_ecg.values_ecg length: %d" % len(self.data_ecg.values_ecg))
+      #   print("data_ecg.values_ecg: " + str(self.data_ecg.values_ecg))
 
 
   def convert_array_to_signed_int(self, data, offset, length):
@@ -214,7 +214,7 @@ class Polar():
           rr = int.from_bytes(data[2:4], byteorder='little', signed=False)
           self.data_rr.values_rr.append(rr)
 
-          print(f'Time: {t} s,   Heart rate: {hr} bpm,       RR-interval: {rr} ms')
+          # print(f'Time: {t} s,   Heart rate: {hr} bpm,       RR-interval: {rr} ms')
 
   ################################
   ## REVISAR FIM
@@ -222,20 +222,20 @@ class Polar():
 
   ## \brief Receive RR data from Polar sensor
   #
-  #  @param d Device.
+  #  @param d MAC Address of Device.
   #  @param filename File where RR data will be stored.
-  async def receive_rr(self, d, filename):
+  async def receive_rr(self, d, filename=''):
     # Listen to the SIGINT signal
     signal.signal(signal.SIGINT, self.signal_handler)
     try:
-      async with BleakClient(d.address) as client:
+      async with BleakClient(d) as client:
         if (not client.is_connected):
-          raise Exception("Unable to connect to device at %s" % d.address)
+          raise Exception("Unable to connect to device at %s" % d)
         # Connected
         await client.start_notify(HEART_RATE, self.parse_rr)
         while not FLAG_INTERRUPT:
           await asyncio.sleep(0.1)
-          if FLAG_SAVE_RR:
+          if FLAG_SAVE_RR and filename != '':
             self.data_rr.save_raw_data(filename)
           if(self.data_rr.time != []):
             self.data_rr.clear()
@@ -248,22 +248,22 @@ class Polar():
 
   ## \brief Receive ECG data from Polar sensor
   #
-  #  @param d Device.
+  #  @param d MAC Address of Device.
   #  @param filename File where ECG data will be stored.
-  async def receive_ecg(self, d, filename):
+  async def receive_ecg(self, d, filename=''):
     # Listen to the SIGINT signal
     signal.signal(signal.SIGINT, self.signal_handler)
     try:
-      async with BleakClient(d.address) as client:
+      async with BleakClient(d) as client:
         if (not client.is_connected):
-          raise Exception("Unable to connect to device at %s" % d.address)
+          raise Exception("Unable to connect to device at %s" % d)
         # Connected
         att_read = await client.read_gatt_char(PMD_CONTROL)
         await client.write_gatt_char(PMD_CONTROL, ECG_WRITE)
         await client.start_notify(PMD_DATA, self.parse_ecg)
         while not FLAG_INTERRUPT:
           await asyncio.sleep(0.1)
-          if FLAG_SAVE_ECG:
+          if FLAG_SAVE_ECG and filename != '':
             self.data_ecg.save_raw_data(filename)
           if(self.data_ecg.time != []):
             self.data_ecg.clear()
@@ -278,16 +278,16 @@ class Polar():
 
   ## \brief Receive ECG and RR data from Polar sensor
   #
-  #  @param d Device.
+  #  @param d MAC Address of Device.
   #  @param filename_rr File where RR data will be stored.
   #  @param filename_ecg File where ECG data will be stored.
-  async def receive_both(self, d, filename_rr, filename_ecg):
+  async def receive_both(self, d, filename_rr='', filename_ecg=''):
     # Listen to the SIGINT signal
     signal.signal(signal.SIGINT, self.signal_handler)
     try:
-      async with BleakClient(d.address) as client:
+      async with BleakClient(d) as client:
         if (not client.is_connected):
-          raise Exception("Unable to connect to device at %s" % d.address)
+          raise Exception("Unable to connect to device at %s" % d)
         # Connected
         att_read = await client.read_gatt_char(PMD_CONTROL)
         await client.write_gatt_char(PMD_CONTROL, ECG_WRITE)
@@ -299,9 +299,9 @@ class Polar():
             self.plot.plot_incremental(self.data_ecg.values_ecg, Plot.TYPE_ECG)
           if (FLAG_PLOT_RR):
             self.plot.plot_incremental(self.data_rr.values_hr, Plot.TYPE_RR)
-          if FLAG_SAVE_ECG:
+          if FLAG_SAVE_ECG and filename_ecg != '':
             self.data_ecg.save_raw_data(filename_ecg)
-          if FLAG_SAVE_RR:
+          if FLAG_SAVE_RR and filename_rr != '':
             self.data_rr.save_raw_data(filename_rr)
           if(self.data_ecg.time != []):
             self.data_ecg.clear()

@@ -38,6 +38,7 @@ class CamScreen(tk.Frame):
     def __init__(self, window, client, path, name='subj'):
         super().__init__(window)
         self.__streaming = False
+        self.recording = False
         self.client = client
         self.window = window
         self.name = name
@@ -55,6 +56,8 @@ class CamScreen(tk.Frame):
             try:
                 frame = self.client.recv_frame(IMG_DATA_SIZE)
                 cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+                img = Image.fromarray(cv2image)
+                imgtk = ImageTk.PhotoImage(image=img)
             except:
                 self.client.stop_stream_client()
                 self.client.stop_commands_client()
@@ -62,14 +65,17 @@ class CamScreen(tk.Frame):
                 self.__streaming = False
                 return
 
-            img = Image.fromarray(cv2image)
-            imgtk = ImageTk.PhotoImage(image=img)
             self.screen.config(image=imgtk)
             self.screen.imgtk = imgtk
-            self.cap.write(frame)  
+
+            if self.recording:
+                self.cap.write(frame)  
 
     def connected(self):
         return self.__streaming
+
+    def start_recording(self):
+        self.recording = True
 
     def cleanup(self):
         self.__streaming = False
@@ -88,6 +94,7 @@ class WinMainTk(tk.Frame):
         self.root = root
         self.client1 = Client()
         self.client2 = Client()
+
         self.__set_dir_name()
         self.create_frame_main()
 
@@ -147,10 +154,14 @@ class WinMainTk(tk.Frame):
 
         self.root.columnconfigure(1, weight=0, minsize=200)
 
-        BUTTON_WIDTH = 20
+        BUTTON_WIDTH = 45
+        IPADY = 3
 
         self.selected_host_cam1 = tk.StringVar()
         self.selected_host_cam2 = tk.StringVar()
+
+        self.selected_host_polar1 = tk.StringVar()
+        self.selected_host_polar2 = tk.StringVar()
 
         self.btn_scan = tk.Button(self.frame_right, text="Scan the network", padx=3, width=BUTTON_WIDTH,
                                     command=self.scan_network)
@@ -163,10 +174,18 @@ class WinMainTk(tk.Frame):
         self.select_cam1_label = tk.Label(self.frame_right,text="\nCAM 1", padx=3)
         self.select_cam2_label = tk.Label(self.frame_right,text="\nCAM 2", padx=3)
 
+        self.select_polar1_label = tk.Label(self.frame_right,text="\nPolar 1", padx=3)
+        self.select_polar2_label = tk.Label(self.frame_right,text="\nPolar 2", padx=3)
+
         self.btn_select_cam1 = tk.Button(self.frame_right, text="Select host", padx=3, width=BUTTON_WIDTH, 
                                             command=lambda : self.select_host_cam(1))
         self.btn_select_cam2 = tk.Button(self.frame_right, text="Select host", padx=3, width=BUTTON_WIDTH, 
                                             command=lambda : self.select_host_cam(2))
+
+        self.btn_select_polar1 = tk.Button(self.frame_right, text="Select Polar device", padx=3, width=BUTTON_WIDTH, 
+                                            command=lambda : self.select_host_polar(1))
+        self.btn_select_polar2 = tk.Button(self.frame_right, text="Select Polar device", padx=3, width=BUTTON_WIDTH, 
+                                            command=lambda : self.select_host_polar(2))
 
         self.select_routine_label = tk.Label(self.frame_right,text="\nRoutine\nNo file selected", padx=3)
         self.btn_routine = tk.Button(self.frame_right, text="Select routine file", padx=3, width=BUTTON_WIDTH, 
@@ -175,7 +194,7 @@ class WinMainTk(tk.Frame):
         self.schedule_time_label = tk.Label(self.frame_right, text="\nSelect routine start in seconds", padx=3)
 
         self.schedule_time = tk.Entry(self.frame_right, width=BUTTON_WIDTH)
-        self.schedule_time.insert(0, '0')
+        self.schedule_time.insert(0, '10')
 
         self.btn_schedule = tk.Button(self.frame_right, text="Schedule routine start", padx=3, width=BUTTON_WIDTH, 
                                         command=self.schedule_routine)
@@ -186,26 +205,40 @@ class WinMainTk(tk.Frame):
         self.combo_box_cam2 = ttk.Combobox(self.frame_right, width=BUTTON_WIDTH, textvariable=self.selected_host_cam2)
         self.combo_box_cam2['state'] = 'readonly'
 
-        self.btn_scan.grid(row=0, column=0, ipady=10, pady=(100,0))
+        self.combo_box_polar1 = ttk.Combobox(self.frame_right, width=BUTTON_WIDTH, textvariable=self.selected_host_polar1)
+        self.combo_box_polar1['state'] = 'readonly'
 
-        self.scan_at.grid(row=1, column=0, ipady=10)
-        self.scan_entry.grid(row=2, column=0, ipady=10)
-        self.btn_scan_at.grid(row=3, column=0, ipady=10)
+        self.combo_box_polar2 = ttk.Combobox(self.frame_right, width=BUTTON_WIDTH, textvariable=self.selected_host_polar2)
+        self.combo_box_polar2['state'] = 'readonly'
 
-        self.select_cam1_label.grid(row=4, column=0, ipady=10)
-        self.combo_box_cam1.grid(row=5, column=0, ipady=10)
-        self.btn_select_cam1.grid(row=6, column=0, ipady=10)
+        self.btn_scan.grid(row=0, column=0, ipady=IPADY, pady=(10,0))
 
-        self.select_cam2_label.grid(row=7, column=0, ipady=10)
-        self.combo_box_cam2.grid(row=8, column=0, ipady=10)
-        self.btn_select_cam2.grid(row=9, column=0, ipady=10)
+        self.scan_at.grid(row=1, column=0, ipady=IPADY)
+        self.scan_entry.grid(row=2, column=0, ipady=IPADY)
+        self.btn_scan_at.grid(row=3, column=0, ipady=IPADY)
 
-        self.select_routine_label.grid(row=10, column=0, ipady=10)
-        self.btn_routine.grid(row=11, column=0, ipady=10)
+        self.select_cam1_label.grid(row=4, column=0, ipady=IPADY)
+        self.combo_box_cam1.grid(row=5, column=0, ipady=IPADY)
+        self.btn_select_cam1.grid(row=6, column=0, ipady=IPADY)
 
-        self.schedule_time_label.grid(row=12, column=0, ipady=10)
-        self.schedule_time.grid(row=13, column=0, ipady=10)
-        self.btn_schedule.grid(row=14, column=0, ipady=10, pady=(0,100))
+        self.select_cam2_label.grid(row=7, column=0, ipady=IPADY)
+        self.combo_box_cam2.grid(row=8, column=0, ipady=IPADY)
+        self.btn_select_cam2.grid(row=9, column=0, ipady=IPADY)
+
+        self.select_polar1_label.grid(row=10, column=0, ipady=IPADY)
+        self.combo_box_polar1.grid(row=11, column=0, ipady=IPADY)
+        self.btn_select_polar1.grid(row=12, column=0, ipady=IPADY)
+
+        self.select_polar2_label.grid(row=13, column=0, ipady=IPADY)
+        self.combo_box_polar2.grid(row=14, column=0, ipady=IPADY)
+        self.btn_select_polar2.grid(row=15, column=0, ipady=IPADY)
+
+        self.select_routine_label.grid(row=16, column=0, ipady=IPADY)
+        self.btn_routine.grid(row=17, column=0, ipady=IPADY)
+
+        self.schedule_time_label.grid(row=18, column=0, ipady=IPADY)
+        self.schedule_time.grid(row=19, column=0, ipady=IPADY)
+        self.btn_schedule.grid(row=20, column=0, ipady=IPADY, pady=(0,10))
 
     def scan_network(self):
 
@@ -235,30 +268,47 @@ class WinMainTk(tk.Frame):
             tk.messagebox.showerror(title="Error Scheduling Routine", message="The specified time is not a number")
             return
 
-        devices = self.client1.list_cams_at(ip)
+        cameras = self.client1.list_cams_at(ip)
+        polars = self.client1.list_polars_at(ip)
 
-        if not devices:
-            tk.messagebox.showwarning(title="Scanning complete", message="No devices found")  
+        if not cameras:
+            tk.messagebox.showwarning(title="Scanning complete", message="No cameras found")  
             return
 
         tk.messagebox.showinfo(title="Scanning complete", message="HOSTS updated")  
 
-        values = []
-        for dev in devices: 
-            values.append(f'{ip}; #{dev}')
+        cam_values = []
+        for dev in cameras: 
+            cam_values.append(f'{ip}; #{dev}')
 
-        for v in values:
+        for v in cam_values:
             if v in self.combo_box_cam1['values'] or v in self.combo_box_cam2['values']:
-                values = values.remove(v)
+                cam_values = cam_values.remove(v)
 
-        if values:
-            values = [*self.combo_box_cam1['values'], *values]
+        if cam_values:
+            cam_values = [*self.combo_box_cam1['values'], *cam_values]
         else:
-            values = self.combo_box_cam1['values']
+            cam_values = self.combo_box_cam1['values']
 
-        self.combo_box_cam1['values'] = values
-        self.combo_box_cam2['values'] = values
+        self.combo_box_cam1['values'] = cam_values
+        self.combo_box_cam2['values'] = cam_values
 
+        polar_values = []
+        for dev in polars:
+            polar_values.append(f'{ip}; {dev}')
+
+        for v in polar_values:
+            if v in self.combo_box_polar1['values'] or v in self.combo_box_polar2['values']:
+                polar_values = polar_values.remove(v)
+
+        if polar_values:
+            polar_values = [*self.combo_box_polar1['values'], *polar_values]
+        else:
+            polar_values = self.combo_box_polar1['values']   
+
+        self.combo_box_polar1['values'] = polar_values
+        self.combo_box_polar2['values'] = polar_values
+         
 
     def select_host_cam(self, slot):
 
@@ -292,12 +342,43 @@ class WinMainTk(tk.Frame):
 
         client.start_commands_connection()
 
-        client.send_command(f'SELECT {device}')
+        client.send_command(f'SELECT CAM {device}')
 
         client.start_stream_connection()
         client_thread = threading.Thread(target=lambda : screen.display_frames())
         client_thread.start()
         self.running_threads.append(client_thread)
+
+    def select_host_polar(self, slot):
+        if slot == 1:
+            client = self.client1
+            screen = self.screen1
+            host = self.selected_host_polar1.get()
+            print(f"Log: HOST {host} selected for Polar {slot}")
+
+        else:
+            client = self.client2
+            screen = self.screen2
+            host = self.selected_host_polar2.get()
+            print(f"Log: HOST {host} selected for Polar {slot}")
+
+        ip, polar_tuple = host.split(';')
+        polar_tuple = polar_tuple.replace(')','')
+        polar_tuple = polar_tuple.replace('(','')
+        name, addr = polar_tuple.split(',')
+        addr = addr.replace(' ', '')
+
+
+        client.start_commands_connection()
+
+        client.send_command(f'SELECT POLAR {addr}')
+
+        client.start_polar_connection()
+        i = 0
+        while i < 20:
+            print(client.recv_values())
+            i+=1
+
 
     def select_routine_file(self):
         self.routine_filename = tk.filedialog.askopenfilename()
@@ -319,6 +400,10 @@ class WinMainTk(tk.Frame):
         if time_to_start == '':
             return
 
+        if time_to_start == '0':
+            tk.messagebox.showerror(title="Error Scheduling Routine", message="Please choose a number greater than 0")
+            return
+
         thread = threading.Thread(target=self.send_routine, args=(time_to_start, ))
         thread.start()
         
@@ -332,6 +417,7 @@ class WinMainTk(tk.Frame):
             return
 
         now = dt.datetime.now()
+        time_to_start = int(now.timestamp()) + int(time_to_start)
 
         print(f"Log: routine is schedule to start at {now + dt.timedelta(seconds=int(time_to_start))}")
 
@@ -349,6 +435,9 @@ class WinMainTk(tk.Frame):
         if self.screen2.connected():
             self.client2.send_command(routine)
 
+        # self.screen1.start_recording()
+        # self.screen2.start_recording()
+
     def cleanup(self):
 
         self.screen1.cleanup()
@@ -363,8 +452,8 @@ class WinMainTk(tk.Frame):
         except:
             pass
 
-        for thread in self.running_threads:
-            thread.join()
+        # for thread in self.running_threads:
+        #     thread.join()
 
         self.client1.stop_commands_client()
         self.client1.stop_stream_client()

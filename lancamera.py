@@ -6,6 +6,11 @@ import struct
 import scapy.all as sp
 import time
 import datetime
+import Polar
+import re
+import asyncio
+import signal
+from bleak import BleakClient
 from PIL import Image
 from PIL import ImageTk
 
@@ -17,13 +22,15 @@ PORT_CAM   = 9000
 PORT_POLAR = 9001
 PORT_COMMANDS = 9002
 
-## \brief Class LanCamera
+## \brief Class LanDevice
 #
 #  Main class of the package lancamera, with functionalities to list camera servers and their cameras.
-class LanCamera:
+class LanDevice:
 
-    def __init__(self):    
+    def __init__(self):
         self.cam = None
+        self.polar = Polar.Polar()
+        self.polar_mac = ''
 
     ## \brief Initialize camera
     #
@@ -31,13 +38,14 @@ class LanCamera:
     def init_camera(self, device):
         self.cam = cv2.VideoCapture(device)
 
-    ## \brief Destroy camera
-    #
-    #  Destroy video capture device and window data structures
-    def cleanup(self):
-        if self.cam:
-            self.cam.release()
-            cv2.destroyAllWindows()
+    def list_polars_local(self):
+
+        devices = self.polar.list_devices_polar()
+        dev_list = []
+        for d in devices:
+            dev_list.append((d.name, d.address))
+
+        return dev_list 
 
     ## \brief List all cameras in localhost.
     #
@@ -54,19 +62,29 @@ class LanCamera:
             i += 1
         return v
 
+    ## \brief Destroy camera
+    #
+    #  Destroy video capture device and window data structures
+    def cleanup_camera(self):
+        if self.cam:
+            self.cam.release()
+            cv2.destroyAllWindows()
+
 ## \brief Class Client
 #
 #  Class with functionalities to query and connect to camera servers.
-class Client(LanCamera):
+class Client(LanDevice):
 
     def __init__(self, HOST='0.0.0.0', PORT=PORT_CAM, name=''):
-
+        super().__init__()
         self.__running = False
         self.__streaming = False
+        self.__streaming_polar = False
         self.__host = HOST
         self.__port = PORT
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket_commands = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__socket_polar = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.data = b''
 
     """#########################################################
@@ -77,6 +95,7 @@ class Client(LanCamera):
     def __init_socket(self):
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket_commands.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.__socket_polar.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     ## \brief Set the internal host ip and port.
     #
@@ -85,6 +104,12 @@ class Client(LanCamera):
     def set_host(self, host, port):
         self.__host = host
         self.__port = port
+
+
+    def list_polars_at(self, ip):
+
+        devices = self.recv_polars(ip, PORT_COMMANDS)
+        return devices
 
     ## \brief List servers listening to a given port.
     #
@@ -214,20 +239,36 @@ class Client(LanCamera):
 
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((ip, port))
-            msg_len = struct.pack('i', len('LIST'))
-            s.sendall(msg_len + b"LIST")
-            cams = s.recv(1024).decode()
-            cams = cams.replace(' ', '')
-            cams = cams.replace('[','')
-            cams = cams.replace(']','')
-            cams = cams.split(',')
-            # for cam in cams:
-            #     devices.append(cam)
-            print(f'Cameras do servidor {ip}:9000 -> {cams}')
+            msg_len = struct.pack('i', len('LIST CAM'))
+            s.sendall(msg_len + b"LIST CAM")
+            devices = s.recv(1024).decode()
+            devices = devices.replace(' ', '')
+            devices = devices.replace('[','')
+            devices = devices.replace(']','')
+            devices = devices.split(',')
+            print(f'Cameras do servidor {ip}:9000 -> {devices}')
             msg_len = struct.pack('i', len('END'))
             s.sendall(msg_len + b"END")
 
-        return cams
+        return devices
+
+    def recv_polars(self, ip, port):
+
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((ip, port))
+            msg_len = struct.pack('i', len('LIST POLAR'))
+            s.sendall(msg_len + b"LIST POLAR")
+            data = s.recv(1024).decode()
+            devices = data.replace('[','')
+            devices = devices.replace(']','')
+            devices = devices.replace('\'','')
+            devices = devices.replace('\"','')
+            devices = re.findall(r'\(.*?\)', devices)
+            print(f'Sensores Polar do servidor {ip}:9000 -> {devices}')
+            msg_len = struct.pack('i', len('END'))
+            s.sendall(msg_len + b"END")
+
+        return devices
 
     ## \brief Connects to a commands server.
     #
@@ -256,6 +297,35 @@ class Client(LanCamera):
         if self.__running:
             self.__running = False
             self.__socket_commands.close()
+
+        else:
+            print("Não tem clientes rodando")
+
+
+    """#########################################################
+    ############################################################
+    ###          POLAR HR STREAMING FUNCTIONALITIES          ###
+    ############################################################
+    #########################################################"""
+
+    def start_polar_connection(self):
+
+        if self.__streaming_polar: 
+            print("O cliente já está rodando")
+        else:
+            self.__streaming_polar = True
+            self.__socket_polar.connect((self.__host, PORT_POLAR))
+
+    def recv_values(self):
+
+        return self.__socket_polar.recv(4096)
+
+    def stop_polar_connection(self):
+
+        if self.__streaming_polar:
+            self.__streaming_polar = False
+            self.__socket_polar.shutdown(socket.SHUT_RDWR)
+            self.__socket_polar.close()
 
         else:
             print("Não tem clientes rodando")
@@ -329,18 +399,19 @@ class Client(LanCamera):
 ## \brief Class Server.
 #
 #  Class with functionalities to share the camera and stream video.
-class Server(LanCamera):
+class Server(LanDevice):
 
     def __init__(self, HOST='', PORT=PORT_CAM, device=0):
         
         super().__init__()
         self.__running = False
         self.__streaming = False
+        self.__streaming_polar = False
         self.__host = HOST
         self.__port = PORT
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__socket_polar = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket_commands = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.cam = None
         self.connections = []
         self.stream_threads = []
         self.commands_threads = []
@@ -351,8 +422,10 @@ class Server(LanCamera):
     #  Initializes all sockets binding them to specific ports
     def __init_socket(self):
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.__socket_polar.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket_commands.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket.bind((self.__host, self.__port))
+        self.__socket_polar.bind((self.__host, self.__port + 1))
         self.__socket_commands.bind((self.__host, self.__port + 2))
 
     """#########################################################
@@ -415,14 +488,18 @@ class Server(LanCamera):
                 data = self.recv_command(conn)
 
             except:
-                print('ih rapai')
                 break
 
-            if data == b"LIST":
+            if b"LIST" in data:
 
-                cams = self.list_cams_local(5)
+                device = data.split(b' ')[1]
+                print(device)
+                if device == b"CAM":
+                    devices = self.list_cams_local(5)
+                else:
+                    devices = self.list_polars_local()
                 try:
-                    conn.sendall(str(cams).encode())
+                    conn.sendall(str(devices).encode())
                 except:
                     break
 
@@ -441,7 +518,8 @@ class Server(LanCamera):
                     routine += packet
 
                 lines = routine.split('\n')
-                delay = int(lines[0])   
+                now = datetime.datetime.now().timestamp()
+                delay = int(lines[0]) - now
 
                 time.sleep(delay)
 
@@ -484,15 +562,24 @@ class Server(LanCamera):
                             break
 
             if b'SELECT' in data:
-                device = int(data.split(b' ')[1])
-                try:
-                    self.init_camera(device)
+                split_data = data.split(b' ')
+                device = split_data[1]
 
-                except:
-                    print("Erro ao selecionar camera")
+                if device == b'CAM':
+                    index = split_data[2]
+                    try:
+                        self.init_camera(device)
+
+                    except:
+                        print("Erro ao selecionar camera")
+                else:
+                    print(split_data)
+                    addr = split_data[2]
+                    self.polar_mac = addr.decode()
 
             if data == b'END' or data == b'':
-                self.cleanup()
+                # print('why')
+                self.cleanup_camera()
                 break
 
         conn.close()
@@ -508,9 +595,9 @@ class Server(LanCamera):
             closer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             closer.connect((self.__host, self.__port + 2))
             closer.close()
+            print('comand thread', self.commands_threads)
 
             self.__socket_commands.close()
-
 
         else:
             print("O servidor não está realizando o streaming")
@@ -573,7 +660,7 @@ class Server(LanCamera):
                     size = len(data)
 
                     try:
-                        # if one connection fails, stops the server entirely
+                        # if one connection fails, closes it and stops sending
                         if self.__streaming:
                             for conn in self.connections:
                                 conn.sendall(struct.pack('>L', size) + data)
@@ -606,16 +693,108 @@ class Server(LanCamera):
             for conn in self.connections:
                 conn.close()
 
+            print(self.stream_threads)
             for t in self.stream_threads:
                 t.join()
 
             self.connections = []
 
-            self.cleanup()
+            self.cleanup_camera()
 
         else:
             print("O servidor não está realizando o streaming")
 
+
+    """#########################################################
+    ############################################################
+    ###          POLAR HR STREAMING FUNCTIONALITIES          ###
+    ############################################################
+    #########################################################"""
+
+    async def receive_both(self, d, conn):
+        try:
+            async with BleakClient(d) as client:
+                if (not client.is_connected):
+                    raise Exception("Unable to connect to device at %s" % d)
+                # Connected
+                att_read = await client.read_gatt_char(Polar.PMD_CONTROL)
+                await client.write_gatt_char(Polar.PMD_CONTROL, Polar.ECG_WRITE)
+                await client.start_notify(Polar.PMD_DATA, self.polar.parse_ecg)
+                await client.start_notify(Polar.HEART_RATE, self.polar.parse_rr)
+                while not Polar.FLAG_INTERRUPT:
+                    await asyncio.sleep(0.2)
+
+                    # print(self.polar.data_ecg.values_ecg, self.polar.data_rr.values_hr)
+                    if self.polar.data_ecg.time != []:
+                        conn.sendall(str(self.polar.data_ecg.values_ecg).encode())
+
+                    if self.polar.data_rr.time != []:
+                        conn.sendall(str(self.polar.data_rr.values_hr).encode())
+
+
+                    if(self.polar.data_ecg.time != []):
+                        self.polar.data_ecg.clear()
+                    if(self.polar.data_rr.time != []):
+                        self.polar.data_rr.clear()
+
+                # Will disconnect
+                await client.stop_notify(Polar.PMD_DATA)
+                await client.disconnect()
+
+        except Exception as e:
+            self.polar.print_exception(e, "receive_both", __file__)
+
+
+    def start_polar_server(self):
+
+        if self.__streaming_polar:
+            print("O servidor já está realizando o streaming.")
+            return
+
+        server_thread = threading.Thread(target=self.__server_listen_polar)
+        server_thread.start()
+
+    def __server_listen_polar(self):
+
+        self.__streaming_polar = True
+
+        while self.__streaming_polar:
+            self.__socket_polar.listen()
+            conn, addr = self.__socket_polar.accept()
+            print('aceitei', self.polar_mac)
+
+            if self.__streaming_polar:
+                thread = threading.Thread(target=self.__stream_polar, args=(conn, ))
+                thread.start()
+
+    def __stream_polar(self, conn):
+
+        while self.__streaming_polar:
+            if self.polar_mac:
+                print('vou entrar', self.polar_mac)
+                asyncio.run(self.receive_both(self.polar_mac, conn))
+                print('sai depois')
+
+            else:
+                time.sleep(0.1)
+
+    def stop_stream_server(self):
+
+        if self.__streaming_polar:
+
+            self.__streaming_polar = False
+
+            closer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            closer.connect((self.__host, self.__port))
+            closer.close()
+
+            self.__socket_polar.close()
+
+            # self.cleanup()
+
+        else:
+            print("O servidor não está realizando o streaming")
 
 """#########################################################
 ############################################################
@@ -625,7 +804,7 @@ class Server(LanCamera):
 
 
 if __name__ == "__main__":
-  c = LanCamera()
+  c = LanDevice()
   cams = c.list_cams_local()
   print("Local cameras: %s" % cams)
   c.list_servers((PORT_CAM))
