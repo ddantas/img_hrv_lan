@@ -29,6 +29,7 @@ from bleak import BleakClient
 from bleak import BleakScanner
 
 import Data
+import Plot
 
 
 MODEL_NBR_UUID = '00002a24-0000-1000-8000-00805f9b34fb'
@@ -45,10 +46,15 @@ PMD_DATA = "FB005C82-02E7-F387-1CAD-8ACD2D8DF0C8"
 ## UUID for Request of ECG Stream ##
 ECG_WRITE = bytearray([0x02, 0x00, 0x00, 0x01, 0x82, 0x00, 0x01, 0x01, 0x0E, 0x00])
 
-interrupt_flag = False
+FLAG_INTERRUPT = False
+FLAG_SAVE_RR = True
+FLAG_SAVE_ECG = True
+FLAG_PLOT_RR = True
+FLAG_PLOT_ECG = True
 
 data_rr = Data.Data(Data.TYPE_RR)
 data_ecg = Data.Data(Data.TYPE_ECG)
+plot = Plot.Plot()
 
 ## \brief Handles the interrupt signal.
 #
@@ -56,8 +62,8 @@ data_ecg = Data.Data(Data.TYPE_ECG)
 #  @param frame
 def signal_handler(sig, frame):
   print('\b\bKeyboard interrupt received...')
-  global interrupt_flag
-  interrupt_flag = True
+  global FLAG_INTERRUPT
+  FLAG_INTERRUPT = True
 
 
 ## \brief Print exception message preceded with file and function name.
@@ -207,9 +213,10 @@ async def receive_rr(d, filename):
         raise Exception("Unable to connect to device at %s" % d.address)
       # Connected
       await client.start_notify(HEART_RATE, parse_rr)
-      while not interrupt_flag:
+      while not FLAG_INTERRUPT:
         await asyncio.sleep(0.1)
-        data_rr.save_raw_data(filename)
+        if FLAG_SAVE_RR:
+          data_rr.save_raw_data(filename)
         if(data_rr.time != []):
           data_rr.clear()
       # Will disconnect
@@ -234,9 +241,10 @@ async def receive_ecg(d, filename):
       att_read = await client.read_gatt_char(PMD_CONTROL)
       await client.write_gatt_char(PMD_CONTROL, ECG_WRITE)
       await client.start_notify(PMD_DATA, parse_ecg)
-      while not interrupt_flag:
+      while not FLAG_INTERRUPT:
         await asyncio.sleep(0.1)
-        data_ecg.save_raw_data(filename)
+        if FLAG_SAVE_ECG:
+          data_ecg.save_raw_data(filename)
         if(data_ecg.time != []):
           data_ecg.clear()
 
@@ -246,7 +254,7 @@ async def receive_ecg(d, filename):
       await client.disconnect()
 
   except Exception as e:
-    print_exception(e, "receive_both", __file__)
+    print_exception(e, "receive_ecg", __file__)
 
 ## \brief Receive ECG and RR data from Polar sensor
 #
@@ -265,10 +273,16 @@ async def receive_both(d, filename_rr, filename_ecg):
       await client.write_gatt_char(PMD_CONTROL, ECG_WRITE)
       await client.start_notify(PMD_DATA, parse_ecg)
       await client.start_notify(HEART_RATE, parse_rr)
-      while not interrupt_flag:
-        await asyncio.sleep(0.1)
-        data_ecg.save_raw_data(filename_ecg)
-        data_rr.save_raw_data(filename_rr)
+      while not FLAG_INTERRUPT:
+        await asyncio.sleep(0.2)
+        if (FLAG_PLOT_ECG):
+          plot.plot_incremental(data_ecg.values_ecg, Plot.TYPE_ECG)
+        if (FLAG_PLOT_RR):
+          plot.plot_incremental(data_rr.values_hr, Plot.TYPE_RR)
+        if FLAG_SAVE_ECG:
+          data_ecg.save_raw_data(filename_ecg)
+        if FLAG_SAVE_RR:
+          data_rr.save_raw_data(filename_rr)
         if(data_ecg.time != []):
           data_ecg.clear()
         if(data_rr.time != []):
@@ -280,7 +294,7 @@ async def receive_both(d, filename_rr, filename_ecg):
 
     
   except Exception as e:
-    print_exception(e, "connect", __file__)
+    print_exception(e, "receive_both", __file__)
 
 ## \brief Print details about device.
 #
@@ -346,6 +360,9 @@ def main():
     print_message("Returning", "main", __file__)
     return
 
+  if (FLAG_PLOT_RR or FLAG_PLOT_ECG):
+    plot.init()
+
   d = devices[0]
 
   filename_rr = "/tmp/rr.tsv"
@@ -363,10 +380,8 @@ def main():
 
   #loop = asyncio.get_event_loop()
   #loop.run_until_complete(receive_rr(d))
- 
+
   return devices
-  
-    
 
 if __name__ == '__main__':
   main()

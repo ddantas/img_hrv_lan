@@ -1,3 +1,18 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+"""#########################################################
+############################################################
+### Save data from Polar H10 sensor.                     ###
+###                                                      ###
+### Thanks to                                            ###
+### https://github.com/mmuramatsu/Heart-rate-collector   ###
+###                                                      ###
+### Author: Daniel Dantas                                ###
+### Last edited: Jan 2022                                ###
+############################################################
+#########################################################"""
+
 import numpy as np
 import pandas as pd
 import os
@@ -54,19 +69,21 @@ class Data:
         return
 
     if (self.datatype == TYPE_RR):
-      df = pd.DataFrame(data=[self.time, self.values_hr, self.values_rr])
-      df = df.T
-      df.columns = ['time', 'heart_rate', 'rr_interval']
+      df = pd.DataFrame(data = {"time": self.time,
+                                "heart_rate": self.values_hr,
+                                "rr_interval": self.values_rr})
     elif (self.datatype == TYPE_ECG):
-      df = pd.DataFrame(data=[self.time, self.timestamp, self.values_ecg])
-      df = df.T
-      df.columns = ['time', 'timestamp', 'ecg']
+      df = pd.DataFrame(data = {"time": self.time,
+                                "timestamp": self.timestamp,
+                                "ecg": self.values_ecg})
+
+    print(df)
 
     if not os.path.exists(filename):
       print (f'------ Save raw data in \"{filename}\" ------\n\n')
-      df.to_csv(filename, sep = '\t', mode = "w", header = True)
+      df.to_csv(filename, sep = '\t', index=False, mode = "w", header = True)
     else:
-      df.to_csv(filename, sep = '\t', mode = "a", header = False)
+      df.to_csv(filename, sep = '\t', index=False, mode = "a", header = False)
 
 
 
