@@ -174,6 +174,7 @@ class WinSub(tk.Frame):
         print(self.threads)
         self.server.stop_stream_server()
         self.server.stop_commands_server()
+        self.server.stop_polar_server()
 
         self.client.stop_stream_client()
 

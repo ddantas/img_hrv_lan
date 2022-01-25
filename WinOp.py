@@ -18,6 +18,9 @@ from tkinter import ttk
 import cv2
 import tkinter.messagebox
 import tkinter.filedialog
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, 
+    NavigationToolbar2Tk)
 
 import math as m
 import os
@@ -29,9 +32,69 @@ from PIL import Image
 from PIL import ImageTk
 
 from lancamera import *
+import Plot
+import Data
 
 WIN_TITLE = "Operator Window"
 IMG_DATA_SIZE = struct.calcsize('>L')
+
+class HrvScreen(tk.Frame):
+
+    def __init__(self, window, client, path, name='subj'):
+        super().__init__(window)
+        self.client = client
+        self.window = window
+        self.recording = False
+        self.__streaming = False
+        self.name = name
+        self.path = path
+        self.filename_ecg = self.path + self.name + '_ecg.tsv'
+        self.filename_rr = self.path + self.name + '_rr.tsv'
+        self.plot = Plot.Plot()
+        self.init_plot()
+        self.hrv_plot = FigureCanvasTkAgg(self.plot.fig, master=self.window)
+        self.hrv_plot.get_tk_widget().grid(padx=50, pady=(0,50))
+
+    def init_plot(self):
+        self.plot.fig = Figure(figsize=(5,3))
+        self.plot.ax_rr = self.plot.fig.add_subplot(211)
+        self.plot.ax_ecg = self.plot.fig.add_subplot(212)
+
+    def display_hrv_plot(self):
+        self.__streaming = True
+        while self.__streaming:
+            try:
+                packet = self.client.recv_values()
+                data = packet.decode_packet()
+
+                if data.datatype == Data.TYPE_ECG:
+
+                    if self.recording:
+                        data.save_raw_data(self.filename_ecg)
+
+                    self.plot.plot_incremental(data.values_ecg, Plot.TYPE_ECG)
+
+                    if(data.time != []):
+                        data.clear()
+
+                else:
+                    if self.recording:
+                        data.save_raw_data(self.filename_rr)
+
+                    self.plot.plot_incremental(data.values_hr, Plot.TYPE_RR)
+
+                    if(data.time != []):
+                        data.clear()
+
+                self.hrv_plot.draw()
+
+
+            except Exception as e:
+                print(e)
+
+    def start_recording(self):
+        self.recording = True
+
 
 class CamScreen(tk.Frame):
 
@@ -44,10 +107,13 @@ class CamScreen(tk.Frame):
         self.name = name
         self.path = path
         self.cap = cv2.VideoWriter(self.path + self.name + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (640,480))
-        self.width = 640
+        self.width = 600
         self.height = 480
-        self.screen = tk.Label(window, width=self.width, height=self.height, bg='black')
-        self.screen.pack()
+        self.frame = tk.Frame(self.window, bg='black', height=480, width=600)
+        self.frame.grid_propagate(False)
+        self.frame.grid(padx=50, pady=50)
+        self.screen = tk.Label(self.frame, width=self.width, height=self.height, bg='black')
+        self.screen.grid()
 
     def display_frames(self):
 
@@ -70,6 +136,7 @@ class CamScreen(tk.Frame):
 
             if self.recording:
                 self.cap.write(frame)  
+
 
     def connected(self):
         return self.__streaming
@@ -130,21 +197,23 @@ class WinMainTk(tk.Frame):
 
         self.frame_main.grid(row=0, column=0, stick='nsew')
 
-        self.frame1 = tk.Frame(self.frame_main, bg='black', height=480, width=600)
-        self.frame2 = tk.Frame(self.frame_main, bg='black', height=480, width=600)
+        self.frame1_parent = tk.Frame(self.frame_main, height=600, width=600)
+        self.frame2_parent = tk.Frame(self.frame_main, height=600, width=600)
 
-        self.frame1.pack_propagate(False)
-        self.frame2.pack_propagate(False)
-        self.frame1.grid_propagate(False)
-        self.frame2.grid_propagate(False)
+        self.frame1_parent.grid(row=0, column=0, stick='nsew')
+        self.frame2_parent.grid(row=0, column=1, stick='nsew')
 
-        self.frame1.grid(row=0, column=0, padx=50, pady=100)
-        self.frame2.grid(row=0, column=1, padx=50, pady=100)
+        self.screen1 = CamScreen(self.frame1_parent, self.client1, self.path, name='subj1')
+        self.screen1.grid(row=0, column=0)
+        
+        self.hrv_plot1 = HrvScreen(self.frame1_parent, self.client1, self.path, name='subj1')
+        self.hrv_plot1.grid(row=1, column=0)
 
-        self.screen1 = CamScreen(self.frame1, self.client1, self.path, name='subj1')
-        self.screen1.pack()
-        self.screen2 = CamScreen(self.frame2, self.client2, self.path, name='subj2')
-        self.screen2.pack()
+        self.screen2 = CamScreen(self.frame2_parent, self.client2, self.path, name='subj2')
+        self.screen2.grid(row=0, column=0)
+
+        self.hrv_plot2 = HrvScreen(self.frame2_parent, self.client2, self.path, name='subj2')
+        self.hrv_plot2.grid(row=1, column=0)
 
     ## Create toolbox frame, with buttons to access tools.
     #  @param self The object pointer.
@@ -352,13 +421,13 @@ class WinMainTk(tk.Frame):
     def select_host_polar(self, slot):
         if slot == 1:
             client = self.client1
-            screen = self.screen1
+            hrv_plot = self.hrv_plot1
             host = self.selected_host_polar1.get()
             print(f"Log: HOST {host} selected for Polar {slot}")
 
         else:
             client = self.client2
-            screen = self.screen2
+            hrv_plot = self.hrv_plot2
             host = self.selected_host_polar2.get()
             print(f"Log: HOST {host} selected for Polar {slot}")
 
@@ -368,17 +437,15 @@ class WinMainTk(tk.Frame):
         name, addr = polar_tuple.split(',')
         addr = addr.replace(' ', '')
 
-
         client.start_commands_connection()
 
         client.send_command(f'SELECT POLAR {addr}')
 
         client.start_polar_connection()
-        i = 0
-        while i < 20:
-            print(client.recv_values())
-            i+=1
-
+        print('checkpoint')
+        client_thread = threading.Thread(target=lambda : hrv_plot.display_hrv_plot())
+        client_thread.start()
+        self.running_threads.append(client_thread)
 
     def select_routine_file(self):
         self.routine_filename = tk.filedialog.askopenfilename()
@@ -435,8 +502,17 @@ class WinMainTk(tk.Frame):
         if self.screen2.connected():
             self.client2.send_command(routine)
 
-        # self.screen1.start_recording()
-        # self.screen2.start_recording()
+        with open(self.path + 'routine.txt', 'w') as f:
+            f.write(routine)
+            
+        now = datetime.datetime.now().timestamp()
+        delay = int(time_to_start) - now
+        time.sleep(delay)
+
+        self.screen1.start_recording()
+        self.screen2.start_recording()
+        self.hrv_plot1.start_recording()
+        self.hrv_plot2.start_recording()
 
     def cleanup(self):
 
@@ -459,7 +535,6 @@ class WinMainTk(tk.Frame):
         self.client1.stop_stream_client()
         self.client2.stop_commands_client()
         self.client2.stop_stream_client()
-
 
 
 

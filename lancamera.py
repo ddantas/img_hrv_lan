@@ -6,10 +6,14 @@ import struct
 import scapy.all as sp
 import time
 import datetime
-import Polar
 import re
 import asyncio
 import signal
+
+import Polar
+import Data
+import Packet
+
 from bleak import BleakClient
 from PIL import Image
 from PIL import ImageTk
@@ -120,11 +124,11 @@ class Client(LanDevice):
         hosts = self.__list_lan_ports(ports_to_scan)
 
         if len(hosts) > 0:
-            print("Servidores encontrados: ")
+            print("Servers found: ")
             for host, ports in hosts.items():
-                print(f"IP Servidor: {host}; Portas abertas: {ports}")
+                print(f"Server IP: {host}; Open ports: {ports}")
         else:
-            print("Nenhum servidor foi encontrado")
+            print("No server found")
 
         return hosts
 
@@ -246,7 +250,7 @@ class Client(LanDevice):
             devices = devices.replace('[','')
             devices = devices.replace(']','')
             devices = devices.split(',')
-            print(f'Cameras do servidor {ip}:9000 -> {devices}')
+            print(f'Server cameras {ip}:9000 -> {devices}')
             msg_len = struct.pack('i', len('END'))
             s.sendall(msg_len + b"END")
 
@@ -264,7 +268,7 @@ class Client(LanDevice):
             devices = devices.replace('\'','')
             devices = devices.replace('\"','')
             devices = re.findall(r'\(.*?\)', devices)
-            print(f'Sensores Polar do servidor {ip}:9000 -> {devices}')
+            print(f'Server Polar Sensors {ip}:9000 -> {devices}')
             msg_len = struct.pack('i', len('END'))
             s.sendall(msg_len + b"END")
 
@@ -276,7 +280,7 @@ class Client(LanDevice):
     def start_commands_connection(self):
 
         if self.__running:
-            print("O cliente já está conectado")
+            print("The client is already connected")
         else:
             self.__running = True
             self.__socket_commands.connect((self.__host, self.__port + 2))
@@ -299,36 +303,7 @@ class Client(LanDevice):
             self.__socket_commands.close()
 
         else:
-            print("Não tem clientes rodando")
-
-
-    """#########################################################
-    ############################################################
-    ###          POLAR HR STREAMING FUNCTIONALITIES          ###
-    ############################################################
-    #########################################################"""
-
-    def start_polar_connection(self):
-
-        if self.__streaming_polar: 
-            print("O cliente já está rodando")
-        else:
-            self.__streaming_polar = True
-            self.__socket_polar.connect((self.__host, PORT_POLAR))
-
-    def recv_values(self):
-
-        return self.__socket_polar.recv(4096)
-
-    def stop_polar_connection(self):
-
-        if self.__streaming_polar:
-            self.__streaming_polar = False
-            self.__socket_polar.shutdown(socket.SHUT_RDWR)
-            self.__socket_polar.close()
-
-        else:
-            print("Não tem clientes rodando")
+            print("No clients are running")
 
     """#########################################################
     ############################################################
@@ -342,7 +317,7 @@ class Client(LanDevice):
     def start_stream_connection(self):
 
         if self.__streaming: 
-            print("O cliente já está rodando")
+            print("The client is already running")
         else:
             self.__streaming = True
             self.__socket.connect((self.__host, self.__port))
@@ -392,9 +367,45 @@ class Client(LanDevice):
             self.__socket.close()
 
         else:
-            print("Não tem clientes rodando")
+            print("No clients are running")
 
+    """#########################################################
+    ############################################################
+    ###          POLAR HR STREAMING FUNCTIONALITIES          ###
+    ############################################################
+    #########################################################"""
 
+    def start_polar_connection(self):
+
+        if self.__streaming_polar: 
+            print("The client is already running")
+        else:
+            self.__streaming_polar = True
+            self.__socket_polar.connect((self.__host, PORT_POLAR))
+
+    def recv_values(self):
+
+        n_bytes = struct.calcsize('i')
+        packet_type = self.__socket_polar.recv(1)
+        packet_len = self.__socket_polar.recv(n_bytes)
+        packet_len = struct.unpack('i', packet_len)[0]
+
+        packet_content = self.__socket_polar.recv(packet_len)
+
+        while len(packet_content) < packet_len:
+            packet_content += self.__socket_polar.recv(packet_len)
+
+        return Packet.Packet(packet_type.decode(), packet_content.decode())
+
+    def stop_polar_connection(self):
+
+        if self.__streaming_polar:
+            self.__streaming_polar = False
+            self.__socket_polar.shutdown(socket.SHUT_RDWR)
+            self.__socket_polar.close()
+
+        else:
+            print("No clients are running")
 
 ## \brief Class Server.
 #
@@ -449,7 +460,7 @@ class Server(LanDevice):
     def start_commands_server(self, routine_handler=None):
 
         if self.__running:
-            print("O servidor já está rodando")
+            print("Commands Server already running")
 
         else:
             thread = threading.Thread(target=self.__server_listen_commands, args=(routine_handler, ))
@@ -518,6 +529,7 @@ class Server(LanDevice):
                     routine += packet
 
                 lines = routine.split('\n')
+                
                 now = datetime.datetime.now().timestamp()
                 delay = int(lines[0]) - now
 
@@ -571,7 +583,7 @@ class Server(LanDevice):
                         self.init_camera(device)
 
                     except:
-                        print("Erro ao selecionar camera")
+                        print("Error selecting camera")
                 else:
                     print(split_data)
                     addr = split_data[2]
@@ -595,12 +607,11 @@ class Server(LanDevice):
             closer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             closer.connect((self.__host, self.__port + 2))
             closer.close()
-            print('comand thread', self.commands_threads)
 
             self.__socket_commands.close()
 
         else:
-            print("O servidor não está realizando o streaming")
+            print("Commands Server is not running")
 
     """#########################################################
     ############################################################
@@ -614,7 +625,7 @@ class Server(LanDevice):
     def start_stream_server(self):
 
         if self.__streaming:
-            print("O servidor já está realizando o streaming")
+            print("Camera Server is already streaming")
             return
 
         server_thread = threading.Thread(target=self.__server_listen)
@@ -702,7 +713,7 @@ class Server(LanDevice):
             self.cleanup_camera()
 
         else:
-            print("O servidor não está realizando o streaming")
+            print("Camera Server is not streaming")
 
 
     """#########################################################
@@ -724,13 +735,29 @@ class Server(LanDevice):
                 while not Polar.FLAG_INTERRUPT:
                     await asyncio.sleep(0.2)
 
-                    # print(self.polar.data_ecg.values_ecg, self.polar.data_rr.values_hr)
                     if self.polar.data_ecg.time != []:
-                        conn.sendall(str(self.polar.data_ecg.values_ecg).encode())
+
+                        time = self.polar.data_ecg.time
+                        timestamp = self.polar.data_ecg.timestamp
+                        ecg = self.polar.data_ecg.values_ecg
+
+                        content = str(time) + ';' + str(timestamp) + ';' + str(ecg) 
+                        packet = Packet.Packet(Data.TYPE_ECG, content)
+                        packet_encoded = packet.construct_packet()
+
+                        conn.sendall(packet_encoded)
 
                     if self.polar.data_rr.time != []:
-                        conn.sendall(str(self.polar.data_rr.values_hr).encode())
 
+                        time = self.polar.data_rr.time
+                        hr = self.polar.data_rr.values_hr
+                        rr = self.polar.data_rr.values_rr
+
+                        content = str(time) + ';' + str(hr) + ';' + str(rr) 
+                        packet = Packet.Packet(Data.TYPE_RR, content)
+                        packet_encoded = packet.construct_packet()
+
+                        conn.sendall(packet_encoded)
 
                     if(self.polar.data_ecg.time != []):
                         self.polar.data_ecg.clear()
@@ -748,7 +775,7 @@ class Server(LanDevice):
     def start_polar_server(self):
 
         if self.__streaming_polar:
-            print("O servidor já está realizando o streaming.")
+            print("Polar Server is already streaming")
             return
 
         server_thread = threading.Thread(target=self.__server_listen_polar)
@@ -761,7 +788,6 @@ class Server(LanDevice):
         while self.__streaming_polar:
             self.__socket_polar.listen()
             conn, addr = self.__socket_polar.accept()
-            print('aceitei', self.polar_mac)
 
             if self.__streaming_polar:
                 thread = threading.Thread(target=self.__stream_polar, args=(conn, ))
@@ -770,15 +796,15 @@ class Server(LanDevice):
     def __stream_polar(self, conn):
 
         while self.__streaming_polar:
+
             if self.polar_mac:
-                print('vou entrar', self.polar_mac)
+                print('streamando')
                 asyncio.run(self.receive_both(self.polar_mac, conn))
-                print('sai depois')
 
             else:
                 time.sleep(0.1)
 
-    def stop_stream_server(self):
+    def stop_polar_server(self):
 
         if self.__streaming_polar:
 
@@ -794,7 +820,7 @@ class Server(LanDevice):
             # self.cleanup()
 
         else:
-            print("O servidor não está realizando o streaming")
+            print("Polar Server is already streaming")
 
 """#########################################################
 ############################################################

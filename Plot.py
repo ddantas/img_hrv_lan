@@ -50,7 +50,7 @@ class Plot():
         #self.data_rr = self.data_rr[-DATA_MAX_LEN]
         self.clear_rr()
         self.data_rr = []
-        self.data.rr.extend(data)
+        self.data_rr.extend(data)
       else:
         self.data_rr.extend(data)
       line_rr, = self.ax_rr.plot(self.data_rr, color="red")
