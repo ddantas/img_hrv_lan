@@ -27,6 +27,7 @@ import os
 import threading
 import time
 import datetime as dt
+from multiprocessing import Process
 
 from PIL import Image
 from PIL import ImageTk
@@ -122,25 +123,26 @@ class CamScreen(tk.Frame):
     def display_frames(self):
 
         self.__streaming = True
+
         while self.__streaming:
             try:
                 frame = self.client.recv_frame(IMG_DATA_SIZE)
                 cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
                 img = Image.fromarray(cv2image)
                 imgtk = ImageTk.PhotoImage(image=img)
+
             except:
-                self.client.stop_stream_client()
-                self.client.stop_commands_client()
                 self.screen.config(image='', bg='black')
                 self.__streaming = False
-                return
+                break
 
             self.screen.config(image=imgtk)
             self.screen.imgtk = imgtk
 
             if self.recording:
-                self.cap.write(frame)  
+                self.cap.write(frame)
 
+        print('sai da funcao')
 
     def connected(self):
         return self.__streaming
@@ -149,6 +151,7 @@ class CamScreen(tk.Frame):
         self.recording = True
 
     def cleanup(self):
+        print('entrei aqui')
         self.__streaming = False
         self.cap.release()
 
@@ -170,7 +173,8 @@ class WinMainTk(tk.Frame):
         if DEBUG == 0:
             self.__set_dir_name()
         else:
-            self.path = 'data/001'
+            self.path = 'data/001/'
+
         self.create_frame_main()
 
         self.create_frame_toolbox()
@@ -332,7 +336,8 @@ class WinMainTk(tk.Frame):
 
     def scan_network(self):
 
-        hosts = self.scanner.list_servers([9000,9001,9002])
+        # hosts = self.scanner.list_servers([9000,9001,9002])
+        hosts = self.scanner.list_servers([9000])
 
         if not hosts:
             tk.messagebox.showwarning(title="Scanning complete", message="No devices found")  
@@ -345,13 +350,17 @@ class WinMainTk(tk.Frame):
 
         for ip, ports in hosts.items():
 
-            if ports == [9000, 9001, 9002]:
+            # if ports == [9000, 9001, 9002]:
+            if ports == [9000]:
 
                 cameras = self.scanner.list_cams_at(ip)
                 polars = self.scanner.list_polars_at(ip)
 
                 devices[ip] = (cameras, polars)
 
+        if devices == {}:
+
+            return
         camera_values = []
         polar_values = []
 
@@ -439,6 +448,9 @@ class WinMainTk(tk.Frame):
             host = self.selected_host_cam2.get()
             print(f"Log: HOST {host} selected at CAM {slot}")
 
+        if screen.connected():
+            return
+
         if not host:
             tk.messagebox.showerror(title="Error Connecting to HOST 1", message="Select HOST 1 first")  
             return    
@@ -460,9 +472,11 @@ class WinMainTk(tk.Frame):
         client.send_command(f'SELECT CAM {device}')
 
         client.start_stream_connection()
-        client_thread = threading.Thread(target=lambda : screen.display_frames())
+        client_thread = threading.Thread(target=screen.display_frames)
+        # client_thread = Process(target=lambda : screen.display_frames())
+
         client_thread.start()
-        self.running_threads.append(client_thread)
+        self.running_threads.append((client_thread, screen.display_frames))
 
     def select_host_polar(self, slot):
         if slot == 1:
@@ -491,7 +505,7 @@ class WinMainTk(tk.Frame):
         print('checkpoint')
         client_thread = threading.Thread(target=lambda : hrv_plot.display_hrv_plot())
         client_thread.start()
-        self.running_threads.append(client_thread)
+        self.running_threads.append((client_thread, hrv_plot.display_hrv_plot))
 
     def select_routine_file(self):
         self.routine_filename = tk.filedialog.askopenfilename()
@@ -524,10 +538,15 @@ class WinMainTk(tk.Frame):
 
         try:
             with open(self.routine_filename) as f:
-                routine = f.read()
+                routine_lines = f.readlines()
         except:            
             tk.messagebox.showerror(title="Error Scheduling Routine", message="No file was specified")
             return
+
+        routine = ''
+        for line in routine_lines:
+            if line.strip()[0] != '#':
+                routine += line
 
         now = dt.datetime.now()
         time_to_start = int(now.timestamp()) + int(time_to_start)
@@ -537,10 +556,10 @@ class WinMainTk(tk.Frame):
         routine = str(time_to_start) + '\n' + routine
 
         if self.screen1.connected():
-            self.client1.send_command("ROUTINE;s1")
+            self.client1.send_command(f"ROUTINE;s1;{self.client1.get_streaming_dst()}")
 
         if self.screen2.connected():
-            self.client2.send_command("ROUTINE;s1")
+            self.client2.send_command(f"ROUTINE;s2;{self.client2.get_streaming_dst()}")
 
         if self.screen1.connected():
             self.client1.send_command(routine)
@@ -556,11 +575,12 @@ class WinMainTk(tk.Frame):
         time.sleep(delay)
 
         self.screen1.start_recording()
-        self.screen2.start_recording()
         self.hrv_plot1.start_recording()
+        self.screen2.start_recording()
         self.hrv_plot2.start_recording()
 
     def cleanup(self):
+
 
         self.screen1.cleanup()
         self.screen2.cleanup()
@@ -568,24 +588,17 @@ class WinMainTk(tk.Frame):
         self.hrv_plot1.cleanup()
         self.hrv_plot2.cleanup()
 
-        try:
-            self.client1.send_command('STOP CAM')
-        except:
-            pass
-        try:
-            self.client2.send_command('STOP CAM')
-        except:
-            pass
-
-        # for thread in self.running_threads:
-        #     thread.join()
-        print('parei antes do command')
         self.client1.stop_commands_client()
-        print('parei antes do stream')
         self.client1.stop_stream_client()
+        self.client1.stop_polar_client()
+
         self.client2.stop_commands_client()
         self.client2.stop_stream_client()
+        self.client2.stop_polar_client()
 
+        for thread, target in self.running_threads:
+            print(thread, target)
+            thread.join()
 
 
 
@@ -607,4 +620,3 @@ if __name__ == "__main__":
     app = WinMainTk(root)
     app.mainloop()
     app.cleanup()
-

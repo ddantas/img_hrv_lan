@@ -109,6 +109,10 @@ class Client(LanDevice):
     #
     #  Set the internal host ip and port that the client will use 
     #  to connect to the server.
+
+    def get_streaming_dst(self):
+        return self.__host
+
     def set_host(self, host, port):
         self.__host = host
         self.__port = port
@@ -208,7 +212,7 @@ class Client(LanDevice):
         #  Uncomment this to debug.
     #def get_ips(self, network='192.168.0.0/24'):
     #    return self.__get_ips(network)
-    def __get_ips(self, network='192.168.0.0/24'):
+    def __get_ips(self, network='192.168.129.0/24'):
 
         ans,unans = sp.srp(sp.Ether(dst="ff:ff:ff:ff:ff:ff")/sp.ARP(pdst=network),timeout=2)
         ips = []
@@ -287,7 +291,7 @@ class Client(LanDevice):
             self.__socket_commands.close()
 
         else:
-            print("No clients are running")
+            print("Client is not connected to a commands server")
 
     """#########################################################
     ############################################################
@@ -308,37 +312,43 @@ class Client(LanDevice):
 
     ## \brief Receives frame from the server.
     #
-    #  Receives, decodes and displays a single streaming frame that was received from the server
+    #  Receives and decodes a single streaming frame that was received from the server
     #  This method is designed to be accessed by the GUI interface in order to display
     #  the frame on the application window
     def recv_frame(self, img_data_size):
 
-        # self.__socket.send(b'READY')
-        while len(self.data) < img_data_size:
-            recv = self.__socket.recv(4096)
-            self.data += recv
+        print('entrei no recv')
+        if self.__streaming:
+            while len(self.data) < img_data_size:
 
-            if self.data == b'':
-                self.stop_stream_client()
-                return None
+                recv = self.__socket.recv(4096)
+                self.data += recv
 
-        msg_size = self.data[:img_data_size]
-        self.data = self.data[img_data_size:]
+                if self.data == b'':
+                    self.stop_stream_client()
+                    return None
 
-        msg_size = struct.unpack(">L", msg_size)[0]
+            msg_size = self.data[:img_data_size]
+            self.data = self.data[img_data_size:]
 
-        while len(self.data) < msg_size:
-            self.data += self.__socket.recv(4096)
-            if self.data == b'':
-                self.stop_stream_client()
-                return None
-            
-        frame_data = self.data[:msg_size]
-        self.data = self.data[msg_size:]  
-        frame = pickle.loads(frame_data, fix_imports=True, encoding="bytes")
-        frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
+            msg_size = struct.unpack(">L", msg_size)[0]
 
-        return frame
+            while len(self.data) < msg_size:
+                recv = self.__socket.recv(4096)
+                self.data += recv
+
+                if self.data == b'':
+                    self.stop_stream_client()
+                    return None
+                
+            frame_data = self.data[:msg_size]
+            self.data = self.data[msg_size:]  
+            frame = pickle.loads(frame_data, fix_imports=True, encoding="bytes")
+            frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
+            print('sai do recv')
+            return frame
+
+        return None
 
     ## \brief Stop connection.
     #
@@ -351,7 +361,7 @@ class Client(LanDevice):
             self.__socket.close()
 
         else:
-            print("No clients are running")
+            print("Client is not connected to a Camera streaming server")
 
     """#########################################################
     ############################################################
@@ -381,7 +391,7 @@ class Client(LanDevice):
 
         return Packet.Packet(packet_type.decode(), packet_content.decode())
 
-    def stop_polar_connection(self):
+    def stop_polar_client(self):
 
         if self.__streaming_polar:
             self.__streaming_polar = False
@@ -389,7 +399,7 @@ class Client(LanDevice):
             self.__socket_polar.close()
 
         else:
-            print("No clients are running")
+            print("Client is not connected to a Polar streaming server")
 
 ## \brief Class Server.
 #
@@ -506,7 +516,12 @@ class Server(LanDevice):
 
             if b'ROUTINE' in data:
 
-                host = data.split(b';')[1].decode()
+                _, host, ip = data.split(b';')
+                host = host.decode()
+                ip = ip.decode()
+
+                routine_handler('connect', ip)
+
                 cur_time = 0
                 size = struct.unpack('i', conn.recv(struct.calcsize ('i')))[0]
 
@@ -580,11 +595,6 @@ class Server(LanDevice):
                     print(split_data)
                     addr = split_data[2]
                     self.polar_mac = addr.decode()
-
-
-            if data == b'STOP CAM':
-                self.cleanup_camera()
-                break
 
             if data == b'':
                 break
@@ -672,7 +682,8 @@ class Server(LanDevice):
                                 conn.sendall(struct.pack('>L', size) + data)
 
                     except:
-                        self.connections.remove(conn)
+                        if conn in self.connections:
+                            self.connections.remove(conn)
                         conn.close()
 
                 else:
@@ -697,6 +708,7 @@ class Server(LanDevice):
             self.__socket.close()
 
             for conn in self.connections:
+                conn.shutdown(socket.SHUT_RDWR)
                 conn.close()
 
             for t in self.stream_threads:

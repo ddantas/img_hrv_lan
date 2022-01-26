@@ -122,6 +122,9 @@ class WinSub(tk.Frame):
             stream_thread.start()
             self.threads.append(stream_thread)
 
+        elif cmd == 'connect':
+            self.client.set_host(instruction, 9000)
+
         elif cmd == 'stop':
 
             if self.__streaming:
@@ -197,6 +200,7 @@ if __name__ == "__main__":
     # host = sys.argv[1]
     # port = int(sys.argv[2])
     # host='192.168.0.29'
+
     host = ''
     port=9000
     

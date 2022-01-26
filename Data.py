@@ -77,7 +77,7 @@ class Data:
                                 "timestamp": self.timestamp,
                                 "ecg": self.values_ecg})
 
-    print(df)
+    # print(df)
 
     if not os.path.exists(filename):
       print (f'------ Save raw data in \"{filename}\" ------\n\n')
