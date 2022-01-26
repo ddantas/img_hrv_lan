@@ -105,17 +105,32 @@ class Client(LanDevice):
         self.__socket_commands.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket_polar.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
+    def get_local_machine_ip(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.settimeout(0)
+        try:
+            # doesn't even have to be reachable
+            s.connect(('10.255.255.255', 1))
+            IP = s.getsockname()[0]
+
+        except Exception:
+            IP = '127.0.0.1'
+        finally:
+            s.close()
+
+        return IP
+
     ## \brief Set the internal host ip and port.
     #
     #  Set the internal host ip and port that the client will use 
     #  to connect to the server.
 
-    def get_streaming_dst(self):
-        return self.__host
-
     def set_host(self, host, port):
         self.__host = host
         self.__port = port
+
+    def get_streaming_dst(self):
+        return self.__host
 
     ## \brief List servers listening to a given port.
     #
@@ -162,7 +177,9 @@ class Client(LanDevice):
     def __list_lan_ports(self, ports_to_scan):
 
         ips = self.__get_ips()
-        ips.append("127.0.0.1")
+        
+        ips.append(self.get_local_machine_ip())
+
         hosts = {}
         for ip in ips:
             ports = self.__list_server_ports(ip, ports_to_scan)
@@ -170,7 +187,7 @@ class Client(LanDevice):
 
             if ports:
                 hosts[ip] = ports
-
+        print(hosts)
         return hosts
 
     ## \brief List open ports of a specific host.
@@ -317,7 +334,6 @@ class Client(LanDevice):
     #  the frame on the application window
     def recv_frame(self, img_data_size):
 
-        print('entrei no recv')
         if self.__streaming:
             while len(self.data) < img_data_size:
 
@@ -345,7 +361,6 @@ class Client(LanDevice):
             self.data = self.data[msg_size:]  
             frame = pickle.loads(frame_data, fix_imports=True, encoding="bytes")
             frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
-            print('sai do recv')
             return frame
 
         return None
@@ -520,6 +535,8 @@ class Server(LanDevice):
                 host = host.decode()
                 ip = ip.decode()
 
+                # before we start the routine, we connect both WinSub clients to their 
+                # respective servers
                 routine_handler('connect', ip)
 
                 cur_time = 0

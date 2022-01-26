@@ -142,7 +142,6 @@ class CamScreen(tk.Frame):
             if self.recording:
                 self.cap.write(frame)
 
-        print('sai da funcao')
 
     def connected(self):
         return self.__streaming
@@ -171,9 +170,17 @@ class WinMainTk(tk.Frame):
         self.scanner = Client()
 
         if DEBUG == 0:
+
             self.__set_dir_name()
+            
         else:
-            self.path = 'data/001/'
+
+            if not os.path.isdir('./data'):
+                os.mkdir('./data')            
+            if not os.path.isdir('./data/DEBUG'):
+                os.mkdir('./data/DEBUG')      
+
+            self.path = 'data/DEBUG/'
 
         self.create_frame_main()
 
@@ -556,10 +563,12 @@ class WinMainTk(tk.Frame):
         routine = str(time_to_start) + '\n' + routine
 
         if self.screen1.connected():
-            self.client1.send_command(f"ROUTINE;s1;{self.client1.get_streaming_dst()}")
+            print(self.client2.get_streaming_dst())
+            self.client1.send_command(f"ROUTINE;s1;{self.client2.get_streaming_dst()}")
 
         if self.screen2.connected():
-            self.client2.send_command(f"ROUTINE;s2;{self.client2.get_streaming_dst()}")
+            print(self.client1.get_streaming_dst())
+            self.client2.send_command(f"ROUTINE;s2;{self.client1.get_streaming_dst()}")
 
         if self.screen1.connected():
             self.client1.send_command(routine)

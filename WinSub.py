@@ -123,6 +123,7 @@ class WinSub(tk.Frame):
             self.threads.append(stream_thread)
 
         elif cmd == 'connect':
+            print('cheguei aqui', cmd, instruction)
             self.client.set_host(instruction, 9000)
 
         elif cmd == 'stop':
