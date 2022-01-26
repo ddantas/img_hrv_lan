@@ -37,6 +37,7 @@ import Data
 
 WIN_TITLE = "Operator Window"
 IMG_DATA_SIZE = struct.calcsize('>L')
+DEBUG = 1
 
 class HrvScreen(tk.Frame):
 
@@ -162,7 +163,10 @@ class WinMainTk(tk.Frame):
         self.client1 = Client()
         self.client2 = Client()
 
-        self.__set_dir_name()
+        if DEBUG == 0:
+            self.__set_dir_name()
+        else:
+            self.path = 'data/001'
         self.create_frame_main()
 
         self.create_frame_toolbox()
