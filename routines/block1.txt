@@ -7,6 +7,7 @@
 15.0; play; all; “videos/instructions_90s.mp4”
 ## Block 1.2
 # No View No Motion
+105.0; label; block1; NVNM
 105.0; message; all; “Descanse as mãos e aguarde.”
 105.0; clear; all; #FF5733
 #No View Motion
@@ -19,6 +20,7 @@
 135.0; show; s2; c1
 ## Block 1.3
 # No View No Motion
+225.0; label; block1; NVNM
 225.0; message; all; “Descanse as mãos e aguarde.”
 225.0; clear; all; #FF5733
 #No View Motion
@@ -32,6 +34,7 @@
 255.0; show; s2; c1
 ## Block 1.4
 # No View No Motion
+345.0; label; block1; NVNM
 345.0; message; all; “Descanse as mãos e aguarde.”
 345.0; clear; all; #FF5733
 #No View Motion
