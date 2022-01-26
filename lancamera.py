@@ -33,6 +33,7 @@ class LanDevice:
 
     def __init__(self):
         self.cam = None
+        self.cam_index = -1
         self.polar = Polar.Polar()
         self.polar_mac = ''
 
@@ -40,6 +41,7 @@ class LanDevice:
     #
     #  Initializes video capture device
     def init_camera(self, device):
+        self.cam_index = device
         self.cam = cv2.VideoCapture(device)
 
     def list_polars_local(self):
@@ -60,9 +62,11 @@ class LanDevice:
         i = 0
         while i < num:
             cap = cv2.VideoCapture(i)
-            if cap.isOpened():
+
+            if i != self.cam_index and cap.isOpened():
                 v.append(i)
-                cap.release()
+
+            cap.release()
             i += 1
         return v
 
@@ -234,8 +238,6 @@ class Client(LanDevice):
             devices = devices.replace(']','')
             devices = devices.split(',')
             print(f'Server cameras {ip}:9000 -> {devices}')
-            msg_len = struct.pack('i', len('END'))
-            s.sendall(msg_len + b"END")
 
         return devices
 
@@ -252,8 +254,6 @@ class Client(LanDevice):
             devices = devices.replace('\"','')
             devices = re.findall(r'\(.*?\)', devices)
             print(f'Server Polar Sensors {ip}:9000 -> {devices}')
-            msg_len = struct.pack('i', len('END'))
-            s.sendall(msg_len + b"END")
 
         return devices
 
@@ -283,6 +283,7 @@ class Client(LanDevice):
 
         if self.__running:
             self.__running = False
+            self.__socket_commands.shutdown(socket.SHUT_RDWR)
             self.__socket_commands.close()
 
         else:
@@ -433,9 +434,15 @@ class Server(LanDevice):
     #  First, receives the number of bytes of that command (size), 
     #  then receives the proper command
     def recv_command(self, conn):
+
         n_bytes = conn.recv(struct.calcsize ('i'))
+
+        if n_bytes == b'':
+            return b''
+
         size = struct.unpack('i', n_bytes)[0]
-        return conn.recv(size)
+        data = conn.recv(size)
+        return data
 
     ## \brief Start command server thread
     #
@@ -574,9 +581,12 @@ class Server(LanDevice):
                     addr = split_data[2]
                     self.polar_mac = addr.decode()
 
-            if data == b'END' or data == b'':
-                # print('why')
+
+            if data == b'STOP CAM':
                 self.cleanup_camera()
+                break
+
+            if data == b'':
                 break
 
         conn.close()

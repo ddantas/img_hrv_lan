@@ -345,7 +345,7 @@ class WinMainTk(tk.Frame):
 
         for ip, ports in hosts.items():
 
-            if hosts[ip] == [9000, 9001, 9002]:
+            if ports == [9000, 9001, 9002]:
 
                 cameras = self.scanner.list_cams_at(ip)
                 polars = self.scanner.list_polars_at(ip)
@@ -394,7 +394,7 @@ class WinMainTk(tk.Frame):
 
         cam_values = []
         for dev in cameras: 
-            cam_values.append(f'{ip}; #{dev}')
+                cam_values.append(f'{ip}; #{dev}')
 
         for v in cam_values:
             if v in self.combo_box_cam1['values'] or v in self.combo_box_cam2['values']:
@@ -569,18 +569,19 @@ class WinMainTk(tk.Frame):
         self.hrv_plot2.cleanup()
 
         try:
-            self.client1.send_command('END')
+            self.client1.send_command('STOP CAM')
         except:
             pass
         try:
-            self.client2.send_command('END')
+            self.client2.send_command('STOP CAM')
         except:
             pass
 
         # for thread in self.running_threads:
         #     thread.join()
-
+        print('parei antes do command')
         self.client1.stop_commands_client()
+        print('parei antes do stream')
         self.client1.stop_stream_client()
         self.client2.stop_commands_client()
         self.client2.stop_stream_client()
