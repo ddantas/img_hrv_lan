@@ -1,0 +1,21 @@
+#No View No Motion
+0.0; label; block1; NVNM
+0.0; message; all; “Welcome!”
+0.0; clear; all; #FFFF00
+5.0; message; all; “Please watch this video”
+5.0; play; all; “videos/instructions.mp4”
+30.0; message; all; “No View No Motion”
+#No View Motion
+45.0; label; block1; NVM
+45.0; message; all; “Please gesticulate.”
+#Spontaneous Imitation
+60.0; label; block1; SI
+60.0; message; all; “Please gesticulate. Imitate if you wish.”
+60.0; show; s1; c2
+60.0; show; s2; c1
+#Induced Imitation IImitator 1
+90.0; label; block1; Imitator1
+90.0; message; s1; “Please imitate your partner.”
+90.0; message; s2; “Please gesticulate.”
+120.0; message; all; “Please stop. Thank you!”
+120.0; clear; all; #FFFF00
