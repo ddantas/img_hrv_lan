@@ -91,11 +91,14 @@ class HrvScreen(tk.Frame):
 
 
             except Exception as e:
-                print(e)
+                self.__streaming = False
+                return
 
     def start_recording(self):
         self.recording = True
 
+    def cleanup(self):
+        self.__streaming = False
 
 class CamScreen(tk.Frame):
 
@@ -162,6 +165,7 @@ class WinMainTk(tk.Frame):
         self.root = root
         self.client1 = Client()
         self.client2 = Client()
+        self.scanner = Client()
 
         if DEBUG == 0:
             self.__set_dir_name()
@@ -237,11 +241,11 @@ class WinMainTk(tk.Frame):
         self.selected_host_polar2 = tk.StringVar()
 
         self.btn_scan = tk.Button(self.frame_right, text="Scan the network", padx=3, width=BUTTON_WIDTH,
-                                    command=self.scan_network)
+                                    command=lambda: self.start_scan('network'))
 
         self.scan_at = tk.Label(self.frame_right,text="\nScan specific host", padx=3)
         self.btn_scan_at = tk.Button(self.frame_right, text="Scan host", padx=3, width=BUTTON_WIDTH,
-                                    command=self.scan_host_at)
+                                    command=lambda: self.start_scan('specific'))
         self.scan_entry = tk.Entry(self.frame_right, width=BUTTON_WIDTH)
 
         self.select_cam1_label = tk.Label(self.frame_right,text="\nCAM 1", padx=3)
@@ -313,23 +317,61 @@ class WinMainTk(tk.Frame):
         self.schedule_time.grid(row=19, column=0, ipady=IPADY)
         self.btn_schedule.grid(row=20, column=0, ipady=IPADY, pady=(0,10))
 
+    def start_scan(self, scope):
+
+        if scope not in ['network', 'specific']:
+            return
+
+        if scope == 'network':
+            thread = threading.Thread(target=self.scan_network)
+
+        else:
+            thread = threading.Thread(target=self.scan_host_at)
+
+        thread.start()
+
     def scan_network(self):
 
-        hosts = self.client1.list_cams_lan()  
+        hosts = self.scanner.list_servers([9000,9001,9002])
 
         if not hosts:
             tk.messagebox.showwarning(title="Scanning complete", message="No devices found")  
             return
 
+        print(hosts)
+        cameras = []
+        polars = []
+        devices = {}
+
+        for ip, ports in hosts.items():
+
+            if hosts[ip] == [9000, 9001, 9002]:
+
+                cameras = self.scanner.list_cams_at(ip)
+                polars = self.scanner.list_polars_at(ip)
+
+                devices[ip] = (cameras, polars)
+
+        camera_values = []
+        polar_values = []
+
+        for host, devs in devices.items():
+            cams = devs[0]
+            sensors = devs[1]
+            print(cams, sensors)
+            for dev in cams:
+                camera_values.append(f'{host}; #{dev}')
+
+            for dev in sensors:
+                polar_values.append(f'{host}; #{dev}')
+
+        self.combo_box_cam1['values'] = camera_values
+        self.combo_box_cam2['values'] = camera_values
+
+        self.combo_box_polar1['values'] = polar_values
+        self.combo_box_polar2['values'] = polar_values
+
         tk.messagebox.showinfo(title="Scanning complete", message="HOSTS updated")  
-
-        values = []
-        for host, devices in hosts.items():
-            for dev in devices: 
-                values.append(f'{host}; #{dev}')
-
-        self.combo_box_cam1['values'] = values
-        self.combo_box_cam2['values'] = values
 
     def scan_host_at(self):
 
@@ -341,8 +383,8 @@ class WinMainTk(tk.Frame):
             tk.messagebox.showerror(title="Error Scheduling Routine", message="The specified time is not a number")
             return
 
-        cameras = self.client1.list_cams_at(ip)
-        polars = self.client1.list_polars_at(ip)
+        cameras = self.scanner.list_cams_at(ip)
+        polars = self.scanner.list_polars_at(ip)
 
         if not cameras:
             tk.messagebox.showwarning(title="Scanning complete", message="No cameras found")  
@@ -522,6 +564,9 @@ class WinMainTk(tk.Frame):
 
         self.screen1.cleanup()
         self.screen2.cleanup()
+
+        self.hrv_plot1.cleanup()
+        self.hrv_plot2.cleanup()
 
         try:
             self.client1.send_command('END')

@@ -109,12 +109,6 @@ class Client(LanDevice):
         self.__host = host
         self.__port = port
 
-
-    def list_polars_at(self, ip):
-
-        devices = self.recv_polars(ip, PORT_COMMANDS)
-        return devices
-
     ## \brief List servers listening to a given port.
     #
     #  List all available servers on LAN that have certain ports open.
@@ -141,28 +135,17 @@ class Client(LanDevice):
     ## \brief List cameras from a single host.
     #
     #  List all cameras from a specified host.
-    #  list devs, specify only the type of device
-    def list_cams_at(self, ip, ports_to_scan=[9000,9002]):
+    def list_cams_at(self, ip):
 
-        ports = self.list_host_at(ip, ports_to_scan)
-        devices = []
-        if set(ports) == set(ports_to_scan):
-            devices = self.recv_cameras(ip, PORT_COMMANDS)
-
+        devices = self.recv_cameras(ip, PORT_COMMANDS)
         return devices
 
-    ## \brief List cameras from available hosts in the network.
+    ## \brief List Polar sensors from a single host.
     #
-    #  List all cameras and hosts with available cameras in the LAN.
-    def list_cams_lan(self, ports_to_scan=[9000,9002]):
+    #  List all Polar sensors from a specified host.
+    def list_polars_at(self, ip):
 
-        hosts = self.list_servers(ports_to_scan)
-        devices = {}
-        for ip, ports in hosts.items():
-            if set(ports) == set(ports_to_scan):
-                cams = self.recv_cameras(ip, PORT_COMMANDS)
-                devices[ip] = cams
-
+        devices = self.recv_polars(ip, PORT_COMMANDS)
         return devices
 
     ## \brief List open ports of the hosts in the LAN.
@@ -435,9 +418,9 @@ class Server(LanDevice):
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket_polar.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket_commands.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.bind((self.__host, self.__port))
-        self.__socket_polar.bind((self.__host, self.__port + 1))
-        self.__socket_commands.bind((self.__host, self.__port + 2))
+        self.__socket.bind((self.__host, PORT_CAM))
+        self.__socket_polar.bind((self.__host, PORT_POLAR))
+        self.__socket_commands.bind((self.__host, PORT_COMMANDS))
 
     """#########################################################
     ############################################################
@@ -504,7 +487,7 @@ class Server(LanDevice):
             if b"LIST" in data:
 
                 device = data.split(b' ')[1]
-                print(device)
+
                 if device == b"CAM":
                     devices = self.list_cams_local(5)
                 else:
@@ -578,7 +561,7 @@ class Server(LanDevice):
                 device = split_data[1]
 
                 if device == b'CAM':
-                    
+
                     index = int(split_data[2].decode())
 
                     try:
@@ -706,7 +689,6 @@ class Server(LanDevice):
             for conn in self.connections:
                 conn.close()
 
-            print(self.stream_threads)
             for t in self.stream_threads:
                 t.join()
 
@@ -734,7 +716,7 @@ class Server(LanDevice):
                 await client.write_gatt_char(Polar.PMD_CONTROL, Polar.ECG_WRITE)
                 await client.start_notify(Polar.PMD_DATA, self.polar.parse_ecg)
                 await client.start_notify(Polar.HEART_RATE, self.polar.parse_rr)
-                while not Polar.FLAG_INTERRUPT:
+                while self.__streaming_polar:
                     await asyncio.sleep(0.2)
 
                     if self.polar.data_ecg.time != []:
@@ -800,9 +782,7 @@ class Server(LanDevice):
         while self.__streaming_polar:
 
             if self.polar_mac:
-                print('streamando')
                 asyncio.run(self.receive_both(self.polar_mac, conn))
-
             else:
                 time.sleep(0.1)
 
@@ -814,7 +794,7 @@ class Server(LanDevice):
 
             closer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-            closer.connect((self.__host, self.__port))
+            closer.connect((self.__host, PORT_POLAR))
             closer.close()
 
             self.__socket_polar.close()

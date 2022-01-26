@@ -30,8 +30,6 @@ class Packet:
 		self.content = self.content.replace('[','')
 		self.content = self.content.replace(']','')
 
-		print('decoding', self.tp, type(self.tp), Data.TYPE_ECG)
-
 		if self.tp == Data.TYPE_ECG:
 			data = Data.Data(Data.TYPE_ECG)
 			values_time, values_timestamp, values_ecg = self.content.split(';')
