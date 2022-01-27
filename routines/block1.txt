@@ -49,3 +49,4 @@
 ## End of routine
 465.0; message; all; “Muito obrigado pela colaboração!”
 465.0; clear; all; #FF5733
+465.0; stop; all
