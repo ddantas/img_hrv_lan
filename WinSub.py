@@ -34,6 +34,7 @@ class WinSub(tk.Frame):
         self.host = host
         self.port = port
         self.videoCap = None
+        self.__clear = False
         self.__streaming = False
         self.__playing_video = False
         self.threads = []
@@ -85,20 +86,18 @@ class WinSub(tk.Frame):
 
         elif cmd == 'clear':
 
-            if self.__streaming:
-                
-                self.__streaming = False
+            # if self.__streaming:
+            #     self.__streaming = False
 
-            if self.__playing_video:
-                self.__playing_video = False
+            self.__playing_video = False
 
+            self.__clear = True
             self.screen.config(image='', bg=instruction)
             self.screen_frame.config(bg=instruction)
 
         elif cmd == 'play': 
 
-            if self.__streaming:
-                self.__streaming = False
+            self.__streaming = False
 
             self.__playing_video = True
             
@@ -112,8 +111,9 @@ class WinSub(tk.Frame):
 
         elif cmd == 'show':
 
-            if self.__playing_video:
-                self.__playing_video = False
+            self.__playing_video = False
+
+            self.__clear = False
 
             self.__streaming = True
 
@@ -162,6 +162,10 @@ class WinSub(tk.Frame):
 
         img_data_size = struct.calcsize('>L')
         frame = self.client.recv_frame(img_data_size)
+
+        if self.__clear:
+            self.screen.after(1, self.display_frames)
+
         cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
         img = Image.fromarray(cv2image)
         imgtk = ImageTk.PhotoImage(image=img)

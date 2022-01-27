@@ -176,7 +176,8 @@ class WinMainTk(tk.Frame):
         else:
 
             if not os.path.isdir('./data'):
-                os.mkdir('./data')            
+                os.mkdir('./data')          
+
             if not os.path.isdir('./data/DEBUG'):
                 os.mkdir('./data/DEBUG')      
 
@@ -188,6 +189,14 @@ class WinMainTk(tk.Frame):
 
         self.running_threads = []
         
+    def log(self, text):
+        now = datetime.datetime.now()
+        log_template = f'{now} Log:'
+        print(log_template + text)
+
+        with open(self.path + 'log.txt', 'a') as log:
+            print(log_template + text, file=log)
+
 
     def __set_dir_name(self):
         if not os.path.isdir('./data'):
@@ -206,8 +215,11 @@ class WinMainTk(tk.Frame):
         new_dir = num+1
         path =f'./data/{new_dir:03d}/'
         self.path = path 
-        print(f"Log: saving the recordings at {self.path}")
         os.mkdir(self.path)
+
+        self.log(f"saving the recordings at {self.path}")
+        # print(f"Log: saving the recordings at {self.path}")
+
 
     ## Create main frame, composed by an ImgCanvas object.
     #  @param self The object pointer.
@@ -394,7 +406,8 @@ class WinMainTk(tk.Frame):
         try:
             ip = self.scan_entry.get()
             if ip == '':
-                ip = '0.0.0.0'
+                ip = self.scanner.get_local_machine_ip()
+                print(ip)
         except:
             tk.messagebox.showerror(title="Error Scheduling Routine", message="The specified time is not a number")
             return
@@ -447,14 +460,15 @@ class WinMainTk(tk.Frame):
             client = self.client1
             screen = self.screen1
             host = self.selected_host_cam1.get()
-            print(f"Log: HOST {host} selected at CAM {slot}")
+            # print(f"Log: HOST {host} selected at CAM {slot}")
 
         else:
             client = self.client2
             screen = self.screen2
             host = self.selected_host_cam2.get()
-            print(f"Log: HOST {host} selected at CAM {slot}")
+            # print(f"Log: HOST {host} selected at CAM {slot}")
 
+        self.log(f"HOST {host} selected at CAM {slot}")
         if screen.connected():
             return
 
