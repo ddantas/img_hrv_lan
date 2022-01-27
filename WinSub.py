@@ -86,12 +86,10 @@ class WinSub(tk.Frame):
 
         elif cmd == 'clear':
 
-            # if self.__streaming:
-            #     self.__streaming = False
-
             self.__playing_video = False
 
             self.__clear = True
+
             self.screen.config(image='', bg=instruction)
             self.screen_frame.config(bg=instruction)
 
@@ -136,7 +134,6 @@ class WinSub(tk.Frame):
                 self.__playing_video = False
                 self.videoCap.release()
 
-            self.msg.set('')
             self.screen.config(image='', bg='black')
             self.screen_frame.config(bg='black')
             self.cleanup()
