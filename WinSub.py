@@ -95,7 +95,11 @@ class WinSub(tk.Frame):
 
         elif cmd == 'play': 
 
+
             self.__streaming = False
+
+            if not os.path.exists(instruction):
+                return
 
             self.__playing_video = True
             

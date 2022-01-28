@@ -127,6 +127,10 @@ class CamScreen(tk.Frame):
         while self.__streaming:
             try:
                 frame = self.client.recv_frame(IMG_DATA_SIZE)
+
+                if self.recording:
+                    self.cap.write(frame)
+
                 cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
                 img = Image.fromarray(cv2image)
                 imgtk = ImageTk.PhotoImage(image=img)
@@ -139,8 +143,6 @@ class CamScreen(tk.Frame):
             self.screen.config(image=imgtk)
             self.screen.imgtk = imgtk
 
-            if self.recording:
-                self.cap.write(frame)
 
 
     def connected(self):
@@ -494,7 +496,6 @@ class WinMainTk(tk.Frame):
 
         client.start_stream_connection()
         client_thread = threading.Thread(target=screen.display_frames)
-        # client_thread = Process(target=lambda : screen.display_frames())
 
         client_thread.start()
         self.running_threads.append((client_thread, screen.display_frames))
@@ -504,14 +505,13 @@ class WinMainTk(tk.Frame):
             client = self.client1
             hrv_plot = self.hrv_plot1
             host = self.selected_host_polar1.get()
-            print(f"Log: HOST {host} selected for Polar {slot}")
 
         else:
             client = self.client2
             hrv_plot = self.hrv_plot2
             host = self.selected_host_polar2.get()
-            print(f"Log: HOST {host} selected for Polar {slot}")
 
+        self.log(f"HOST {host} selected for Polar {slot}")
         ip, polar_tuple = host.split(';')
         polar_tuple = polar_tuple.replace(')','')
         polar_tuple = polar_tuple.replace('(','')
@@ -534,7 +534,7 @@ class WinMainTk(tk.Frame):
         if not self.routine_filename:
             return
 
-        print(f"Log: selected {self.routine_filename}")
+        self.log(f"selected {self.routine_filename}")
         self.select_routine_label.config(text=f"\nRoutine\n{self.routine_filename.split('/')[-1]}")
 
     def schedule_routine(self):
@@ -572,7 +572,7 @@ class WinMainTk(tk.Frame):
         now = dt.datetime.now()
         time_to_start = int(now.timestamp()) + int(time_to_start)
 
-        print(f"Log: routine is schedule to start at {now + dt.timedelta(seconds=int(time_to_start))}")
+        self.log(f"routine is schedule to start at {now + dt.timedelta(seconds=int(time_to_start))}")
 
         routine = str(time_to_start) + '\n' + routine
 

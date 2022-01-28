@@ -229,7 +229,7 @@ class Client(LanDevice):
         #  Uncomment this to debug.
     #def get_ips(self, network='192.168.0.0/24'):
     #    return self.__get_ips(network)
-    def __get_ips(self, network='192.168.129.0/24'):
+    def __get_ips(self, network='192.168.0.0/24'):
 
         ans,unans = sp.srp(sp.Ether(dst="ff:ff:ff:ff:ff:ff")/sp.ARP(pdst=network),timeout=2)
         ips = []
@@ -822,6 +822,7 @@ class Server(LanDevice):
 
             if self.polar_mac:
                 asyncio.run(self.receive_both(self.polar_mac, conn))
+
             else:
                 time.sleep(0.1)
 
