@@ -222,15 +222,15 @@ class Polar():
 
   ## \brief Receive RR data from Polar sensor
   #
-  #  @param d MAC Address of Device.
+  #  @param mac MAC Address of Device.
   #  @param filename File where RR data will be stored.
-  async def receive_rr(self, d, filename=''):
+  async def receive_rr(self, mac, filename=''):
     # Listen to the SIGINT signal
     signal.signal(signal.SIGINT, self.signal_handler)
     try:
-      async with BleakClient(d) as client:
+      async with BleakClient(mac) as client:
         if (not client.is_connected):
-          raise Exception("Unable to connect to device at %s" % d)
+          raise Exception("Unable to connect to device at %s" % mac)
         # Connected
         await client.start_notify(HEART_RATE, self.parse_rr)
         while not FLAG_INTERRUPT:
@@ -248,15 +248,15 @@ class Polar():
 
   ## \brief Receive ECG data from Polar sensor
   #
-  #  @param d MAC Address of Device.
+  #  @param mac MAC Address of Device.
   #  @param filename File where ECG data will be stored.
-  async def receive_ecg(self, d, filename=''):
+  async def receive_ecg(self, mac, filename=''):
     # Listen to the SIGINT signal
     signal.signal(signal.SIGINT, self.signal_handler)
     try:
-      async with BleakClient(d) as client:
+      async with BleakClient(mac) as client:
         if (not client.is_connected):
-          raise Exception("Unable to connect to device at %s" % d)
+          raise Exception("Unable to connect to device at %s" % mac)
         # Connected
         att_read = await client.read_gatt_char(PMD_CONTROL)
         await client.write_gatt_char(PMD_CONTROL, ECG_WRITE)
@@ -278,16 +278,16 @@ class Polar():
 
   ## \brief Receive ECG and RR data from Polar sensor
   #
-  #  @param d MAC Address of Device.
+  #  @param mac MAC Address of Device.
   #  @param filename_rr File where RR data will be stored.
   #  @param filename_ecg File where ECG data will be stored.
-  async def receive_both(self, d, filename_rr='', filename_ecg=''):
+  async def receive_both(self, mac, filename_rr='', filename_ecg=''):
     # Listen to the SIGINT signal
     signal.signal(signal.SIGINT, self.signal_handler)
     try:
-      async with BleakClient(d) as client:
+      async with BleakClient(mac) as client:
         if (not client.is_connected):
-          raise Exception("Unable to connect to device at %s" % d)
+          raise Exception("Unable to connect to device at %s" % mac)
         # Connected
         att_read = await client.read_gatt_char(PMD_CONTROL)
         await client.write_gatt_char(PMD_CONTROL, ECG_WRITE)
@@ -323,11 +323,11 @@ class Polar():
   #  Return list of devices with type bleak.backends.device.BLEDevice
   #
   #  @param name String to search in device name
-  async def list_devices(self, name=""):
+  async def list_devices(self, name="", timeout=50.0):
     self.print_message("Scanning devices.", "list_devices", __file__)
 
     result = []
-    devices = await BleakScanner.discover()
+    devices = await BleakScanner.discover(timeout=timeout)
     for d in devices:
       if (d.name.find(name) < 0):
         continue
@@ -343,10 +343,10 @@ class Polar():
   #
   #  Return list of devices with type bleak.backends.device.BLEDevice
   #
-  def list_devices_polar(self):
+  def list_devices_polar(self, timeout=50.0):
     #loop = asyncio.get_event_loop()
     #result = loop.run_until_complete(list_devices("Polar"))
-    result = asyncio.run(self.list_devices("Polar"))
+    result = asyncio.run(self.list_devices("Polar", timeout))
     return result
 
 def main():
@@ -369,13 +369,13 @@ def main():
 
   filename_rr = "/tmp/rr.tsv"
   Data.Data.remove(filename_rr)
-  #asyncio.run(polar.receive_rr(d, filename_rr))
+  #asyncio.run(polar.receive_rr(d.address, filename_rr))
 
   filename_ecg = "/tmp/ecg.tsv"
   Data.Data.remove(filename_ecg)
-  #asyncio.run(polar.receive_ecg(d, filename_ecg))
+  #asyncio.run(polar.receive_ecg(d.address, filename_ecg))
 
-  asyncio.run(polar.receive_both(d, filename_rr, filename_ecg))
+  asyncio.run(polar.receive_both(d.address, filename_rr, filename_ecg))
   
   return devices
 
