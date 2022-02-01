@@ -323,7 +323,7 @@ class Polar():
   #  Return list of devices with type bleak.backends.device.BLEDevice
   #
   #  @param name String to search in device name
-  async def list_devices(self, name="", timeout=50.0):
+  async def list_devices(self, name="", timeout=10.0):
     self.print_message("Scanning devices.", "list_devices", __file__)
 
     result = []
@@ -342,8 +342,8 @@ class Polar():
   #  string "Polar" in the name.
   #
   #  Return list of devices with type bleak.backends.device.BLEDevice
-  #
-  def list_devices_polar(self, timeout=50.0):
+  # 
+  def list_devices_polar(self, timeout=10.0):
     #loop = asyncio.get_event_loop()
     #result = loop.run_until_complete(list_devices("Polar"))
     result = asyncio.run(self.list_devices("Polar", timeout))
