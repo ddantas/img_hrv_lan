@@ -34,9 +34,10 @@ class WinSub(tk.Frame):
         self.host = host
         self.port = port
         self.videoCap = None
+        self.connected = False
         self.__clear = False
-        self.__streaming = False
-        self.__playing_video = False
+        self.is_receiving_video = False
+        self.is_playing_video = False
         self.threads = []
         # self.root.attributes('-fullscreen', 1)
 
@@ -86,7 +87,8 @@ class WinSub(tk.Frame):
 
         elif cmd == 'clear':
 
-            self.__playing_video = False
+            self.is_playing_video = False
+            # self.is_receiving_video = False
 
             self.__clear = True
 
@@ -95,13 +97,12 @@ class WinSub(tk.Frame):
 
         elif cmd == 'play': 
 
-
-            self.__streaming = False
+            self.is_receiving_video = False
 
             if not os.path.exists(instruction):
                 return
 
-            self.__playing_video = True
+            self.is_playing_video = True
             
             if self.videoCap:
                 self.videoCap.release()
@@ -113,29 +114,28 @@ class WinSub(tk.Frame):
 
         elif cmd == 'show':
 
-            self.__playing_video = False
+            self.is_playing_video = False
 
+            self.is_receiving_video = True
             self.__clear = False
 
-            self.__streaming = True
+            if self.connected:
+                return
 
             self.client.start_stream_connection()
             stream_thread = threading.Thread(target=self.display_frames)
             stream_thread.start()
             self.threads.append(stream_thread)
-
-        elif cmd == 'connect':
-            print('cheguei aqui', cmd, instruction)
-            self.client.set_host(instruction, 9000)
+            self.connected = True
 
         elif cmd == 'stop':
 
-            if self.__streaming:
-                self.__streaming = False
+            if self.is_receiving_video:
+                self.is_receiving_video = False
                 self.client.stop_stream_client()
 
-            elif self.__playing_video:
-                self.__playing_video = False
+            elif self.is_playing_video:
+                self.is_playing_video = False
                 self.videoCap.release()
 
             self.screen.config(image='', bg='black')
@@ -144,39 +144,39 @@ class WinSub(tk.Frame):
 
     def show_video(self):
 
-        if not self.__playing_video:
-            return
+        while self.is_playing_video:
+            ret, frame = self.videoCap.read()
 
-        _, frame = self.videoCap.read()
-        # frame = cv2.resize(frame, (self.width, self.height))
-        cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-        img = Image.fromarray(cv2image)
-        imgtk = ImageTk.PhotoImage(image=img)
-        self.screen.configure(image=imgtk)
-        self.screen.imgtk = imgtk
-        self.screen.after(20, self.show_video)
+            if not ret:
+                return
+
+            # frame = cv2.resize(frame, (self.width, self.height))
+            cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+            img = Image.fromarray(cv2image)
+            imgtk = ImageTk.PhotoImage(image=img)
+            self.screen.configure(image=imgtk)
+            self.screen.imgtk = imgtk
 
     def display_frames(self):
 
-        if not self.__streaming:
-            return
+        while self.is_receiving_video:
 
-        img_data_size = struct.calcsize('>L')
-        frame = self.client.recv_frame(img_data_size)
+            img_data_size = struct.calcsize('>L')
+            frame, ret = self.client.recv_frame(img_data_size)
 
-        if self.__clear:
-            self.screen.after(1, self.display_frames)
+            if not ret:
+                return
 
-        cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-        img = Image.fromarray(cv2image)
-        imgtk = ImageTk.PhotoImage(image=img)
-        self.screen.configure(image=imgtk)
-        self.screen.imgtk = imgtk
-        self.screen.after(1, self.display_frames)
+            if not self.__clear:
+                cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+                img = Image.fromarray(cv2image)
+                imgtk = ImageTk.PhotoImage(image=img)
+                self.screen.configure(image=imgtk)
+                self.screen.imgtk = imgtk
 
     def cleanup(self):
-        self.__streaming = False
-        self.__playing_video = False
+        self.is_receiving_video = False
+        self.is_playing_video = False
         
         for t in self.threads:
             t.join()
