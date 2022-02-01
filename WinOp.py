@@ -13,6 +13,8 @@
 
 
 # python 3
+import cProfile
+
 import tkinter as tk
 from tkinter import ttk
 import cv2
@@ -27,7 +29,6 @@ import os
 import threading
 import time
 import datetime as dt
-from multiprocessing import Process
 
 from PIL import Image
 from PIL import ImageTk
@@ -125,24 +126,35 @@ class CamScreen(tk.Frame):
         self.__streaming = True
 
         while self.__streaming:
-            try:
-                frame = self.client.recv_frame(IMG_DATA_SIZE)
+            # print('entrei')
+            frame, ret = self.client.recv_frame(IMG_DATA_SIZE)
+            # print('sai')
 
-                if self.recording:
-                    self.cap.write(frame)
-
-                cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-                img = Image.fromarray(cv2image)
-                imgtk = ImageTk.PhotoImage(image=img)
-
-            except:
-                self.screen.config(image='', bg='black')
+            if not ret:
                 self.__streaming = False
                 break
 
-            self.screen.config(image=imgtk)
-            self.screen.imgtk = imgtk
+            # print('to no meio')
 
+            if self.recording:
+                self.cap.write(frame)
+
+            # print('ainda to no meio')
+
+            cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+
+            # print('to no meio só que dnv')
+            img = Image.fromarray(cv2image)
+            # print('ainda aqui')
+            imgtk = ImageTk.PhotoImage(image=img)
+            # print('quase sai')
+
+            self.screen.config(image=imgtk)
+            # print('tamo indo')
+            self.screen.imgtk = imgtk
+            # print('fomo')
+
+        # print('devia ter saido então')
 
 
     def connected(self):
@@ -152,9 +164,9 @@ class CamScreen(tk.Frame):
         self.recording = True
 
     def cleanup(self):
-        print('entrei aqui')
         self.__streaming = False
         self.cap.release()
+        self.recording = False
 
 
 class WinMainTk(tk.Frame):
@@ -313,6 +325,9 @@ class WinMainTk(tk.Frame):
         self.combo_box_polar2 = ttk.Combobox(self.frame_right, width=BUTTON_WIDTH, textvariable=self.selected_host_polar2)
         self.combo_box_polar2['state'] = 'readonly'
 
+        self.btn_reset = tk.Button(self.frame_right, text="RESET", padx=3, width=BUTTON_WIDTH, 
+                                        command=self.reset_capture)
+
         self.btn_scan.grid(row=0, column=0, ipady=IPADY, pady=(10,0))
 
         self.scan_at.grid(row=1, column=0, ipady=IPADY)
@@ -340,7 +355,8 @@ class WinMainTk(tk.Frame):
 
         self.schedule_time_label.grid(row=18, column=0, ipady=IPADY)
         self.schedule_time.grid(row=19, column=0, ipady=IPADY)
-        self.btn_schedule.grid(row=20, column=0, ipady=IPADY, pady=(0,10))
+        self.btn_schedule.grid(row=20, column=0, ipady=IPADY, pady=10)
+        self.btn_reset.grid(row=21, column=0, ipady=IPADY, pady=10)
 
     def start_scan(self, scope):
 
@@ -462,15 +478,14 @@ class WinMainTk(tk.Frame):
             client = self.client1
             screen = self.screen1
             host = self.selected_host_cam1.get()
-            # print(f"Log: HOST {host} selected at CAM {slot}")
 
         else:
             client = self.client2
             screen = self.screen2
             host = self.selected_host_cam2.get()
-            # print(f"Log: HOST {host} selected at CAM {slot}")
 
         self.log(f"HOST {host} selected at CAM {slot}")
+
         if screen.connected():
             return
 
@@ -577,12 +592,12 @@ class WinMainTk(tk.Frame):
         routine = str(time_to_start) + '\n' + routine
 
         if self.screen1.connected():
-            print(self.client2.get_streaming_dst())
-            self.client1.send_command(f"ROUTINE;s1;{self.client2.get_streaming_dst()}")
+            print(self.client2.get_streaming_addr())
+            self.client1.send_command(f"ROUTINE;s1;{self.client2.get_streaming_addr()}")
 
         if self.screen2.connected():
-            print(self.client1.get_streaming_dst())
-            self.client2.send_command(f"ROUTINE;s2;{self.client1.get_streaming_dst()}")
+            print(self.client1.get_streaming_addr())
+            self.client2.send_command(f"ROUTINE;s2;{self.client1.get_streaming_addr()}")
 
         if self.screen1.connected():
             self.client1.send_command(routine)
@@ -602,14 +617,27 @@ class WinMainTk(tk.Frame):
         self.screen2.start_recording()
         self.hrv_plot2.start_recording()
 
-    def cleanup(self):
+    def reset_capture(self):
 
+        return
+
+        if not DEBUG:
+            self.__set_dir_name()
+
+        print(self.path, self.screen1.path + self.screen1.name)
+        self.screen1.cap = cv2.VideoWriter(self.screen1.path + self.screen1.name + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'),
+                                            30.0, (640,480))
+
+        self.screen2.cap = cv2.VideoWriter(self.screen2.path + self.screen2.name + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'),
+                                            30.0, (640,480))
+
+        self.client1.__init__(HOST=self.client1.get_streaming_addr())
+        self.client2.__init__(HOST=self.client2.get_streaming_addr())
+
+    def cleanup(self):
 
         self.screen1.cleanup()
         self.screen2.cleanup()
-
-        self.hrv_plot1.cleanup()
-        self.hrv_plot2.cleanup()
 
         self.client1.stop_commands_client()
         self.client1.stop_stream_client()
@@ -619,10 +647,12 @@ class WinMainTk(tk.Frame):
         self.client2.stop_stream_client()
         self.client2.stop_polar_client()
 
-        for thread, target in self.running_threads:
-            print(thread, target)
-            thread.join()
+        # for thread, target in self.running_threads:
+        #     print(thread, target)
+        #     thread.join()
 
+        self.hrv_plot1.cleanup()
+        self.hrv_plot2.cleanup()
 
 
 """#########################################################
@@ -630,7 +660,16 @@ class WinMainTk(tk.Frame):
 ### Main function                                        ###
 ############################################################
 #########################################################"""
+def main():
+    root = tk.Tk()
+    root.rowconfigure(0, weight=1)
+    root.columnconfigure(0, weight=1)
+    root.title(WIN_TITLE)
+    root.minsize(300,300)
 
+    app = WinMainTk(root)
+    app.mainloop()
+    app.cleanup()
 
 if __name__ == "__main__":
 

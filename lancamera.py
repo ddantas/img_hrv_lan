@@ -83,7 +83,7 @@ class LanDevice:
 #  Class with functionalities to query and connect to camera servers.
 class Client(LanDevice):
 
-    def __init__(self, HOST='0.0.0.0', PORT=PORT_CAM, name=''):
+    def __init__(self, HOST='0.0.0.0', PORT=PORT_CAM):
         super().__init__()
         self.__running = False
         self.__streaming = False
@@ -100,7 +100,7 @@ class Client(LanDevice):
     ###              NETWORK FUNCTIONALITIES                 ###
     ############################################################
     #########################################################"""
-    def __init_socket(self):
+    def init_socket(self):
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket_commands.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket_polar.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -129,7 +129,7 @@ class Client(LanDevice):
         self.__host = host
         self.__port = port
 
-    def get_streaming_dst(self):
+    def get_streaming_addr(self):
         return self.__host
 
     ## \brief List servers listening to a given port.
@@ -340,9 +340,9 @@ class Client(LanDevice):
                 recv = self.__socket.recv(4096)
                 self.data += recv
 
-                if self.data == b'':
+                if recv == b'':
                     self.stop_stream_client()
-                    return None
+                    return None, False
 
             msg_size = self.data[:img_data_size]
             self.data = self.data[img_data_size:]
@@ -353,17 +353,18 @@ class Client(LanDevice):
                 recv = self.__socket.recv(4096)
                 self.data += recv
 
-                if self.data == b'':
+                if recv == b'':
                     self.stop_stream_client()
-                    return None
+                    return None, False
                 
             frame_data = self.data[:msg_size]
             self.data = self.data[msg_size:]  
             frame = pickle.loads(frame_data, fix_imports=True, encoding="bytes")
             frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
-            return frame
 
-        return None
+            return frame, True
+
+        return None, False
 
     ## \brief Stop connection.
     #
@@ -421,7 +422,7 @@ class Client(LanDevice):
 #  Class with functionalities to share the camera and stream video.
 class Server(LanDevice):
 
-    def __init__(self, HOST='', PORT=PORT_CAM, device=0):
+    def __init__(self, HOST='', PORT=PORT_CAM):
         
         super().__init__()
         self.__running = False
@@ -432,15 +433,17 @@ class Server(LanDevice):
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket_polar = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket_commands = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connections = []
+        self.connections_stream = []
+        self.connections_cmd = []
+        self.connections_polar = []
         self.stream_threads = []
         self.commands_threads = []
-        self.__init_socket()
+        self.init_socket()
 
     ## \brief Initialize socket
     #
     #  Initializes all sockets binding them to specific ports
-    def __init_socket(self):
+    def init_socket(self):
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket_polar.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket_commands.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -472,7 +475,7 @@ class Server(LanDevice):
     ## \brief Start command server thread
     #
     #  Start a thread to receive commands from the client
-    def start_commands_server(self, routine_handler=None):
+    def start_commands_server(self, routine_handler=None, init=False):
 
         if self.__running:
             print("Commands Server already running")
@@ -489,10 +492,12 @@ class Server(LanDevice):
 
         self.__running = True
 
-        self.connections = []
+        self.connections_cmd = []
         while self.__running:
             self.__socket_commands.listen()
             conn, addr = self.__socket_commands.accept()
+            
+            self.connections_cmd.append(conn)
 
             if self.__running:
                 thread = threading.Thread(target=self.__handle_commands, args=(conn, routine_handler, ))
@@ -630,6 +635,13 @@ class Server(LanDevice):
             closer.connect((self.__host, self.__port + 2))
             closer.close()
 
+            for conn in self.connections_cmd:
+                print(conn)
+                # conn.shutdown(socket.SHUT_RDWR)
+                conn.close()
+
+            self.connections_cmd = []
+
             self.__socket_commands.close()
 
         else:
@@ -661,20 +673,20 @@ class Server(LanDevice):
     def __server_listen(self):
 
         self.__streaming = True
-
         while self.__streaming:
             self.__socket.listen()
             conn, addr = self.__socket.accept()
+            conn.setblocking(0)
 
             ''' if we are closing the server (self.__streaming was set to False while accept() was waiting)
                 we don't want to start anything else '''
             if self.__streaming:
 
-                if self.connections == []:
+                if self.connections_stream == []:
                     thread = threading.Thread(target=self.__stream)
                     thread.start()
 
-                self.connections.append(conn)
+                self.connections_stream.append(conn)
 
 
     ## \brief Encode and stream video.
@@ -694,13 +706,14 @@ class Server(LanDevice):
 
                     try:
                         # if one connection fails, closes it and stops sending
+                        conn = None
                         if self.__streaming:
-                            for conn in self.connections:
+                            for conn in self.connections_stream:
                                 conn.sendall(struct.pack('>L', size) + data)
 
                     except:
-                        if conn in self.connections:
-                            self.connections.remove(conn)
+                        if conn in self.connections_stream:
+                            self.connections_stream.remove(conn)
                         conn.close()
 
                 else:
@@ -724,14 +737,15 @@ class Server(LanDevice):
 
             self.__socket.close()
 
-            for conn in self.connections:
+            for conn in self.connections_stream:
+                print(conn)
                 conn.shutdown(socket.SHUT_RDWR)
                 conn.close()
 
             for t in self.stream_threads:
                 t.join()
 
-            self.connections = []
+            self.connections_stream = []
 
             self.cleanup_camera()
 
@@ -811,6 +825,8 @@ class Server(LanDevice):
         while self.__streaming_polar:
             self.__socket_polar.listen()
             conn, addr = self.__socket_polar.accept()
+            self.connections_polar.append(conn)
+
 
             if self.__streaming_polar:
                 thread = threading.Thread(target=self.__stream_polar, args=(conn, ))
@@ -836,6 +852,10 @@ class Server(LanDevice):
 
             closer.connect((self.__host, PORT_POLAR))
             closer.close()
+
+            for conn in self.connections_polar:
+                conn.shutdown(socket.SHUT_RDWR)
+                conn.close()
 
             self.__socket_polar.close()
 
