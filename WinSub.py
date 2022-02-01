@@ -112,10 +112,6 @@ class WinSub(tk.Frame):
             video_thread.start()
             self.threads.append(video_thread)
 
-        # server sends this at the start of each routine
-        elif cmd == 'connected':
-            self.client.set_host(instruction, 9000)
-
         elif cmd == 'show':
 
             self.is_playing_video = False
@@ -131,6 +127,9 @@ class WinSub(tk.Frame):
             stream_thread.start()
             self.threads.append(stream_thread)
             self.connected = True
+
+        elif cmd == 'connect':
+            self.client.set_host(instruction, 9000)
 
         elif cmd == 'stop':
 
@@ -149,7 +148,6 @@ class WinSub(tk.Frame):
     def show_video(self):
 
         while self.is_playing_video:
-
             ret, frame = self.videoCap.read()
 
             if not ret:
@@ -167,10 +165,11 @@ class WinSub(tk.Frame):
         while self.is_receiving_video:
 
             img_data_size = struct.calcsize('>L')
-            frame, ret = self.client.recv_frame(img_data_size)
+            frame = self.client.recv_frame(img_data_size)
 
-            if not ret:
-                return
+            if len(frame) == 0:
+                self.is_receiving_video = False
+                break
 
             if not self.__clear:
                 cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)

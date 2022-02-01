@@ -342,7 +342,7 @@ class Polar():
   #  string "Polar" in the name.
   #
   #  Return list of devices with type bleak.backends.device.BLEDevice
-  # 
+  #
   def list_devices_polar(self, timeout=10.0):
     #loop = asyncio.get_event_loop()
     #result = loop.run_until_complete(list_devices("Polar"))
