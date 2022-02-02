@@ -342,7 +342,7 @@ class Client(LanDevice):
 
                 if self.data == b'':
                     self.stop_stream_client()
-                    return None
+                    return b''
 
             msg_size = self.data[:img_data_size]
             self.data = self.data[img_data_size:]
@@ -355,7 +355,7 @@ class Client(LanDevice):
 
                 if self.data == b'':
                     self.stop_stream_client()
-                    return None
+                    return b''
                 
             frame_data = self.data[:msg_size]
             self.data = self.data[msg_size:]  
@@ -363,7 +363,7 @@ class Client(LanDevice):
             frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
             return frame
 
-        return None
+        return b''
 
     ## \brief Stop connection.
     #
