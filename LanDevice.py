@@ -285,9 +285,10 @@ class Client(LanDevice):
 
         if self.__running:
             print("The client is already connected")
+            
         else:
             self.__running = True
-            self.__socket_commands.connect((self.__host, self.__port + 2))
+            self.__socket_commands.connect((self.__host, PORT_COMMANDS))
 
     ## \brief Sends a command to the server.
     #
@@ -627,7 +628,7 @@ class Server(LanDevice):
             self.__running = False
 
             closer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            closer.connect((self.__host, self.__port + 2))
+            closer.connect((self.__host, PORT_COMMANDS))
             closer.close()
 
             self.__socket_commands.close()

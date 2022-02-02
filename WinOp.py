@@ -552,6 +552,8 @@ class WinMainTk(tk.Frame):
         name, addr = polar_tuple.split(',')
         addr = addr.replace(' ', '')
 
+        client.set_host(ip, PORT_CAM)
+
         client.start_commands_connection()
 
         client.send_command(f'SELECT POLAR {addr}')
