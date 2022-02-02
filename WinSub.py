@@ -17,13 +17,13 @@ import sys
 from PIL import Image
 from PIL import ImageTk
 
-from lancamera import *
+from LanDevice import *
 
 WIN_TITLE = "Server Window"
 
 class WinSub(tk.Frame):
 
-    ## Object constructor.
+    ## \brief Object constructor.
     #  @param self The object pointer.
     #  @param root The object root, usualy created by calling tkinter.Tk().
     def __init__(self, root, host, port):
@@ -48,7 +48,7 @@ class WinSub(tk.Frame):
 
         self.create_frame_main()
         
-    ## Create main frame, composed by a Label object (where the video will be displayed) and a Message box.
+    ## \brief Create main frame, composed by a Label object (where the video will be displayed) and a Message box.
     #  @param self The object pointer.
     def create_frame_main(self):
 
@@ -73,7 +73,7 @@ class WinSub(tk.Frame):
 
         self.width, self.height = self.root.winfo_screenwidth()/2, self.root.winfo_screenheight()/2
 
-    ## Initialize all the servers that will be used during the connection.
+    ## \brief Initialize all the servers that will be used during the connection.
     #  @param self The object pointer.
     def init_server(self):
 
@@ -81,7 +81,7 @@ class WinSub(tk.Frame):
         self.server.start_commands_server(routine_handler=self.execute_command)
         self.server.start_polar_server()
 
-    ## Intepret the instructions received during a ROUTINE command.
+    ## \brief Intepret the instructions received during a ROUTINE command.
     #  @param cmd The command that is supposed to be executed.
     #  @param instruction Indicates the flavor of the command (i.e. color of the screen).
     def execute_command(self, cmd, instruction):
@@ -151,7 +151,7 @@ class WinSub(tk.Frame):
             self.cleanup()
 
 
-    ## Show a locally available video on the App's screen.
+    ## \brief Show a locally available video on the App's screen.
     #  @param self The object pointer.
     def show_video(self):
 
@@ -168,7 +168,7 @@ class WinSub(tk.Frame):
             self.screen.configure(image=imgtk)
             self.screen.imgtk = imgtk
 
-    ## Show the video received, from the other subject,
+    ## \brief Show the video received, from the other subject,
     ## via streaming on the App's screen.
     #  @param self The object pointer.
     def display_frames(self):
@@ -191,9 +191,10 @@ class WinSub(tk.Frame):
                 self.screen.imgtk = imgtk
 
             else:
+                self.screen.configure(image='')
                 time.sleep(0.010)
 
-    ## Stop all threads and servers in order to exit the program cleanly.
+    ## \brief Stop all threads and servers in order to exit the program cleanly.
     #  @param self The object pointer.
     def cleanup(self):
         self.is_receiving_video = False

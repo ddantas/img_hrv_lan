@@ -31,7 +31,7 @@ import datetime as dt
 from PIL import Image
 from PIL import ImageTk
 
-from lancamera import *
+from LanDevice import *
 import Plot
 import Data
 
@@ -39,14 +39,22 @@ WIN_TITLE = "Operator Window"
 IMG_DATA_SIZE = struct.calcsize('>L')
 DEBUG = 1
 
+## \brief HrvScreen class
+# Class responsible for using a connected client to receive, save and plot the ECG and RR data.
 class HrvScreen(tk.Frame):
 
+    ## \brief Object constructor.
+    #  @param self The object pointer.
+    #  @param window The object root, which will always be a Frame inside of a tkinter.Tk() object.
+    #  @param client The Client which will receive the bluetooth data.
+    #  @param path The path where the program will save the received bluetooth data.
+    #  @param name The name of the object, used to differentiate between different files.
     def __init__(self, window, client, path, name='subj'):
         super().__init__(window)
         self.client = client
         self.window = window
         self.recording = False
-        self.__streaming = False
+        self.is_receiving_data = False
         self.name = name
         self.path = path
         self.filename_ecg = self.path + self.name + '_ecg.tsv'
@@ -56,14 +64,18 @@ class HrvScreen(tk.Frame):
         self.hrv_plot = FigureCanvasTkAgg(self.plot.fig, master=self.window)
         self.hrv_plot.get_tk_widget().grid(padx=50, pady=(0,50))
 
+    ## \brief Initiate the plotting figure where the ECG and RR data will be displayed.
+    #  @param self The object pointer.
     def init_plot(self):
         self.plot.fig = Figure(figsize=(5,3))
         self.plot.ax_rr = self.plot.fig.add_subplot(211)
         self.plot.ax_ecg = self.plot.fig.add_subplot(212)
 
+    ## \brief Use its client to receive the ECG and RR data, save it to the disk, and plot it on the screen.
+    #  @param self The object pointer.
     def display_hrv_plot(self):
-        self.__streaming = True
-        while self.__streaming:
+        self.is_receiving_data = True
+        while self.is_receiving_data:
             try:
                 packet = self.client.recv_values()
                 data = packet.decode_packet()
@@ -91,20 +103,26 @@ class HrvScreen(tk.Frame):
 
 
             except Exception as e:
-                self.__streaming = False
+                self.is_receiving_data = False
                 return
 
+    ## \brief Set a flag to tell the display thread to start recording.
+    #  @param self The object pointer.
     def start_recording(self):
         self.recording = True
 
+    ## \brief Set a flag to tell the display thread to stop running.
+    #  @param self The object pointer.
     def cleanup(self):
-        self.__streaming = False
+        self.is_receiving_data = False
 
+## \brief CamScreen class
+# Class responsible for using a connected client to receive, save and display the video streaming data.
 class CamScreen(tk.Frame):
 
     def __init__(self, window, client, path, name='subj'):
         super().__init__(window)
-        self.__streaming = False
+        self.is_receiving_video = False
         self.recording = False
         self.client = client
         self.window = window
@@ -119,16 +137,18 @@ class CamScreen(tk.Frame):
         self.screen = tk.Label(self.frame, width=self.width, height=self.height, bg='black')
         self.screen.grid()
 
+    ## \brief Use its client to receive the video streaming data, save it to the disk, and display it on the screen.
+    #  @param self The object pointer.
     def display_frames(self):
 
-        self.__streaming = True
+        self.is_receiving_video = True
 
-        while self.__streaming:
+        while self.is_receiving_video:
 
             frame = self.client.recv_frame(IMG_DATA_SIZE)
 
             if len(frame) == 0:
-                self.__streaming = False
+                self.is_receiving_video = False
                 self.screen.config(image='', bg='black')
                 break
 
@@ -142,21 +162,21 @@ class CamScreen(tk.Frame):
             self.screen.config(image=imgtk)
             self.screen.imgtk = imgtk
 
-    def connected(self):
-        return self.__streaming
-
+    ## \brief Set a flag to tell the display thread to start recording.
+    #  @param self The object pointer.
     def start_recording(self):
         self.recording = True
 
+    ## \brief Set a flag to tell the display thread to stop running and release the VideoCapture object.
+    #  @param self The object pointer.
     def cleanup(self):
-        print('entrei aqui')
-        self.__streaming = False
+        self.is_receiving_video = False
         self.cap.release()
 
 
 class WinMainTk(tk.Frame):
 
-    ## Object constructor.
+    ## \brief Object constructor.
     #  @param self The object pointer.
     #  @param root The object root, usualy created by calling tkinter.Tk().
     def __init__(self, root):
@@ -168,14 +188,16 @@ class WinMainTk(tk.Frame):
         self.client2 = Client()
         self.scanner = Client()
 
-        self.__set_dir_name()        
+        self.set_dir_name()        
 
         self.create_frame_main()
 
         self.create_frame_toolbox()
 
         self.running_threads = []
-        
+  
+    ## \brief Log all desired events to stdout and a file using a specific template.
+    #  @param text The text that will be written.
     def log(self, text):
         now = datetime.datetime.now()
         log_template = f'{now} Log:'
@@ -184,8 +206,9 @@ class WinMainTk(tk.Frame):
         with open(self.path + 'log.txt', 'a') as log:
             print(log_template + text, file=log)
 
-
-    def __set_dir_name(self):
+    ## \brief Set automatically to what directory the received data (video and [ECG,RR]) will be saved to.
+    #  @param self The object pointer.
+    def set_dir_name(self):
 
         if not os.path.isdir('./data'):
             os.mkdir('./data')
@@ -220,7 +243,9 @@ class WinMainTk(tk.Frame):
         self.log(f"saving the recordings at {self.path}")
 
 
-    ## Create main frame, composed by an ImgCanvas object.
+    ## \brief Create main frame, composed by two frames where
+    ## one of them contains two CamScreens and two HrvScreens 
+    ## and the other one contains a toolbox for all the program's functionalities.
     #  @param self The object pointer.
     def create_frame_main(self):
         self.frame_main = tk.Frame(self.root)
@@ -245,7 +270,7 @@ class WinMainTk(tk.Frame):
         self.hrv_plot2 = HrvScreen(self.frame2_parent, self.client2, self.path, name='subj2')
         self.hrv_plot2.grid(row=1, column=0)
 
-    ## Create toolbox frame, with buttons to access tools.
+    ## \brief Create toolbox frame, with buttons and entry fields to use the tools.
     #  @param self The object pointer.
     def create_frame_toolbox(self):
         self.frame_right = tk.Frame(self.root)
@@ -339,6 +364,9 @@ class WinMainTk(tk.Frame):
         self.schedule_time.grid(row=19, column=0, ipady=IPADY)
         self.btn_schedule.grid(row=20, column=0, ipady=IPADY, pady=(0,10))
 
+    ## \brief Scan the network or one specific host looking for open WinSub servers.
+    #  @param self The object pointer.
+    #  @param scope The scope of the scan, it is either done for the whole network (256 hosts) or 1 specific host.
     def start_scan(self, scope):
 
         if scope not in ['network', 'specific']:
@@ -352,6 +380,8 @@ class WinMainTk(tk.Frame):
 
         thread.start()
 
+    ## \brief Scan the network looking for open WinSub servers. Will be called by self.start_scan.
+    #  @param self The object pointer.
     def scan_network(self):
 
         # hosts = self.scanner.list_servers([9000,9001,9002])
@@ -400,6 +430,8 @@ class WinMainTk(tk.Frame):
 
         tk.messagebox.showinfo(title="Scanning complete", message="HOSTS updated")  
 
+    ## \brief Scan a specific host looking for open WinSub servers. Will be called by self.start_scan.
+    #  @param self The object pointer.
     def scan_host_at(self):
 
         try:
@@ -452,23 +484,23 @@ class WinMainTk(tk.Frame):
         self.combo_box_polar1['values'] = polar_values
         self.combo_box_polar2['values'] = polar_values
          
-
+    ## \brief Selects the camera of a host in the networks and starts a streaming connection to it's server.
+    #  @param self The object pointer.
+    #  @param slot A flag to specify which client to use in the connection and which CamScreen to display the streaming on.
     def select_host_cam(self, slot):
 
         if slot == 1:
             client = self.client1
             screen = self.screen1
             host = self.selected_host_cam1.get()
-            # print(f"Log: HOST {host} selected at CAM {slot}")
 
         else:
             client = self.client2
             screen = self.screen2
             host = self.selected_host_cam2.get()
-            # print(f"Log: HOST {host} selected at CAM {slot}")
 
         self.log(f"HOST {host} selected at CAM {slot}")
-        if screen.connected():
+        if screen.is_receiving_video:
             return
 
         if not host:
@@ -497,7 +529,11 @@ class WinMainTk(tk.Frame):
         client_thread.start()
         self.running_threads.append((client_thread, screen.display_frames))
 
+    ## \brief Selects the Polar Sensor of a host in the network and starts a streaming connection to it's server.
+    #  @param self The object pointer.
+    #  @param slot A flag to specify which client to use in the connection and which HrvScreen to display the streaming on.
     def select_host_polar(self, slot):
+
         if slot == 1:
             client = self.client1
             hrv_plot = self.hrv_plot1
@@ -525,6 +561,8 @@ class WinMainTk(tk.Frame):
         client_thread.start()
         self.running_threads.append((client_thread, hrv_plot.display_hrv_plot))
 
+    ## \brief Selects the routine file that will be used in the capture. 
+    #  @param self The object pointer.
     def select_routine_file(self):
         self.routine_filename = tk.filedialog.askopenfilename()
 
@@ -534,6 +572,8 @@ class WinMainTk(tk.Frame):
         self.log(f"selected {self.routine_filename}")
         self.select_routine_label.config(text=f"\nRoutine\n{self.routine_filename.split('/')[-1]}")
 
+    ## \brief Gets the time at which the routine will start and call a thread to send the routine to all hosts. 
+    #  @param self The object pointer.
     def schedule_routine(self):
 
         try:
@@ -551,7 +591,12 @@ class WinMainTk(tk.Frame):
 
         thread = threading.Thread(target=self.send_routine, args=(time_to_start, ))
         thread.start()
-        
+ 
+    ## \brief Reads the routine file, uses time_to_start to calculate at which clock time the routine should start and
+    ## sends everything to all the hosts that are connected. Saves a copy of the routine file that was used 
+    ## inside the directory that the data will be saved at. Starts recording streaming and Polar data.
+    #  @param self The object pointer.  
+    #  @param time_to_start The time in seconds which should pass before the routine procedure starts.     
     def send_routine(self, time_to_start):
 
         try:
@@ -573,18 +618,18 @@ class WinMainTk(tk.Frame):
 
         routine = str(time_to_start) + '\n' + routine
 
-        if self.screen1.connected():
+        if self.screen1.is_receiving_video:
             print(self.client2.get_streaming_dst())
             self.client1.send_command(f"ROUTINE;s1;{self.client2.get_streaming_dst()}")
 
-        if self.screen2.connected():
+        if self.screen2.is_receiving_video:
             print(self.client1.get_streaming_dst())
             self.client2.send_command(f"ROUTINE;s2;{self.client1.get_streaming_dst()}")
 
-        if self.screen1.connected():
+        if self.screen1.is_receiving_video:
             self.client1.send_command(routine)
 
-        if self.screen2.connected():
+        if self.screen2.is_receiving_video:
             self.client2.send_command(routine)
 
         with open(self.path + 'routine.txt', 'w') as f:
@@ -599,8 +644,9 @@ class WinMainTk(tk.Frame):
         self.screen2.start_recording()
         self.hrv_plot2.start_recording()
 
+    ## \brief Stop all threads and clients in order to exit the program cleanly.
+    #  @param self The object pointer.
     def cleanup(self):
-
 
         self.screen1.cleanup()
         self.screen2.cleanup()
