@@ -192,7 +192,6 @@ class WinSub(tk.Frame):
                 self.screen.imgtk = imgtk
 
             else:
-                self.screen.configure(image='')
                 time.sleep(0.010)
 
     ## \brief Stop all threads and servers in order to exit the program cleanly.
