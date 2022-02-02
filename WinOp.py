@@ -27,7 +27,6 @@ import os
 import threading
 import time
 import datetime as dt
-from multiprocessing import Process
 
 from PIL import Image
 from PIL import ImageTk
@@ -169,19 +168,7 @@ class WinMainTk(tk.Frame):
         self.client2 = Client()
         self.scanner = Client()
 
-        if DEBUG == 0:
-
-            self.__set_dir_name()
-            
-        else:
-
-            if not os.path.isdir('./data'):
-                os.mkdir('./data')          
-
-            if not os.path.isdir('./data/DEBUG'):
-                os.mkdir('./data/DEBUG')      
-
-            self.path = 'data/DEBUG/'
+        self.__set_dir_name()        
 
         self.create_frame_main()
 
@@ -199,12 +186,25 @@ class WinMainTk(tk.Frame):
 
 
     def __set_dir_name(self):
+
         if not os.path.isdir('./data'):
             os.mkdir('./data')
 
+        if DEBUG:
+            if not os.path.isdir('./data/DEBUG'):
+                os.mkdir('./data/DEBUG')      
+
+            self.path = 'data/DEBUG/'
+            self.log(f"saving the recordings at {self.path}")
+            return
+
         dirs = os.listdir('./data')
+
+        if 'DEBUG' in dirs:
+            dirs.remove('DEBUG')
+
         dirs.sort()
-        print(dirs)
+
         num = 0
         for d in dirs:
             dir_num = int(d)
@@ -218,7 +218,6 @@ class WinMainTk(tk.Frame):
         os.mkdir(self.path)
 
         self.log(f"saving the recordings at {self.path}")
-        # print(f"Log: saving the recordings at {self.path}")
 
 
     ## Create main frame, composed by an ImgCanvas object.

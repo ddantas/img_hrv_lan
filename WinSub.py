@@ -163,7 +163,7 @@ class WinSub(tk.Frame):
     def display_frames(self):
 
         while self.is_receiving_video:
-
+            
             img_data_size = struct.calcsize('>L')
             frame = self.client.recv_frame(img_data_size)
 
@@ -172,11 +172,15 @@ class WinSub(tk.Frame):
                 break
 
             if not self.__clear:
+
                 cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
                 img = Image.fromarray(cv2image)
                 imgtk = ImageTk.PhotoImage(image=img)
                 self.screen.configure(image=imgtk)
                 self.screen.imgtk = imgtk
+
+            else:
+                time.sleep(0.010)
 
     def cleanup(self):
         self.is_receiving_video = False
