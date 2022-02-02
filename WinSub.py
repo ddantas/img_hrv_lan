@@ -48,7 +48,7 @@ class WinSub(tk.Frame):
 
         self.create_frame_main()
         
-    ## Create main frame, composed by an ImgCanvas object.
+    ## Create main frame, composed by a Label object (where the video will be displayed) and a Message box.
     #  @param self The object pointer.
     def create_frame_main(self):
 
@@ -73,12 +73,17 @@ class WinSub(tk.Frame):
 
         self.width, self.height = self.root.winfo_screenwidth()/2, self.root.winfo_screenheight()/2
 
+    ## Initialize all the servers that will be used during the connection.
+    #  @param self The object pointer.
     def init_server(self):
 
         self.server.start_stream_server()
         self.server.start_commands_server(routine_handler=self.execute_command)
         self.server.start_polar_server()
 
+    ## Intepret the instructions received during a ROUTINE command.
+    #  @param cmd The command that is supposed to be executed.
+    #  @param instruction Indicates the flavor of the command (i.e. color of the screen).
     def execute_command(self, cmd, instruction):
 
         if cmd == 'message':
@@ -145,6 +150,9 @@ class WinSub(tk.Frame):
             self.screen_frame.config(bg='black')
             self.cleanup()
 
+
+    ## Show a locally available video on the App's screen.
+    #  @param self The object pointer.
     def show_video(self):
 
         while self.is_playing_video:
@@ -160,10 +168,13 @@ class WinSub(tk.Frame):
             self.screen.configure(image=imgtk)
             self.screen.imgtk = imgtk
 
+    ## Show the video received, from the other subject,
+    ## via streaming on the App's screen.
+    #  @param self The object pointer.
     def display_frames(self):
 
         while self.is_receiving_video:
-            
+
             img_data_size = struct.calcsize('>L')
             frame = self.client.recv_frame(img_data_size)
 
@@ -182,6 +193,8 @@ class WinSub(tk.Frame):
             else:
                 time.sleep(0.010)
 
+    ## Stop all threads and servers in order to exit the program cleanly.
+    #  @param self The object pointer.
     def cleanup(self):
         self.is_receiving_video = False
         self.is_playing_video = False
@@ -205,15 +218,6 @@ class WinSub(tk.Frame):
 
 
 if __name__ == "__main__":
-
-    # if len(sys.argv) < 3:
-    #     ("Please specify HOST and PORT for connection.")
-    #     "Usage: python WinSub.py <HOST> <PORT>")
-    #     exit(1)
-
-    # host = sys.argv[1]
-    # port = int(sys.argv[2])
-    # host='192.168.0.29'
 
     host = ''
     port=9000
