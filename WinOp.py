@@ -243,9 +243,10 @@ class WinMainTk(tk.Frame):
         self.log(f"saving the recordings at {self.path}")
 
 
-    ## \brief Create main frame, composed by two frames where
-    ## one of them contains two CamScreens and two HrvScreens 
-    ## and the other one contains a toolbox for all the program's functionalities.
+    ## \brief Create main frame, composed by two frames.
+    #  Create main frame, composed by two frames, one contains two CamScreens and two HrvScreens
+    #  and the other one contains a toolbox for all the program's functionalities.
+    #
     #  @param self The object pointer.
     def create_frame_main(self):
         self.frame_main = tk.Frame(self.root)
@@ -592,9 +593,12 @@ class WinMainTk(tk.Frame):
         thread = threading.Thread(target=self.send_routine, args=(time_to_start, ))
         thread.start()
  
-    ## \brief Reads the routine file, uses time_to_start to calculate at which clock time the routine should start and
-    ## sends everything to all the hosts that are connected. Saves a copy of the routine file that was used 
-    ## inside the directory that the data will be saved at. Starts recording streaming and Polar data.
+
+    ## \brief Reads the routine file, calculate the time to start the routine and sends
+    #  Reads the routine file, uses time_to_start to calculate at which clock time the routine should start and
+    #  sends everything to all the hosts that are connected. Saves a copy of the routine file that was used 
+    #  inside the directory that the data will be saved at. Starts recording streaming and Polar data.
+    #
     #  @param self The object pointer.  
     #  @param time_to_start The time in seconds which should pass before the routine procedure starts.     
     def send_routine(self, time_to_start):

@@ -168,8 +168,9 @@ class WinSub(tk.Frame):
             self.screen.configure(image=imgtk)
             self.screen.imgtk = imgtk
 
-    ## \brief Show the video received, from the other subject,
-    ## via streaming on the App's screen.
+    ## \brief Show the video received on the App's screen.
+    #  Show the video received from the other subject on the App's screen
+    #
     #  @param self The object pointer.
     def display_frames(self):
 
@@ -208,7 +209,6 @@ class WinSub(tk.Frame):
         self.server.stop_polar_server()
 
         self.client.stop_stream_client()
-
 
 
 """#########################################################
