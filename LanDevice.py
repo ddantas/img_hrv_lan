@@ -83,13 +83,12 @@ class LanDevice:
 #  Class with functionalities to query and connect to camera servers.
 class Client(LanDevice):
 
-    def __init__(self, HOST='0.0.0.0', PORT=PORT_CAM):
+    def __init__(self, HOST='0.0.0.0'):
         super().__init__()
         self.__running = False
         self.__streaming = False
         self.__streaming_polar = False
         self.__host = HOST
-        self.__port = PORT
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket_commands = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket_polar = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -125,9 +124,8 @@ class Client(LanDevice):
     #  Set the internal host ip and port that the client will use 
     #  to connect to the server.
 
-    def set_host(self, host, port):
+    def set_host(self, host):
         self.__host = host
-        self.__port = port
 
     def get_streaming_dst(self):
         return self.__host
@@ -326,7 +324,7 @@ class Client(LanDevice):
             print("The client is already running")
         else:
             self.__streaming = True
-            self.__socket.connect((self.__host, self.__port))
+            self.__socket.connect((self.__host, PORT_CAM))
 
     ## \brief Receives frame from the server.
     #
@@ -422,14 +420,13 @@ class Client(LanDevice):
 #  Class with functionalities to share the camera and stream video.
 class Server(LanDevice):
 
-    def __init__(self, HOST='', PORT=PORT_CAM, device=0):
+    def __init__(self, HOST=''):
         
         super().__init__()
         self.__running = False
         self.__streaming = False
         self.__streaming_polar = False
         self.__host = HOST
-        self.__port = PORT
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket_polar = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket_commands = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -720,7 +717,7 @@ class Server(LanDevice):
 
             closer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-            closer.connect((self.__host, self.__port))
+            closer.connect((self.__host, PORT_CAM))
             closer.close()
 
             self.__socket.close()
@@ -758,7 +755,7 @@ class Server(LanDevice):
                 await client.start_notify(Polar.HEART_RATE, self.polar.parse_rr)
                 while self.__streaming_polar:
                     await asyncio.sleep(0.2)
-
+                    print('.', end='')
                     if self.polar.data_ecg.time != []:
 
                         time = self.polar.data_ecg.time
@@ -819,10 +816,12 @@ class Server(LanDevice):
 
     def __stream_polar(self, conn):
 
-        while self.__streaming_polar:
+        active = False        
+        while self.__streaming_polar and not active:
 
-            if self.polar_mac:
+            if self.polar_mac != '':
                 asyncio.run(self.receive_both(self.polar_mac, conn))
+                active = True
 
             else:
                 time.sleep(0.1)
@@ -858,5 +857,5 @@ if __name__ == "__main__":
   print("Local cameras: %s" % cams)
   c.list_servers((PORT_CAM))
 
-  server = Server(HOST='0.0.0.0', PORT=9000)
-  client = Client(HOST='127.0.0.1', PORT=9000)
+  server = Server(HOST='0.0.0.0')
+  client = Client(HOST='127.0.0.1')

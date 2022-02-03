@@ -26,13 +26,12 @@ class WinSub(tk.Frame):
     ## \brief Object constructor.
     #  @param self The object pointer.
     #  @param root The object root, usualy created by calling tkinter.Tk().
-    def __init__(self, root, host, port):
+    def __init__(self, root, host):
 
         self.frame = tk.Frame.__init__(self, root)
 
         self.root = root
         self.host = host
-        self.port = port
         self.videoCap = None
         self.connected = False
         self.__clear = False
@@ -42,7 +41,7 @@ class WinSub(tk.Frame):
         # self.root.attributes('-fullscreen', 1)
 
         self.server = Server()
-        self.client = Client(HOST=self.host, PORT=self.port)
+        self.client = Client(HOST=self.host)
 
         self.init_server()
 
@@ -92,10 +91,8 @@ class WinSub(tk.Frame):
 
         elif cmd == 'clear':
 
-            self.is_playing_video = False
-            # self.is_receiving_video = False
-
             self.__clear = True
+            self.is_playing_video = False
 
             self.screen.config(image='', bg=instruction)
             self.screen_frame.config(bg=instruction)
@@ -134,7 +131,7 @@ class WinSub(tk.Frame):
             self.connected = True
 
         elif cmd == 'connect':
-            self.client.set_host(instruction, 9000)
+            self.client.set_host(instruction)
 
         elif cmd == 'stop':
 
@@ -172,7 +169,15 @@ class WinSub(tk.Frame):
     #  Show the video received from the other subject on the App's screen
     #
     #  @param self The object pointer.
+    """
+    the flag 'screen_cleared' is used to cover the race condition between the 'clear' command
+    and the thread that is executing this function when the command is executed.
+    The thread might be inside of 'if self.__clear == False': and change the screen back to the
+    last frame captured after we already cleared it.
+    """
     def display_frames(self):
+
+        screen_cleared = False
 
         while self.is_receiving_video:
 
@@ -181,18 +186,27 @@ class WinSub(tk.Frame):
 
             if len(frame) == 0:
                 self.is_receiving_video = False
-                break
+                self.screen.config(image='')
+                break                    
 
-            if not self.__clear:
+            if self.__clear == False:
 
                 cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
                 img = Image.fromarray(cv2image)
                 imgtk = ImageTk.PhotoImage(image=img)
                 self.screen.configure(image=imgtk)
                 self.screen.imgtk = imgtk
+                screen_cleared = False
 
             else:
+
+                if screen_cleared == False:
+                    self.screen.config(image='')
+                    screen_cleared = True
+
                 time.sleep(0.010)
+
+        self.screen.config(image='')
 
     ## \brief Stop all threads and servers in order to exit the program cleanly.
     #  @param self The object pointer.
@@ -219,16 +233,13 @@ class WinSub(tk.Frame):
 
 if __name__ == "__main__":
 
-    host = ''
-    port=9000
-    
     root = tk.Tk()
     root.rowconfigure(0, weight=1)
     root.columnconfigure(0, weight=1)
     root.title(WIN_TITLE)
     root.minsize(300,300)
 
-    app = WinSub(root, host, port)
+    app = WinSub(root, '')
     app.mainloop()
     app.cleanup()
 

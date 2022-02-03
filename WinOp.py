@@ -516,15 +516,18 @@ class WinMainTk(tk.Frame):
         device = host[1]
         split_host = host[0].split(';')
         host = split_host[0]
-        port = 9000 
 
-        client.set_host(host, port)
+        client.set_host(host)
 
-        client.start_commands_connection()
+        try :
+            client.start_commands_connection()
+            client.send_command(f'SELECT CAM {device}')
+            client.start_stream_connection()
 
-        client.send_command(f'SELECT CAM {device}')
+        except:
+            tk.messagebox.showinfo(title="Problems with HOST", message="Could not make the connection")
+            return
 
-        client.start_stream_connection()
         client_thread = threading.Thread(target=screen.display_frames)
 
         client_thread.start()
@@ -552,7 +555,7 @@ class WinMainTk(tk.Frame):
         name, addr = polar_tuple.split(',')
         addr = addr.replace(' ', '')
 
-        client.set_host(ip, PORT_CAM)
+        client.set_host(ip)
 
         client.start_commands_connection()
 
