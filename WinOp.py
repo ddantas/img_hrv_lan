@@ -79,6 +79,7 @@ class HrvScreen(tk.Frame):
             try:
                 packet = self.client.recv_values()
                 data = packet.decode_packet()
+                print(self.name[-1], end="")
 
                 if data.datatype == Data.TYPE_ECG:
 
