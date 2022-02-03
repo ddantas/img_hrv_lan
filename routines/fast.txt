@@ -64,7 +64,52 @@
 22.0; label; block1; Imitator1
 22.0; message; s1; “Please imitate your partner.”
 22.0; message; s2; “Please gesticulate.”
+#No View No Motion
+23.0; label; block1; NVNM
+23.0; message; all; “No View No Motion”
+23.0; clear; all;         #8811AA
+#Spontaneous Imitation
+24.0; label; block1; SI
+24.0; message; all; “Please gesticulate. Imitate if you wish.”
+24.0; show; s1; c2
+24.0; show; s2; c1
+#No View No Motion
+25.0; label; block1; NVNM
+25.0; message; all; “No View No Motion”
+25.0; clear; all;         #771188
+#Spontaneous Imitation
+26.0; label; block1; SI
+26.0; message; all; “Please gesticulate. Imitate if you wish.”
+26.0; show; s1; c2
+26.0; show; s2; c1
+#No View No Motion
+27.0; label; block1; NVNM
+27.0; message; all; “No View No Motion”
+27.0; clear; all;         #661177
+#Spontaneous Imitation
+28.0; label; block1; SI
+28.0; message; all; “Please gesticulate. Imitate if you wish.”
+28.0; show; s1; c2
+28.0; show; s2; c1
+#No View No Motion
+29.0; label; block1; NVNM
+29.0; message; all; “No View No Motion”
+29.0; clear; all;         #552266
+#Spontaneous Imitation
+30.0; label; block1; SI
+30.0; message; all; “Please gesticulate. Imitate if you wish.”
+30.0; show; s1; c2
+30.0; show; s2; c1
+#No View No Motion
+31.0; label; block1; NVNM
+31.0; message; all; “No View No Motion”
+31.0; clear; all;         #8811AA
+#Spontaneous Imitation
+32.0; label; block1; SI
+32.0; message; all; “Please gesticulate. Imitate if you wish.”
+32.0; show; s1; c2
+32.0; show; s2; c1
 #End
-23.0; message; all; “Please stop. Thank you!”
-23.0; clear; all; #888888
-23.0; stop; all
+33.0; message; all; “Please stop. Thank you!”
+33.0; clear; all; #888888
+33.0; stop; all
