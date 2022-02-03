@@ -558,11 +558,15 @@ class WinMainTk(tk.Frame):
 
         client.set_host(ip)
 
-        client.start_commands_connection()
+        try:
+            client.start_commands_connection()
+            client.send_command(f'SELECT POLAR {addr}')
+            client.start_polar_connection()
 
-        client.send_command(f'SELECT POLAR {addr}')
-
-        client.start_polar_connection()
+        except:
+            tk.messagebox.showinfo(title="Problems with HOST", message="Could not make the connection")
+            return
+            
         print('checkpoint')
         client_thread = threading.Thread(target=lambda : hrv_plot.display_hrv_plot())
         client_thread.start()
@@ -676,7 +680,18 @@ class WinMainTk(tk.Frame):
             print(thread, target)
             thread.join()
 
+    def reset_capture(self):
 
+        self.cleanup()
+
+        self.screen1 = CamScreen.__init__(self.frame1_parent, self.client1, self.path, name='subj1')
+        self.hrv_plot1 = HrvScreen.__init__(self.frame1_parent, self.client1, self.path, name='subj1')
+
+        self.screen2 = CamScreen.__init__(self.frame2_parent, self.client2, self.path, name='subj2')
+        self.hrv_plot2 = HrvScreen.__init__(self.frame2_parent, self.client2, self.path, name='subj2')
+
+        self.client1 = Client()
+        self.client2 = Client()
 
 """#########################################################
 ############################################################
