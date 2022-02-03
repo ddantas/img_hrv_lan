@@ -1,0 +1,70 @@
+#No View No Motion
+0.0; label; block1; NVNM
+0.0; message; all; “Welcome!”
+0.0; clear; all;         #FFFF00
+#Primary colors
+1.0; message; all; “Color 00FF00”
+1.0; clear; all;         #00FF00
+2.0; message; all; “Color 00FF00”
+2.0; clear; all;         #00FF00
+3.0; message; all; “Color 0000FF”
+3.0; clear; all;         #0000FF
+4.0; message; all; “Color FFFF00”
+4.0; clear; all;         #FFFF00
+5.0; message; all; “Color 00FFFF”
+5.0; clear; all;         #00FFFF
+6.0; message; all; “Color FFFF00”
+6.0; clear; all;         #FFFF00
+#Grayscale
+7.0; message; all; “Color EEEEEE”
+7.0; clear; all;         #EEEEEE
+8.0; message; all; “Color CCCCCC”
+8.0; clear; all;         #CCCCCC
+9.0; message; all; “Color AAAAAA”
+9.0; clear; all;         #AAAAAA
+10.0; message; all; “Color 888888”
+10.0; clear; all;         #888888
+11.0; message; all; “Color 666666”
+11.0; clear; all;         #666666
+12.0; message; all; “Color 444444”
+12.0; clear; all;         #444444
+13.0; message; all; “Color 222222”
+13.0; clear; all;         #222222
+14.0; message; all; “Color 000000”
+14.0; clear; all;         #000000
+#No View No Motion
+15.0; label; block1; NVNM
+15.0; message; all; “No View No Motion”
+15.0; clear; all;         #AA22FF
+#No View Motion
+16.0; label; block1; NVM
+16.0; message; all; “Please gesticulate.”
+#Spontaneous Imitation
+17.0; label; block1; SI
+17.0; message; all; “Please gesticulate. Imitate if you wish.”
+17.0; show; s1; c2
+17.0; show; s2; c1
+#Induced Imitation IImitator 1
+18.0; label; block1; Imitator1
+18.0; message; s1; “Please imitate your partner.”
+18.0; message; s2; “Please gesticulate.”
+#No View No Motion
+19.0; label; block1; NVNM
+19.0; message; all; “No View No Motion”
+19.0; clear; all;         #8811AA
+#No View Motion
+20.0; label; block1; NVM
+20.0; message; all; “Please gesticulate.”
+#Spontaneous Imitation
+21.0; label; block1; SI
+21.0; message; all; “Please gesticulate. Imitate if you wish.”
+21.0; show; s1; c2
+21.0; show; s2; c1
+#Induced Imitation IImitator 1
+22.0; label; block1; Imitator1
+22.0; message; s1; “Please imitate your partner.”
+22.0; message; s2; “Please gesticulate.”
+#End
+23.0; message; all; “Please stop. Thank you!”
+23.0; clear; all; #888888
+23.0; stop; all
