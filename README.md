@@ -26,7 +26,7 @@ Note: during development and testing, the server used was Ubuntu's default NTP s
 - Finally, apply the synchronization to the hardware clock of every computer. Even though your system is synced with the internet, your hardware might still be following your previous clock. To do that, run `sudo hwclock --systohc` on your terminal.
 
 Use `timedatectl` to check if everything is working. If everything is fine, all the clocks should be synced and you should have these two lines as part of the output of your command :
-> **System clock synchronized: yes
-> NTP service: active** 
+> **System clock synchronized: yes**
+> **NTP service: active** 
 
 You can run the command in a loop to see how time is passing in every clock using `for i in {1.1000}; do timedatectl; done;`.
