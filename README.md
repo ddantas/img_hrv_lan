@@ -27,6 +27,6 @@ Note: during development and testing, the server used was Ubuntu's default NTP s
 
 Use `timedatectl` to check if everything is working. If everything is fine, all the clocks should be synced and you should have these two lines as part of the output of your command :
 > **System clock synchronized: yes**\
-> **NTP service: active** \
+> **NTP service: active** 
 
 You can run the command in a loop to see how time is passing in every clock using `for i in {1.1000}; do timedatectl; done;`.
