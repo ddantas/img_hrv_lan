@@ -99,8 +99,14 @@ class Client(LanDevice):
     ###              NETWORK FUNCTIONALITIES                 ###
     ############################################################
     #########################################################"""
-    def __init_socket(self):
+    def restart_sockets(self):
+        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__socket_commands = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__socket_polar = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    def init_sockets(self):
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.__socket.setblocking(0)
         self.__socket_commands.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket_polar.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
@@ -340,7 +346,7 @@ class Client(LanDevice):
                 self.data += recv
 
                 if self.data == b'':
-                    self.stop_stream_client()
+                    # self.stop_stream_client()
                     return b''
 
             msg_size = self.data[:img_data_size]
@@ -353,7 +359,7 @@ class Client(LanDevice):
                 self.data += recv
 
                 if self.data == b'':
-                    self.stop_stream_client()
+                    # self.stop_stream_client()
                     return b''
                 
             frame_data = self.data[:msg_size]
@@ -495,9 +501,11 @@ class Server(LanDevice):
             self.connections_cmd.append(conn)
 
             if self.__running:
+                print('new')
                 thread = threading.Thread(target=self.__handle_commands, args=(conn, routine_handler, ))
                 thread.start()
                 self.commands_threads.append((thread, conn))
+                print(self.commands_threads)
 
 
     ## \brief Handle received commands.
@@ -506,7 +514,6 @@ class Server(LanDevice):
     #  A function that treats the command should be specified as an argument (routine_handler)
     #  in order to respond the received command properly.
     def __handle_commands(self, conn, routine_handler):
-
         quit = False
         while self.__running:
 
@@ -524,6 +531,8 @@ class Server(LanDevice):
                     devices = self.list_cams_local(5)
                 else:
                     devices = self.list_polars_local()
+
+                print(devices)
                 try:
                     conn.sendall(str(devices).encode())
                 except:
@@ -677,6 +686,7 @@ class Server(LanDevice):
             if self.__streaming:
 
                 if self.connections == []:
+                    conn.setblocking(0)
                     thread = threading.Thread(target=self.__stream)
                     thread.start()
 

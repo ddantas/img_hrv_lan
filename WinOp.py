@@ -105,7 +105,8 @@ class HrvScreen(tk.Frame):
 
             except Exception as e:
                 self.is_receiving_data = False
-                return
+                break
+
 
     ## \brief Set a flag to tell the display thread to start recording.
     #  @param self The object pointer.
@@ -116,6 +117,11 @@ class HrvScreen(tk.Frame):
     #  @param self The object pointer.
     def cleanup(self):
         self.is_receiving_data = False
+
+    def reset_screen(self, path):
+        self.path = path
+        self.filename_ecg = self.path + self.name + '_ecg.tsv'
+        self.filename_rr = self.path + self.name + '_rr.tsv'
 
 ## \brief CamScreen class
 # Class responsible for using a connected client to receive, save and display the video streaming data.
@@ -150,7 +156,7 @@ class CamScreen(tk.Frame):
 
             if len(frame) == 0:
                 self.is_receiving_video = False
-                self.screen.config(image='', bg='black')
+                # self.screen.config(image='', bg='black')
                 break
 
             if self.recording:
@@ -163,8 +169,10 @@ class CamScreen(tk.Frame):
             self.screen.config(image=imgtk)
             self.screen.imgtk = imgtk
 
-    ## \brief Set a flag to tell the display thread to start recording.
-    #  @param self The object pointer.
+        self.screen.config(image='', bg='black')
+
+    # ## \brief Set a flag to tell the display thread to start recording.
+    # #  @param self The object pointer.
     def start_recording(self):
         self.recording = True
 
@@ -174,7 +182,8 @@ class CamScreen(tk.Frame):
         self.is_receiving_video = False
         self.cap.release()
 
-    def reset_screen(self):
+    def reset_screen(self, path):
+        self.path = path
         self.cap = cv2.VideoWriter(self.path + self.name + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (640,480))
 
 
@@ -186,7 +195,7 @@ class WinMainTk(tk.Frame):
     def __init__(self, root):
 
         self.frame = tk.Frame.__init__(self, root)
-
+        self.stop = False
         self.root = root
         self.client1 = Client()
         self.client2 = Client()
@@ -198,7 +207,6 @@ class WinMainTk(tk.Frame):
 
         self.create_frame_toolbox()
 
-        self.running_threads = []
   
     ## \brief Log all desired events to stdout and a file using a specific template.
     #  @param text The text that will be written.
@@ -343,6 +351,12 @@ class WinMainTk(tk.Frame):
         self.combo_box_polar2 = ttk.Combobox(self.frame_right, width=BUTTON_WIDTH, textvariable=self.selected_host_polar2)
         self.combo_box_polar2['state'] = 'readonly'
 
+        self.stop_btn = tk.Button(self.frame_right, text="FINISH CAPTURE", padx=3, width=BUTTON_WIDTH, 
+                                        command=self.cleanup)
+
+        self.reset_btn = tk.Button(self.frame_right, text="RESET CAPTURE", padx=3, width=BUTTON_WIDTH, 
+                                        command=self.reset_capture)
+
         self.btn_scan.grid(row=0, column=0, ipady=IPADY, pady=(10,0))
 
         self.scan_at.grid(row=1, column=0, ipady=IPADY)
@@ -370,7 +384,9 @@ class WinMainTk(tk.Frame):
 
         self.schedule_time_label.grid(row=18, column=0, ipady=IPADY)
         self.schedule_time.grid(row=19, column=0, ipady=IPADY)
-        self.btn_schedule.grid(row=20, column=0, ipady=IPADY, pady=(0,10))
+        self.btn_schedule.grid(row=20, column=0, ipady=IPADY, pady=IPADY)
+        self.reset_btn.grid(row=21, column=0, ipady=IPADY, pady=IPADY)
+        self.stop_btn.grid(row=22, column=0, ipady=IPADY, pady=(0,10))
 
     ## \brief Scan the network or one specific host looking for open WinSub servers.
     #  @param self The object pointer.
@@ -557,7 +573,6 @@ class WinMainTk(tk.Frame):
         client_thread = threading.Thread(target=screen.display_frames)
 
         client_thread.start()
-        self.running_threads.append((client_thread, screen.display_frames))
 
     ## \brief Selects the Polar Sensor of a host in the network and starts a streaming connection to it's server.
     #  @param self The object pointer.
@@ -595,7 +610,6 @@ class WinMainTk(tk.Frame):
         print('checkpoint')
         client_thread = threading.Thread(target=lambda : hrv_plot.display_hrv_plot())
         client_thread.start()
-        self.running_threads.append((client_thread, hrv_plot.display_hrv_plot))
 
     ## \brief Selects the routine file that will be used in the capture. 
     #  @param self The object pointer.
@@ -701,19 +715,18 @@ class WinMainTk(tk.Frame):
         self.client2.stop_stream_client()
         self.client2.stop_polar_client()
 
-        for thread, target in self.running_threads:
-            print(thread, target)
-            thread.join()
+        self.stop = True
 
     def reset_capture(self):
+        pass
 
-        self.cleanup()
-        self.set_dir_name()
-        self.screen1.reset_screen()
-        self.client1 = Client()
-        self.screen2.reset_screen()
-        self.client2 = Client()
+    def check_stop(self):
 
+        if self.stop or DEBUG:
+            self.root.destroy()
+
+        else:
+            tk.messagebox.showwarning(title="Unable to Quit the APP", message="Click on FINISH CAPTURE first")
 
 """#########################################################
 ############################################################
@@ -729,7 +742,6 @@ if __name__ == "__main__":
     root.columnconfigure(0, weight=1)
     root.title(WIN_TITLE)
     root.minsize(300,300)
-
     app = WinMainTk(root)
+    root.protocol("WM_DELETE_WINDOW", app.check_stop)
     app.mainloop()
-    app.cleanup()
