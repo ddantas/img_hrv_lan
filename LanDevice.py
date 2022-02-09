@@ -431,6 +431,7 @@ class Server(LanDevice):
         self.__socket_polar = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__socket_commands = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connections = []
+        self.connections_cmd = []
         self.stream_threads = []
         self.commands_threads = []
         self.__init_socket()
@@ -491,11 +492,12 @@ class Server(LanDevice):
         while self.__running:
             self.__socket_commands.listen()
             conn, addr = self.__socket_commands.accept()
+            self.connections_cmd.append(conn)
 
             if self.__running:
                 thread = threading.Thread(target=self.__handle_commands, args=(conn, routine_handler, ))
                 thread.start()
-                self.commands_threads.append(thread)
+                self.commands_threads.append((thread, conn))
 
 
     ## \brief Handle received commands.
@@ -615,6 +617,7 @@ class Server(LanDevice):
                 break
 
         conn.close()
+        self.connections_cmd.remove(conn)
 
     ## \brief Stop command server thread
     #
@@ -628,6 +631,11 @@ class Server(LanDevice):
             closer.connect((self.__host, PORT_COMMANDS))
             closer.close()
 
+            for conn in self.connections_cmd:
+                print(conn)
+                conn.close()
+
+            # self.__socket_commands.shutdown(socket.SHUT_RDWR)
             self.__socket_commands.close()
 
         else:
@@ -720,10 +728,10 @@ class Server(LanDevice):
             closer.connect((self.__host, PORT_CAM))
             closer.close()
 
+            # self.__socket.shutdown(socket.SHUT_RDWR)
             self.__socket.close()
 
             for conn in self.connections:
-                conn.shutdown(socket.SHUT_RDWR)
                 conn.close()
 
             for t in self.stream_threads:
@@ -837,6 +845,7 @@ class Server(LanDevice):
             closer.connect((self.__host, PORT_POLAR))
             closer.close()
 
+            # self.__socket_polar.shutdown(socket.SHUT_RDWR)
             self.__socket_polar.close()
 
             # self.cleanup()

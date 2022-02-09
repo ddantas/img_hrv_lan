@@ -174,6 +174,9 @@ class CamScreen(tk.Frame):
         self.is_receiving_video = False
         self.cap.release()
 
+    def reset_screen(self):
+        self.cap = cv2.VideoWriter(self.path + self.name + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (640,480))
+
 
 class WinMainTk(tk.Frame):
 
@@ -289,8 +292,11 @@ class WinMainTk(tk.Frame):
         self.selected_host_polar1 = tk.StringVar()
         self.selected_host_polar2 = tk.StringVar()
 
+        # self.btn_scan = tk.Button(self.frame_right, text="Scan the network", padx=3, width=BUTTON_WIDTH,
+        #                             command=lambda: self.start_scan('network'))
+
         self.btn_scan = tk.Button(self.frame_right, text="Scan the network", padx=3, width=BUTTON_WIDTH,
-                                    command=lambda: self.start_scan('network'))
+                                    command=lambda: self.reset_capture())
 
         self.scan_at = tk.Label(self.frame_right,text="\nScan specific host", padx=3)
         self.btn_scan_at = tk.Button(self.frame_right, text="Scan host", padx=3, width=BUTTON_WIDTH,
@@ -442,14 +448,33 @@ class WinMainTk(tk.Frame):
                 ip = self.scanner.get_local_machine_ip()
                 print(ip)
         except:
-            tk.messagebox.showerror(title="Error Scheduling Routine", message="The specified time is not a number")
+            tk.messagebox.showerror(title="Error Obtaining IP to scan", message="Please specify the host IP correctly")
             return
 
-        cameras = self.scanner.list_cams_at(ip)
-        polars = self.scanner.list_polars_at(ip)
+        try:
+            cameras = self.scanner.list_cams_at(ip)
+        except TimeoutError:
+            tk.messagebox.showerror(title="Error Scanning HOST", message="Scan timed out, HOST doesn't exist")
+            return
+        except ConnectionRefusedError:
+            tk.messagebox.showerror(title="Error Scanning HOST", message="This HOST is not running a Server")
+            return
 
+        try:
+            polars = self.scanner.list_polars_at(ip)
+        except:            
+            tk.messagebox.showerror(title="Error Scanning for polar devices", message="Please check your server and devices")
+            return
+
+        found = 0
         if not cameras:
-            tk.messagebox.showwarning(title="Scanning complete", message="No cameras found")  
+            tk.messagebox.showwarning(title="Scanning complete", message="No cameras found")
+            found += 1
+        if not polars:
+            tk.messagebox.showwarning(title="Scanning complete", message="No Polar Sensors found")  
+            found += 1
+
+        if found == 0:
             return
 
         tk.messagebox.showinfo(title="Scanning complete", message="HOSTS updated")  
@@ -566,7 +591,7 @@ class WinMainTk(tk.Frame):
         except:
             tk.messagebox.showinfo(title="Problems with HOST", message="Could not make the connection")
             return
-            
+
         print('checkpoint')
         client_thread = threading.Thread(target=lambda : hrv_plot.display_hrv_plot())
         client_thread.start()
@@ -683,15 +708,12 @@ class WinMainTk(tk.Frame):
     def reset_capture(self):
 
         self.cleanup()
-
-        self.screen1 = CamScreen.__init__(self.frame1_parent, self.client1, self.path, name='subj1')
-        self.hrv_plot1 = HrvScreen.__init__(self.frame1_parent, self.client1, self.path, name='subj1')
-
-        self.screen2 = CamScreen.__init__(self.frame2_parent, self.client2, self.path, name='subj2')
-        self.hrv_plot2 = HrvScreen.__init__(self.frame2_parent, self.client2, self.path, name='subj2')
-
+        self.set_dir_name()
+        self.screen1.reset_screen()
         self.client1 = Client()
+        self.screen2.reset_screen()
         self.client2 = Client()
+
 
 """#########################################################
 ############################################################
