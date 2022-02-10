@@ -113,6 +113,9 @@ class HrvScreen(tk.Frame):
     def start_recording(self):
         self.recording = True
 
+    def stop_recording(self):
+        self.recording = False
+
     ## \brief Set a flag to tell the display thread to stop running.
     #  @param self The object pointer.
     def cleanup(self):
@@ -175,6 +178,9 @@ class CamScreen(tk.Frame):
     # #  @param self The object pointer.
     def start_recording(self):
         self.recording = True
+
+    def stop_recording(self):
+        self.recording = False
 
     ## \brief Set a flag to tell the display thread to stop running and release the VideoCapture object.
     #  @param self The object pointer.
@@ -384,7 +390,7 @@ class WinMainTk(tk.Frame):
 
         self.schedule_time_label.grid(row=18, column=0, ipady=IPADY)
         self.schedule_time.grid(row=19, column=0, ipady=IPADY)
-        self.btn_schedule.grid(row=20, column=0, ipady=IPADY, pady=IPADY)
+        self.btn_schedule.grid(row=20, column=0, ipady=IPADY, pady=(10,0))
         self.reset_btn.grid(row=21, column=0, ipady=IPADY, pady=IPADY)
         self.stop_btn.grid(row=22, column=0, ipady=IPADY, pady=(0,10))
 
@@ -491,7 +497,6 @@ class WinMainTk(tk.Frame):
             found -= 1
 
         if found == 0:
-            print('sai')
             return
 
         tk.messagebox.showinfo(title="Scanning complete", message="HOSTS updated")  
@@ -664,6 +669,9 @@ class WinMainTk(tk.Frame):
         for line in routine_lines:
             if line.strip()[0] != '#':
                 routine += line
+        i = -1
+        while '#' in routine_lines[i]:
+            i -= 1
 
         now = dt.datetime.now()
         time_to_start = int(now.timestamp()) + int(time_to_start)
@@ -698,6 +706,14 @@ class WinMainTk(tk.Frame):
         self.screen2.start_recording()
         self.hrv_plot2.start_recording()
 
+        time_to_end = routine_lines[i].split(';')[0]
+        time.sleep(float(time_to_end))
+
+        self.screen1.stop_recording()
+        self.hrv_plot1.stop_recording()
+        self.screen2.stop_recording()
+        self.hrv_plot2.stop_recording()
+        
     ## \brief Stop all threads and clients in order to exit the program cleanly.
     #  @param self The object pointer.
     def cleanup(self):
