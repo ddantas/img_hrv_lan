@@ -106,7 +106,6 @@ class Client(LanDevice):
 
     def init_sockets(self):
         self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.__socket.setblocking(0)
         self.__socket_commands.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__socket_polar.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
@@ -687,7 +686,6 @@ class Server(LanDevice):
             if self.__streaming:
 
                 if self.connections == []:
-                    conn.setblocking(0)
                     thread = threading.Thread(target=self.__stream)
                     thread.start()
 
