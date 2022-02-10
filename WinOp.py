@@ -482,15 +482,16 @@ class WinMainTk(tk.Frame):
             tk.messagebox.showerror(title="Error Scanning for polar devices", message="Please check your server and devices")
             return
 
-        found = 0
+        found = 2
         if not cameras:
             tk.messagebox.showwarning(title="Scanning complete", message="No cameras found")
-            found += 1
+            found -= 1
         if not polars:
             tk.messagebox.showwarning(title="Scanning complete", message="No Polar Sensors found")  
-            found += 1
+            found -= 1
 
         if found == 0:
+            print('sai')
             return
 
         tk.messagebox.showinfo(title="Scanning complete", message="HOSTS updated")  
@@ -718,7 +719,13 @@ class WinMainTk(tk.Frame):
         self.stop = True
 
     def reset_capture(self):
-        pass
+        self.cleanup()
+        self.stop = False
+        host1 = self.client1.get_streaming_dst()
+        host2 = self.client1.get_streaming_dst()
+        self.client1.__init__(HOST=host1)
+        self.client2.__init__(HOST=host2)
+
 
     def check_stop(self):
 

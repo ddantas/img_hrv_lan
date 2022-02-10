@@ -609,18 +609,19 @@ class Server(LanDevice):
                 device = split_data[1]
 
                 if device == b'CAM':
+                    if not self.cam:
+                        index = int(split_data[2].decode())
 
-                    index = int(split_data[2].decode())
+                        try:
+                            self.init_camera(index)
 
-                    try:
-                        self.init_camera(index)
-
-                    except:
-                        print("Error selecting camera")
+                        except:
+                            print("Error selecting camera")
                 else:
-                    print(split_data)
-                    addr = split_data[2]
-                    self.polar_mac = addr.decode()
+                    if not self.polar_mac:
+                        print(split_data)
+                        addr = split_data[2]
+                        self.polar_mac = addr.decode()
 
             if data == b'':
                 break
