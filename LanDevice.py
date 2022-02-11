@@ -305,7 +305,6 @@ class Client(LanDevice):
 
         if self.__running:
             self.__running = False
-            self.__socket_commands.shutdown(socket.SHUT_RDWR)
             self.__socket_commands.close()
 
         else:
@@ -373,7 +372,6 @@ class Client(LanDevice):
 
         if self.__streaming:
             self.__streaming = False
-            self.__socket.shutdown(socket.SHUT_RDWR)
             self.__socket.close()
 
         else:
@@ -411,7 +409,6 @@ class Client(LanDevice):
 
         if self.__streaming_polar:
             self.__streaming_polar = False
-            self.__socket_polar.shutdown(socket.SHUT_RDWR)
             self.__socket_polar.close()
 
         else:
@@ -641,7 +638,6 @@ class Server(LanDevice):
                 print(conn)
                 conn.close()
 
-            # self.__socket_commands.shutdown(socket.SHUT_RDWR)
             self.__socket_commands.close()
 
         else:
@@ -734,7 +730,6 @@ class Server(LanDevice):
             closer.connect((self.__host, PORT_CAM))
             closer.close()
 
-            # self.__socket.shutdown(socket.SHUT_RDWR)
             self.__socket.close()
 
             for conn in self.connections:
@@ -851,7 +846,6 @@ class Server(LanDevice):
             closer.connect((self.__host, PORT_POLAR))
             closer.close()
 
-            # self.__socket_polar.shutdown(socket.SHUT_RDWR)
             self.__socket_polar.close()
 
             # self.cleanup()
