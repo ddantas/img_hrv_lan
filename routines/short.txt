@@ -19,4 +19,4 @@
 45.0; message; s2; “Please gesticulate.”
 60.0; message; all; “Please stop. Thank you!”
 60.0; clear; all; #FFFF00
-60.0; stop; all
+#60.0; stop; all
