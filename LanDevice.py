@@ -229,9 +229,6 @@ class Client(LanDevice):
     #  Pings via ARP protocol all hosts in the network to obtain the IPs of available hosts in the network
     #  (MUST RUN AS ROOT TO PING VIA ARP)
     #
-        #  Uncomment this to debug.
-    #def get_ips(self, network='192.168.0.0/24'):
-    #    return self.__get_ips(network)
     def __get_ips(self, network='192.168.0.0/24'):
 
         ans,unans = sp.srp(sp.Ether(dst="ff:ff:ff:ff:ff:ff")/sp.ARP(pdst=network),timeout=2)
@@ -297,9 +294,9 @@ class Client(LanDevice):
     #
     #  Sends the specified command to the server
     def send_command(self, command):
-
-        msg_len = struct.pack('i', len(command))
-        self.__socket_commands.sendall(msg_len + command.encode())
+        command_bytes = command.encode()
+        msg_len = struct.pack('i', len(command_bytes))
+        self.__socket_commands.sendall(msg_len + command_bytes)
 
     ## \brief Stop connection.
     #
@@ -550,14 +547,14 @@ class Server(LanDevice):
                 cur_time = 0
                 size = struct.unpack('i', conn.recv(struct.calcsize ('i')))[0]
 
-                routine = ''
-
-                while len(routine) < size:
-                    packet = conn.recv(size-len(routine)).decode()
-                    if not packet:
+                packet = b''
+                while len(packet) < size:
+                    data = conn.recv(size-len(packet))
+                    if not data:
                         break
-                    routine += packet
+                    packet += data
 
+                routine = packet.decode()
                 lines = routine.split('\n')
                 
                 now = datetime.datetime.now().timestamp()

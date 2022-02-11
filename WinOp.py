@@ -489,6 +489,7 @@ class WinMainTk(tk.Frame):
             return
 
         found = 2
+        
         if not cameras:
             tk.messagebox.showwarning(title="Scanning complete", message="No cameras found")
             found -= 1
@@ -669,8 +670,10 @@ class WinMainTk(tk.Frame):
         for line in routine_lines:
             if line.strip()[0] != '#':
                 routine += line
+
+        print(routine)
         i = -1
-        while '#' in routine_lines[i]:
+        while '#' == routine_lines[i].strip()[0]:
             i -= 1
 
         now = dt.datetime.now()
