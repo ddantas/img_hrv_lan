@@ -37,7 +37,7 @@ import Data
 
 WIN_TITLE = "Operator Window"
 IMG_DATA_SIZE = struct.calcsize('>L')
-DEBUG = 1
+DEBUG = 0
 
 ## \brief HrvScreen class
 # Class responsible for using a connected client to receive, save and plot the ECG and RR data.
@@ -122,6 +122,8 @@ class HrvScreen(tk.Frame):
         self.is_receiving_data = False
 
     def reset_screen(self, path):
+        self.plot = Plot.Plot()
+        self.init_plot()
         self.path = path
         self.filename_ecg = self.path + self.name + '_ecg.tsv'
         self.filename_rr = self.path + self.name + '_rr.tsv'
@@ -239,10 +241,12 @@ class WinMainTk(tk.Frame):
             self.log(f"saving the recordings at {self.path}")
             return
 
-        dirs = os.listdir('./data')
-
-        if 'DEBUG' in dirs:
-            dirs.remove('DEBUG')
+        dirs_ = os.listdir('./data')
+        dirs = []
+        
+        for d in dirs_:
+            if d.isnumeric():
+                dirs.append(d)
 
         dirs.sort()
 
@@ -489,7 +493,7 @@ class WinMainTk(tk.Frame):
             return
 
         found = 2
-        
+
         if not cameras:
             tk.messagebox.showwarning(title="Scanning complete", message="No cameras found")
             found -= 1
