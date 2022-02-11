@@ -111,6 +111,9 @@ class HrvScreen(tk.Frame):
     ## \brief Set a flag to tell the display thread to start recording.
     #  @param self The object pointer.
     def start_recording(self):
+        now = time.time()
+        self.client.polar.data_rr.t0 = Data.TIME_UNINITIALIZED
+        self.client.polar.data_ecg.t0 = Data.TIME_UNINITIALIZED
         self.recording = True
 
     def stop_recording(self):
