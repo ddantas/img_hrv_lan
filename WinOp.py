@@ -37,7 +37,7 @@ import Data
 
 WIN_TITLE = "Operator Window"
 IMG_DATA_SIZE = struct.calcsize('>L')
-DEBUG = 0
+DEBUG = 1
 
 ## \brief HrvScreen class
 # Class responsible for using a connected client to receive, save and plot the ECG and RR data.
@@ -122,8 +122,6 @@ class HrvScreen(tk.Frame):
         self.is_receiving_data = False
 
     def reset_screen(self, path):
-        self.plot = Plot.Plot()
-        self.init_plot()
         self.path = path
         self.filename_ecg = self.path + self.name + '_ecg.tsv'
         self.filename_rr = self.path + self.name + '_rr.tsv'
@@ -192,6 +190,7 @@ class CamScreen(tk.Frame):
 
     def reset_screen(self, path):
         self.path = path
+        self.cap.release()
         self.cap = cv2.VideoWriter(self.path + self.name + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (640,480))
 
 
@@ -243,7 +242,7 @@ class WinMainTk(tk.Frame):
 
         dirs_ = os.listdir('./data')
         dirs = []
-        
+
         for d in dirs_:
             if d.isnumeric():
                 dirs.append(d)
@@ -742,13 +741,12 @@ class WinMainTk(tk.Frame):
         self.stop = True
 
     def reset_capture(self):
-        self.cleanup()
-        self.stop = False
-        host1 = self.client1.get_streaming_dst()
-        host2 = self.client1.get_streaming_dst()
-        self.client1.__init__(HOST=host1)
-        self.client2.__init__(HOST=host2)
+        self.set_dir_name()
+        self.screen1.reset_screen(self.path)
+        self.screen2.reset_screen(self.path)
 
+        self.hrv_plot1.reset_screen(self.path)
+        self.hrv_plot2.reset_screen(self.path)
 
     def check_stop(self):
 
