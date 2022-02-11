@@ -79,7 +79,7 @@ class HrvScreen(tk.Frame):
             try:
                 packet = self.client.recv_values()
                 data = packet.decode_packet()
-                print(self.name[-1], end="")
+                # print(self.name[-1], end="")
 
                 if data.datatype == Data.TYPE_ECG:
 
@@ -682,7 +682,7 @@ class WinMainTk(tk.Frame):
         now = dt.datetime.now()
         time_to_start = int(now.timestamp()) + int(time_to_start)
 
-        self.log(f"routine is schedule to start at {now + dt.timedelta(seconds=int(time_to_start))}")
+        self.log(f"routine is schedule to start at {dt.datetime.fromtimestamp(time_to_start)}")
 
         routine = str(time_to_start) + '\n' + routine
 
@@ -741,6 +741,7 @@ class WinMainTk(tk.Frame):
         self.stop = True
 
     def reset_capture(self):
+
         self.set_dir_name()
         self.screen1.reset_screen(self.path)
         self.screen2.reset_screen(self.path)
