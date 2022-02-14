@@ -3,7 +3,7 @@ import Data
 
 class Packet:
 	def __init__(self, tp, content):
-		self.tp = int(tp)
+		self.tp = tp
 		self.content = content
 
 	def construct_packet(self):

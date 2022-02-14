@@ -17,8 +17,8 @@ import numpy as np
 import pandas as pd
 import os
 
-TYPE_RR  = 1
-TYPE_ECG = 2
+TYPE_RR  = "R"
+TYPE_ECG = "E"
 
 TIME_UNINITIALIZED = -1
 

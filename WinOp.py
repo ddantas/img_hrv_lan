@@ -37,7 +37,7 @@ import Data
 
 WIN_TITLE = "Operator Window"
 IMG_DATA_SIZE = struct.calcsize('>L')
-DEBUG = 1
+DEBUG = 0
 
 ## \brief HrvScreen class
 # Class responsible for using a connected client to receive, save and plot the ECG and RR data.
@@ -77,9 +77,10 @@ class HrvScreen(tk.Frame):
         self.is_receiving_data = True
         while self.is_receiving_data:
             try:
+                n = self.name[-1]
+                print(n, end="")
                 packet = self.client.recv_values()
                 data = packet.decode_packet()
-                # print(self.name[-1], end="")
 
                 if data.datatype == Data.TYPE_ECG:
 
@@ -104,8 +105,9 @@ class HrvScreen(tk.Frame):
 
 
             except Exception as e:
-                self.is_receiving_data = False
-                break
+                print("Exception at %s: %s: %s" % (os.path.basename(__file__), "display_hrv_plot", e))
+            #    self.is_receiving_data = False
+            #    break
 
 
     ## \brief Set a flag to tell the display thread to start recording.

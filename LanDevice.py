@@ -401,7 +401,7 @@ class Client(LanDevice):
         packet_content = self.__socket_polar.recv(packet_len)
 
         while len(packet_content) < packet_len:
-            packet_content += self.__socket_polar.recv(packet_len)
+            packet_content += self.__socket_polar.recv(packet_len - len(packet_content))
 
         return Packet.Packet(packet_type.decode(), packet_content.decode())
 
@@ -558,12 +558,6 @@ class Server(LanDevice):
                 delay = int(lines[0]) - now
 
                 time.sleep(delay)
-
-                if self.__streaming_polar:
-                    self.polar.data_ecg.t0 = Data.TIME_UNINITIALIZED
-                    self.polar.data_rr.t0 = Data.TIME_UNINITIALIZED
-                    self.polar.data_rr.clear()
-                    self.polar.data_ecg.clear()
 
                 lines = lines[1:]
 

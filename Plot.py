@@ -15,8 +15,8 @@
 
 import matplotlib.pyplot as plt
 
-TYPE_RR  = 1
-TYPE_ECG = 2
+TYPE_RR  = "R"
+TYPE_ECG = "E"
 
 DATA_MAX_LEN = 500
 
