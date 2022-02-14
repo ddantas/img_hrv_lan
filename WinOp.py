@@ -111,9 +111,6 @@ class HrvScreen(tk.Frame):
     ## \brief Set a flag to tell the display thread to start recording.
     #  @param self The object pointer.
     def start_recording(self):
-        now = time.time()
-        self.client.polar.data_rr.t0 = Data.TIME_UNINITIALIZED
-        self.client.polar.data_ecg.t0 = Data.TIME_UNINITIALIZED
         self.recording = True
 
     def stop_recording(self):
@@ -141,8 +138,8 @@ class CamScreen(tk.Frame):
         self.window = window
         self.name = name
         self.path = path
-        self.cap = cv2.VideoWriter(self.path + self.name + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (640,480))
         self.width = 600
+        self.cap = cv2.VideoWriter(self.path + self.name + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (600,480))
         self.height = 480
         self.frame = tk.Frame(self.window, bg='black', height=480, width=600)
         self.frame.grid_propagate(False)
@@ -237,7 +234,7 @@ class WinMainTk(tk.Frame):
 
         if DEBUG:
             if not os.path.isdir('./data/DEBUG'):
-                os.mkdir('./data/DEBUG')      
+                os.mkdir('./data/DEBUG')
 
             self.path = 'data/DEBUG/'
             self.log(f"saving the recordings at {self.path}")
@@ -396,7 +393,7 @@ class WinMainTk(tk.Frame):
 
         self.schedule_time_label.grid(row=18, column=0, ipady=IPADY)
         self.schedule_time.grid(row=19, column=0, ipady=IPADY)
-        self.btn_schedule.grid(row=20, column=0, ipady=IPADY, pady=(10,0))
+        self.btn_schedule.grid(row=20, column=0, ipady=IPADY, pady=(10,40))
         self.reset_btn.grid(row=21, column=0, ipady=IPADY, pady=IPADY)
         self.stop_btn.grid(row=22, column=0, ipady=IPADY, pady=(0,10))
 

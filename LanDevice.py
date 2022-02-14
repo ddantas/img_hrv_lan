@@ -559,6 +559,12 @@ class Server(LanDevice):
 
                 time.sleep(delay)
 
+                if self.__streaming_polar:
+                    self.polar.data_ecg.t0 = Data.TIME_UNINITIALIZED
+                    self.polar.data_rr.t0 = Data.TIME_UNINITIALIZED
+                    self.polar.data_rr.clear()
+                    self.polar.data_ecg.clear()
+
                 lines = lines[1:]
 
                 for line in lines:
