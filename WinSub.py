@@ -32,7 +32,6 @@ class WinSub(tk.Frame):
 
         self.root = root
         self.host = host
-        self.videoCap = None
         self.connected = False
         self.__clear = False
         self.is_receiving_video = False
@@ -99,8 +98,6 @@ class WinSub(tk.Frame):
 
         elif cmd == 'play': 
 
-            self.is_receiving_video = False
-
             if not os.path.exists(instruction):
                 return
 
@@ -116,13 +113,12 @@ class WinSub(tk.Frame):
 
         elif cmd == 'show':
 
-            self.is_playing_video = False
-
-            self.is_receiving_video = True
+            self.is_playing_video = False 
             self.__clear = False
+            self.is_receiving_video = True
 
             if self.connected:
-                return
+                return 
 
             self.client.start_stream_connection()
             stream_thread = threading.Thread(target=self.display_frames)
@@ -139,7 +135,7 @@ class WinSub(tk.Frame):
                 self.is_receiving_video = False
                 self.client.stop_stream_client()
 
-            elif self.is_playing_video:
+            if self.is_playing_video:
                 self.is_playing_video = False
                 self.videoCap.release()
 
@@ -189,7 +185,7 @@ class WinSub(tk.Frame):
                 self.screen.config(image='')
                 break                    
 
-            if self.__clear == False:
+            if self.__clear == False and self.is_playing_video == False:
 
                 cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
                 img = Image.fromarray(cv2image)

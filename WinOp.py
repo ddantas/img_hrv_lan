@@ -123,7 +123,7 @@ class HrvScreen(tk.Frame):
     def cleanup(self):
         self.is_receiving_data = False
 
-    def reset_screen(self, path):
+    def setup_recording(self, path):
         self.path = path
         self.filename_ecg = self.path + self.name + '_ecg.tsv'
         self.filename_rr = self.path + self.name + '_rr.tsv'
@@ -190,9 +190,12 @@ class CamScreen(tk.Frame):
         self.is_receiving_video = False
         self.cap.release()
 
-    def reset_screen(self, path):
+    def setup_recording(self, path):
         self.path = path
-        self.cap.release()
+
+        if self.cap:
+            self.cap.release()
+
         self.cap = cv2.VideoWriter(self.path + self.name + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (640,480))
 
 
@@ -206,11 +209,10 @@ class WinMainTk(tk.Frame):
         self.frame = tk.Frame.__init__(self, root)
         self.stop = False
         self.root = root
+        self.path = ''
         self.client1 = Client()
         self.client2 = Client()
         self.scanner = Client()
-
-        self.set_dir_name()        
 
         self.create_frame_main()
 
@@ -315,7 +317,7 @@ class WinMainTk(tk.Frame):
         #                             command=lambda: self.start_scan('network'))
 
         self.btn_scan = tk.Button(self.frame_right, text="Scan the network", padx=3, width=BUTTON_WIDTH,
-                                    command=lambda: self.reset_capture())
+                                    command=lambda: self.start_scan('network'))
 
         self.scan_at = tk.Label(self.frame_right,text="\nScan specific host", padx=3)
         self.btn_scan_at = tk.Button(self.frame_right, text="Scan host", padx=3, width=BUTTON_WIDTH,
@@ -365,9 +367,6 @@ class WinMainTk(tk.Frame):
         self.stop_btn = tk.Button(self.frame_right, text="FINISH CAPTURE", padx=3, width=BUTTON_WIDTH, 
                                         command=self.cleanup)
 
-        self.reset_btn = tk.Button(self.frame_right, text="RESET CAPTURE", padx=3, width=BUTTON_WIDTH, 
-                                        command=self.reset_capture)
-
         self.btn_scan.grid(row=0, column=0, ipady=IPADY, pady=(10,0))
 
         self.scan_at.grid(row=1, column=0, ipady=IPADY)
@@ -396,7 +395,7 @@ class WinMainTk(tk.Frame):
         self.schedule_time_label.grid(row=18, column=0, ipady=IPADY)
         self.schedule_time.grid(row=19, column=0, ipady=IPADY)
         self.btn_schedule.grid(row=20, column=0, ipady=IPADY, pady=(10,40))
-        self.reset_btn.grid(row=21, column=0, ipady=IPADY, pady=IPADY)
+
         self.stop_btn.grid(row=22, column=0, ipady=IPADY, pady=(0,10))
 
     ## \brief Scan the network or one specific host looking for open WinSub servers.
@@ -673,16 +672,23 @@ class WinMainTk(tk.Frame):
 
         routine = ''
         for line in routine_lines:
-            if line.strip()[0] != '#':
+            print(line)
+            stripped = line.strip()
+            if stripped and stripped[0] != '#':
                 routine += line
 
-        print(routine)
         i = -1
-        while '#' == routine_lines[i].strip()[0]:
+        quit = False
+        while not quit:
+            stripped = routine_lines[i].strip()
+            if stripped and '#' != stripped[0]:
+                quit = True
             i -= 1
 
         now = dt.datetime.now()
         time_to_start = int(now.timestamp()) + int(time_to_start)
+
+        self.setup_recording()
 
         self.log(f"routine is schedule to start at {dt.datetime.fromtimestamp(time_to_start)}")
 
@@ -742,14 +748,14 @@ class WinMainTk(tk.Frame):
 
         self.stop = True
 
-    def reset_capture(self):
+    def setup_recording(self):
 
         self.set_dir_name()
-        self.screen1.reset_screen(self.path)
-        self.screen2.reset_screen(self.path)
+        self.screen1.setup_recording(self.path)
+        self.screen2.setup_recording(self.path)
 
-        self.hrv_plot1.reset_screen(self.path)
-        self.hrv_plot2.reset_screen(self.path)
+        self.hrv_plot1.setup_recording(self.path)
+        self.hrv_plot2.setup_recording(self.path)
 
     def check_stop(self):
 
