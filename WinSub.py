@@ -32,6 +32,7 @@ class WinSub(tk.Frame):
 
         self.root = root
         self.host = host
+        self.videoCap = None
         self.connected = False
         self.__clear = False
         self.is_receiving_video = False
@@ -152,7 +153,7 @@ class WinSub(tk.Frame):
             ret, frame = self.videoCap.read()
 
             if not ret:
-                return
+                break
 
             # frame = cv2.resize(frame, (self.width, self.height))
             cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
@@ -161,6 +162,7 @@ class WinSub(tk.Frame):
             self.screen.configure(image=imgtk)
             self.screen.imgtk = imgtk
 
+        self.screen.config(image='')
     ## \brief Show the video received on the App's screen.
     #  Show the video received from the other subject on the App's screen
     #
