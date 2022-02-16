@@ -33,6 +33,7 @@ class WinSub(tk.Frame):
         self.root = root
         self.host = host
         self.videoCap = None
+        self.videoFps = 0
         self.connected = False
         self.__clear = False
         self.is_receiving_video = False
@@ -108,6 +109,7 @@ class WinSub(tk.Frame):
                 self.videoCap.release()
 
             self.videoCap = cv2.VideoCapture(instruction)
+            self.videoFps = self.videoCap.get(cv2.CAP_PROP_FPS)
             video_thread = threading.Thread(target=self.show_video)
             video_thread.start()
             self.threads.append(video_thread)
@@ -150,6 +152,8 @@ class WinSub(tk.Frame):
     def show_video(self):
 
         while self.is_playing_video:
+
+            start = time.time()
             ret, frame = self.videoCap.read()
 
             if not ret:
@@ -161,6 +165,12 @@ class WinSub(tk.Frame):
             imgtk = ImageTk.PhotoImage(image=img)
             self.screen.configure(image=imgtk)
             self.screen.imgtk = imgtk
+
+            # calculate screen refresh rate
+            delay = max(0, time.time() - start)
+            delta = max(0 , 1/self.videoFps - delay)
+
+            time.sleep(delta)
 
         self.screen.config(image='')
     ## \brief Show the video received on the App's screen.
