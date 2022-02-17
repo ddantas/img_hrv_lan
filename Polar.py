@@ -132,22 +132,34 @@ class Polar():
     #loop.run_until_complete(print_uuids(d))
     asyncio.run(self.print_uuids(d))
 
-  ################################
-  ## REVISAR INICIO
+  ## \brief Parse the packet with ECG data received from the Polar device.
+  #
+  # Parse the packet with ECG data received from the Polar device into numeric
+  # values and stores it in a Data object.
+  #
+  #  @param sender Parameter required in functions called by client.start_notify
+  #  @param packet Bytearray with heart rate measurement received from the Polar device.
+  #        data (bytearray): Heart rate measurement received from the device
+  #            Byte 0 - if 0x00 then packet is not empty.
+  #            Byte 1..8 - Timestamp from Polar internal clock.
+  #            Byte 10..12, 13..15 etc - INT24 ECG potential in microvolts.
+  def parse_ecg(self, sender, packet):
+    if packet[0] == 0x00:
 
-  ## Bit conversion of the Hexadecimal stream
-  def parse_ecg(self, sender, data):
-    if data[0] == 0x00:
+      """
       if self.data_ecg.t0 == Data.TIME_UNINITIALIZED:
         # Sets t0 to current time
         self.data_ecg.t0 = time.time()
         t = 0.0
       else:
         t = time.time() - self.data_ecg.t0
-      timestamp = self.convert_to_unsigned_long(data, 1, 8)
+      """
+
+      timestamp = self.convert_to_unsigned_long(packet, 1, 8)
       step = 3
-      samples = data[10:]
+      samples = packet[10:]
       offset = 0
+      t = time.time()
       while offset < len(samples):
         ecg = self.convert_array_to_signed_int(samples, offset, step)
         offset += step
@@ -155,69 +167,65 @@ class Polar():
         self.data_ecg.timestamp.extend([timestamp])
         self.data_ecg.values_ecg.extend([ecg])
 
-      # if(self.data_ecg.time != []):
-      #   print("data_ecg.time length: %d" % len(self.data_ecg.time))
-      #   print("data_ecg.time: " + str(self.data_ecg.time))
-      #   print("data_ecg.timestamp length: %d" % len(self.data_ecg.timestamp))
-      #   print("data_ecg.timestamp: " + str(self.data_ecg.timestamp))
-      #   print("data_ecg.values_ecg length: %d" % len(self.data_ecg.values_ecg))
-      #   print("data_ecg.values_ecg: " + str(self.data_ecg.values_ecg))
-
 
   def convert_array_to_signed_int(self, data, offset, length):
-      return int.from_bytes(
-          bytearray(data[offset : offset + length]), byteorder="little", signed=True,
-      )
+    return int.from_bytes(
+      bytearray(data[offset : offset + length]), byteorder="little", signed=True,
+    )
 
 
   def convert_to_unsigned_long(self, data, offset, length):
-      return int.from_bytes(
-          bytearray(data[offset : offset + length]), byteorder="little", signed=False,
-      )
+    return int.from_bytes(
+      bytearray(data[offset : offset + length]), byteorder="little", signed=False,
+    )
 
 
-  def parse_rr(self, sender, data):
-      '''
-      Parse the data receive from the device into numeric values and stores it in
-      a Data object.
+  ## \brief Parse the packet with heart rate data received from the Polar device.
+  #
+  # Parse the packet with heart rate data received from the Polar device into numeric
+  # values and stores it in a Data object.
+  #
+  #  @param sender Parameter required in functions called by client.start_notify
+  #  @param packet Bytearray with heart rate measurement received from the Polar device.
+  #      Byte 0 - Flags:
+  #          Bit 0 - Heart rate value format: 0 -> UINT8 bpm, 1 -> UINT16 bpm
+  #          Bit 1..2 - Sensor contact status
+  #          Bit 3 - Energy expended status
+  #          Bit 4 - RR-interval: 0 -> No values are preent, 1 -> One or more
+  #          values are present
+  #          Bit 5, 6 and 7 - Unused
+  #      Byte 1 - UINT8 BPM
+  #      Byte 2..3, 4..5 etc - UINT16 RR intervals
+  def parse_rr(self, sender, packet):
+    # If the 4th bit of the bytearray is 1 then RR reads were sent
+    print(len(packet), sep="")
+    if (packet[0] & 0b00010000):
 
-      Parameters:
-          data (bytearray): Heart rate measurement received from the device
-              Byte 0 - Flags:
-                  Bit 0 - Heart rate value format: 0 -> UINT8 bpm, 1 -> UINT16 bpm
-                  Bit 1..2 - Sensor contact status
-                  Bit 3 - Energy expended status
-                  Bit 4 - RR-interval: 0 -> No values are preent, 1 -> One or more
-                  values are present
-                  Bit 5, 6 and 7 - Unused
-              Byte 1 - UINT8 BPM
-              Byte 2..5 - UINT16 RR intervals
-      '''
-      # If the 4th bit of the bytearray is 1 then RR reads were sent
-      if (data[0] & 0b00010000):
+      """
+      if self.data_rr.t0 == Data.TIME_UNINITIALIZED:
+        # Sets t0 to current time
+        self.data_rr.t0 = time.time()
+        t = 0.0
+      else:
+        t = time.time() - self.data_rr.t0
+      """
 
-          if self.data_rr.t0 == Data.TIME_UNINITIALIZED:
-              # Sets t0 to current time
-              self.data_rr.t0 = time.time()
-              t = 0.0
-          else:
-              t = time.time() - self.data_rr.t0
+      t = time.time()
 
-          self.data_rr.time.append(t)
+      # packet[1] is the HR read
+      hr = packet[1]
 
-          # data[1] is the HR read
-          hr = data[1]
-          self.data_rr.values_hr.append(hr)
-
-          # data[2:4] is the RR interval
-          # Convert the bytes in UINT16
-          rr = int.from_bytes(data[2:4], byteorder='little', signed=False)
-          self.data_rr.values_rr.append(rr)
-
-          # print(f'Time: {t} s,   Heart rate: {hr} bpm,       RR-interval: {rr} ms')
-
-  ################################
-  ## REVISAR FIM
+      # packet[2:4] is the RR interval times 1/1024s
+      # Convert the bytes to UINT16
+      len_packet = len(packet)
+      i = 2
+      while (i < len_packet):
+        rr = int.from_bytes(packet[2:4], byteorder='little', signed=False)
+        self.data_rr.time.append(t)
+        self.data_rr.values_hr.append(hr)
+        self.data_rr.values_rr.append(rr)
+        print("i = %d, rr = %f" %(i, rr))
+        i += 2
 
 
   ## \brief Receive RR data from Polar sensor
