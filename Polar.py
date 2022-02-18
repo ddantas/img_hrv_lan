@@ -45,6 +45,8 @@ PMD_CONTROL = "FB005C81-02E7-F387-1CAD-8ACD2D8DF0C8"
 PMD_DATA = "FB005C82-02E7-F387-1CAD-8ACD2D8DF0C8"
 ## UUID for Request of ECG Stream ##
 ECG_WRITE = bytearray([0x02, 0x00, 0x00, 0x01, 0x82, 0x00, 0x01, 0x01, 0x0E, 0x00])
+## Polar H10 ECG sampling frequency for reference. Value can not be changed.
+ECG_SAMPLING_FREQ = 130
 
 FLAG_INTERRUPT = False
 FLAG_SAVE_RR = True
