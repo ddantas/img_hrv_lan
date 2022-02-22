@@ -164,6 +164,18 @@ class CamScreen(tk.Frame):
                 # self.screen.config(image='', bg='black')
                 break
 
+            # Code to write date and time on frame
+            # begin
+            t = time.time()
+            str_time = time.strftime("%m/%d/%Y, %H:%M:%S", time.gmtime(t))
+            str_ms = "%03d" % int(round(t % 1, 3)*1000)
+            str_time = str_time + "." + str_ms
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            thick = 1
+            scale = 0.6
+            cv2.putText(frame, str_time, (20,20), font, scale, (0,255,0), thick, cv2.LINE_AA)
+            # end
+
             if self.recording:
                 self.cap.write(frame)
 
@@ -652,6 +664,81 @@ class WinMainTk(tk.Frame):
 
         thread = threading.Thread(target=self.send_routine, args=(time_to_start, ))
         thread.start()
+
+    ## \brief Converts routine to elan annotation file
+    #    
+    #  Converts routine text to annotation in TSV format to be imported by ELAN software.
+    #  The annotation is defined by routine label command.
+    #
+    #  @param self The object pointer.  
+    #  @param routine_filename Name of routine file
+    #  @param output_path Folder where elan_import.txt wil be saved.
+    def routine_to_elan(self, routine_filename, output_path):
+        
+        try:
+            with open(routine_filename) as f:
+                routine_lines = f.readlines()
+        except:            
+            tk.messagebox.showerror(title="Error in routine_to_elan", message="Unable to open routine file %s" % routine_filename)
+            return
+
+        arr_label_time = []
+        arr_label_str = []
+        arr_msg1_time = []
+        arr_msg1_str = []
+        arr_msg2_time = []
+        arr_msg2_str = []
+        max_time = 0.0
+        for l in routine_lines:
+            if l[0] == "#":
+                continue
+
+            cols = l.split(";")
+            for i in range(len(cols)):
+                cols[i] = cols[i].strip("\n ")
+
+            t = float(cols[0])
+            if len(arr_label_time) and t > arr_label_time[-1]:
+                max_time = t
+            if len(arr_msg1_time) and t > arr_msg1_time[-1]:
+                max_time = t
+            if len(arr_msg2_time) and t > arr_msg2_time[-1]:
+                max_time = t
+                
+            if cols[1] == "label":
+                arr_label_time.append(t)
+                arr_label_str.append(cols[3])
+                block = cols[2]
+
+            if cols[1] == "message":
+                if cols[2] == "s1" or cols[2] == "all":
+                    arr_msg1_time.append(t)
+                    arr_msg1_str.append(cols[3])
+                if cols[2] == "s2" or cols[2] == "all":
+                    arr_msg2_time.append(t)
+                    arr_msg2_str.append(cols[3])
+                    
+        arr_label_time.append(max_time)
+        arr_msg1_time.append(max_time)
+        arr_msg2_time.append(max_time)
+        
+        output_filename = os.path.join(output_path, "elan_import.txt")
+        try:
+            of = open(output_filename, "w")
+        except:
+            tk.messagebox.showerror(title="Error in routine_to_elan", message="Unable to open output file %s" % (output_filename))
+            return
+            
+        of.write("Begin_Time; End_Time; Tier; Annotation\n")
+        of.write("%f; %f; block; %s\n" % (arr_label_time[0], max_time, block))
+        for i in range(len(arr_label_str)):
+            of.write("%f; %f; label; %s\n" % (arr_label_time[i], arr_label_time[i+1], arr_label_str[i]))
+        for i in range(len(arr_msg1_str)):
+            of.write("%f; %f; msg1; %s\n" % (arr_msg1_time[i], arr_msg1_time[i+1], arr_msg1_str[i]))
+        for i in range(len(arr_msg2_str)):
+            of.write("%f; %f; msg2; %s\n" % (arr_msg2_time[i], arr_msg2_time[i+1], arr_msg2_str[i]))
+        of.close()
+                
  
 
     ## \brief Reads the routine file, calculate the time to start the routine and sends
@@ -710,6 +797,8 @@ class WinMainTk(tk.Frame):
 
         with open(self.path + 'routine.txt', 'w') as f:
             f.write(routine)
+
+        self.routine_to_elan(self.routine_filename, self.path)
             
         now = datetime.datetime.now().timestamp()
         delay = int(time_to_start) - now
