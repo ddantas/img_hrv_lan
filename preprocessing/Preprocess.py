@@ -36,32 +36,88 @@ def print_tree(tree):
   level = 0
   print_tree_level(level, root)
 
-def create_file_from_template(video1, video2, template_file, time_values):
+def construct_dict_from_eaf(eaf_file):
 
-  xml_file = et.parse(template_file)
+  tree = et.parse(eaf_file)
 
-  root = xml_file.getroot()
+  root = tree.getroot()
+
   q = []
   q.append(root)
-  annotations_dict = {}
+  tiers_dict = {}
+  time_slots_dict = {}
   while len(q) > 0:
 
-    # print(q, q.pop())
     root = q.pop()
     # print(root.text, root.tag, root.attrib)
     first_time = 0
+
     for child in root:
 
-      if child.tag == 'TIME_SLOT':
-        # do something
-        pass
-      elif child.tag == 'ALIGNABLE_ANNOTATION':
-        print(child.attrib, child.text)
+      if root.tag == 'TIER':
+        cur_tier = root.attrib['TIER_ID'].strip()
+        tiers_dict[cur_tier] = {}
 
+      if child.tag == 'TIME_SLOT':
+        time_slots_dict[child.attrib['TIME_SLOT_ID']] = child.attrib['TIME_VALUE']
+
+      elif child.tag == 'ALIGNABLE_ANNOTATION':
+
+        for c in child:
+          value = c.text
+
+        tiers_dict[cur_tier][child.attrib['ANNOTATION_ID']] = {'TIME_SLOT_BEGIN': child.attrib['TIME_SLOT_REF1'], \
+                                                                    'TIME_SLOT_END': child.attrib['TIME_SLOT_REF2'], \
+                                                                    'ANNOTATION_VALUE': value}
       q.append(child)
 
-def annotate_from_routine_file(routine_file):
-  pass
+
+  for tier, tier_dict in tiers_dict.items():
+    for annot_id in tier_dict.keys():
+      annot_dict = tiers_dict[tier][annot_id]
+      begin_ts_id = annot_dict['TIME_SLOT_BEGIN']
+      end_ts_id = annot_dict['TIME_SLOT_END']
+      annot_dict['TIME_SLOT_BEGIN'] = time_slots_dict[begin_ts_id]
+      annot_dict['TIME_SLOT_END'] = time_slots_dict[end_ts_id]
+
+  time_end = max(time_slots_dict.values())
+  time_end = int(time_end)//1000+1
+  return tiers_dict, time_end
+
+def create_file_from_dict(file):
+
+  tiers_dict, time_end = construct_dict_from_eaf(file)
+  with open('teste.tsv', 'w') as f:
+
+    print('sec\t', end='', file=f)
+    for tier in tiers_dict.keys():
+      print(tier + '\t', end='', file=f)
+    print('\n', end='', file=f)
+
+    for i in range(time_end):
+
+      content = {}
+
+      for tier in tiers_dict.keys():
+
+        for annot_id, annot_dict in tiers_dict[tier].items():
+
+          begin_ts = annot_dict['TIME_SLOT_BEGIN']
+          end_ts = annot_dict['TIME_SLOT_END']
+          value = annot_dict['ANNOTATION_VALUE']
+
+          if i >= int(begin_ts)//1000 and i <= int(end_ts)//1000:
+            v = value
+            break
+          else:
+            v = ''
+
+        content[tier] = v
+
+      print(str(i) + '\t', end='', file=f)
+      for tier in tiers_dict.keys():
+        print(content[tier] + '\t', end='', file=f)
+      print('\n', end='', file=f)
 
 """#########################################################
 ############################################################
@@ -78,9 +134,7 @@ if __name__ == "__main__":
   #main(input_path)
   elan_filename = os.path.join(input_path, "annotation.eaf")
   tree = et.parse(elan_filename)
-  # print_tree(tree)
-  # create_file_from_template('../data/a003/subj1.mp4', '', './default.eaf', [])
-  create_file_from_template('../data/a003/subj1.mp4', '', '../data/a003/annotation.eaf', [])
+  create_file_from_dict('annotation.eaf')
   #root = tree.getroot()
   #for child in root:
   #  print(child.tag, child.attrib)  
