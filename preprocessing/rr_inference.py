@@ -16,27 +16,23 @@ def infer_rr_intervals_from_ecg(file):
 
 		signal = np.array(raw_ecg)
 		out = ecg.ecg(signal=signal, sampling_rate=130.0, show=False)
-
+		time_intervals = out[0]
 		rpeaks = out[2]
 		heart_rate = out[-1]
-
-		print(len(set(heart_rate)), len(rpeaks))
-
-		t0 = lines[0].split()[0]
 
 		rr_lines = []
 
 		last_peak = rpeaks[0]
-
-		for i in range(1, len(rpeaks)-1):
+		for i in range(1, len(heart_rate)):
 
 			peak_index = rpeaks[i]
 
-			time, _, _ = lines[peak_index].split()
-			last_time, _, _ = lines[last_peak].split()
+			time = time_intervals[peak_index]
+
+			last_time = time_intervals[last_peak]
 
 			hr = heart_rate[i]
-			rr = (float(time) - float(last_time))*1000/1.024
+			rr = (float(time) - float(last_time))*1000*1000/1024
 			time = float(time)
 
 			rr_lines.append([time, hr, rr])

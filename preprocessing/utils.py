@@ -11,10 +11,6 @@ def save_lines_to_file(lines_list, filename, file_suffix):
 
 	new_file = filename[:-4] + file_suffix
 	save_dir = cur_dir + '/processed/'
-	
-	# if os.path.exists(save_dir + new_file):
-	# 	return
-
 
 	content = 'time\theart_rate\trr_interval\n'
 	for l in lines_list:
