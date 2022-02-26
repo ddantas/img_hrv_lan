@@ -31,10 +31,11 @@ def linear_preprocess(file):
 		t0 = float(lines[0].split()[0])
 
 		for i in range(len(lines)):
+
 			line = lines[i]
 
-			if i == len(lines)-1:
-				next_line = lines[0]
+			if i >= len(lines)-1:
+				next_line = lines[i-1]
 
 			else:
 				next_line = lines[i+1]
@@ -43,14 +44,17 @@ def linear_preprocess(file):
 			time1, hr1, rr1 = next_line.split()
 
 			x_values = [float(time0) - t0, float(time1) - t0]
-			y_values = [int(rr0), int(rr1)]
+			y_values_rr = [int(rr0), int(rr1)]
+			y_values_hr = [int(hr0), int(hr1)]
 
-			interp = linear_interpolate(x_values, y_values)
+
+			interp_rr = linear_interpolate(x_values, y_values_rr)
+			interp_hr = linear_interpolate(x_values, y_values_hr)
 			x = round(float(time0) - t0)
 			# print(x_values, y_values, x, interp(x))
 			time = x
-			hr = hr0
-			rr = interp(x)
+			hr = interp_hr(x)
+			rr = interp_rr(x)
 			interp_lines.append([time, hr, rr])
 
 		save_lines_to_file(interp_lines, f, '_linear.tsv')

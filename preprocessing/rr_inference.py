@@ -6,7 +6,7 @@ import numpy as np
 from utils import *
 
 def infer_rr_intervals_from_ecg(file):
-
+	
 	with open(file) as f_read:
 
 		lines = f_read.readlines()[1:]
@@ -16,6 +16,7 @@ def infer_rr_intervals_from_ecg(file):
 
 		signal = np.array(raw_ecg)
 		out = ecg.ecg(signal=signal, sampling_rate=130.0, show=False)
+		
 		time_intervals = out[0]
 		rpeaks = out[2]
 		heart_rate = out[-1]

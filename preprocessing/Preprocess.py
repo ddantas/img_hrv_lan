@@ -13,6 +13,7 @@
 import os
 import xml.etree.ElementTree as et
 from queue import Queue
+from utils import get_ecg_tuple, get_hr_from_file
 
 def print_tree_level(level, root):
   space = ""
@@ -49,7 +50,6 @@ def construct_dict_from_eaf(eaf_file):
   while len(q) > 0:
 
     root = q.pop()
-    # print(root.text, root.tag, root.attrib)
     first_time = 0
 
     for child in root:
@@ -84,14 +84,29 @@ def construct_dict_from_eaf(eaf_file):
   time_end = int(time_end)//1000+1
   return tiers_dict, time_end
 
-def create_file_from_dict(file):
 
-  tiers_dict, time_end = construct_dict_from_eaf(file)
-  with open('teste.tsv', 'w') as f:
+def create_data_file(ecg_files, hr_files, eaf_file, output_file):
+
+  tiers_dict, time_end = construct_dict_from_eaf(eaf_file)
+  hr1 = get_hr_from_file(hr_files[0])
+  hr2 = get_hr_from_file(hr_files[1])
+
+  ecg_tuple1 = get_ecg_tuple(ecg_files[0])
+  ecg_tuple2 = get_ecg_tuple(ecg_files[1])
+
+  ecg_hr1 = ecg_tuple1[-1]
+  ecg_hr2 = ecg_tuple2[-1]
+
+  with open(output_file, 'w') as f:
 
     print('sec\t', end='', file=f)
+    print('hr_subj1' + '\t', end='', file=f)
+    print('hr_subj2' + '\t', end='', file=f)
+    print('hr_subj1_ecg' + '\t', end='', file=f)
+    print('hr_subj2_ecg' + '\t', end='', file=f)
     for tier in tiers_dict.keys():
       print(tier + '\t', end='', file=f)
+
     print('\n', end='', file=f)
 
     for i in range(time_end):
@@ -115,9 +130,27 @@ def create_file_from_dict(file):
         content[tier] = v
 
       print(str(i) + '\t', end='', file=f)
+
+      try:
+        print(hr1[i] + '\t', end='', file=f)
+      except:
+        print('hr1 not long enough')
+        print('\t', end='', file=f)
+      try:
+        print(hr2[i] + '\t', end='', file=f)
+      except:
+        print('hr2 not long enough')
+        print('\t', end='', file=f)
+
+      print(str(ecg_hr1[i]) + '\t', end='', file=f)
+      print(str(ecg_hr2[i]) + '\t', end='', file=f)
+      
       for tier in tiers_dict.keys():
         print(content[tier] + '\t', end='', file=f)
+
+
       print('\n', end='', file=f)
+
 
 """#########################################################
 ############################################################
@@ -134,7 +167,5 @@ if __name__ == "__main__":
   #main(input_path)
   elan_filename = os.path.join(input_path, "annotation.eaf")
   tree = et.parse(elan_filename)
-  create_file_from_dict('annotation.eaf')
-  #root = tree.getroot()
-  #for child in root:
-  #  print(child.tag, child.attrib)  
+  create_data_file(['../data/a003/subj1_ecg.tsv', '../data/a003/subj2_ecg.tsv'], ['../data/a003/processed/subj1_rr_nn.tsv',\
+                           '../data/a003/processed/subj2_rr_nn.tsv'], 'annotation.eaf', 'teste.tsv')
