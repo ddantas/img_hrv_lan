@@ -173,7 +173,8 @@ class CamScreen(tk.Frame):
             font = cv2.FONT_HERSHEY_SIMPLEX
             thick = 1
             scale = 0.6
-            cv2.putText(frame, str_time, (20,20), font, scale, (0,255,0), thick, cv2.LINE_AA)
+            cv2.putText(frame, str_time, (20,20), font, scale, (0,0,0), thick+1, cv2.LINE_AA)
+            cv2.putText(frame, str_time, (20,20), font, scale, (255,255,255), thick, cv2.LINE_AA)
             # end
 
             if self.recording:
@@ -729,14 +730,14 @@ class WinMainTk(tk.Frame):
             tk.messagebox.showerror(title="Error in routine_to_elan", message="Unable to open output file %s" % (output_filename))
             return
             
-        of.write("Begin_Time; End_Time; Tier; Annotation\n")
-        of.write("%f; %f; block; %s\n" % (arr_label_time[0], max_time, block))
+        of.write("Begin_Time\t End_Time\t Tier\t Annotation\n")
+        of.write("%f\t %f\t block\t %s\n" % (arr_label_time[0], max_time, block))
         for i in range(len(arr_label_str)):
-            of.write("%f; %f; label; %s\n" % (arr_label_time[i], arr_label_time[i+1], arr_label_str[i]))
+            of.write("%f\t %f\t label\t %s\n" % (arr_label_time[i], arr_label_time[i+1], arr_label_str[i]))
         for i in range(len(arr_msg1_str)):
-            of.write("%f; %f; msg1; %s\n" % (arr_msg1_time[i], arr_msg1_time[i+1], arr_msg1_str[i]))
+            of.write("%f\t %f\t msg1\t %s\n" % (arr_msg1_time[i], arr_msg1_time[i+1], arr_msg1_str[i]))
         for i in range(len(arr_msg2_str)):
-            of.write("%f; %f; msg2; %s\n" % (arr_msg2_time[i], arr_msg2_time[i+1], arr_msg2_str[i]))
+            of.write("%f\t %f\t msg2\t %s\n" % (arr_msg2_time[i], arr_msg2_time[i+1], arr_msg2_str[i]))
         of.close()
                 
  
