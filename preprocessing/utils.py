@@ -1,4 +1,28 @@
 import os
+import numpy as np
+from biosppy.signals import ecg
+
+def get_ecg_tuple(file):
+	with open(file) as f:
+		lines = f.readlines()[1:]
+		raw_ecg = [int(line.split()[-1]) for line in lines]
+
+		signal = np.array(raw_ecg)
+		out = ecg.ecg(signal=signal, sampling_rate=130.0, show=False)
+
+		return out
+
+def get_hr_from_file(file):
+
+  with open(file) as f:
+    lines = f.readlines()[1:]
+    lines = sorted(set(lines))
+    hr_values = []
+    for line in lines:
+      _, hr, _ = line.split()
+      hr_values.append(hr)
+
+  return hr_values
 
 def save_lines_to_file(lines_list, filename, file_suffix):
 
@@ -11,10 +35,6 @@ def save_lines_to_file(lines_list, filename, file_suffix):
 
 	new_file = filename[:-4] + file_suffix
 	save_dir = cur_dir + '/processed/'
-	
-	# if os.path.exists(save_dir + new_file):
-	# 	return
-
 
 	content = 'time\theart_rate\trr_interval\n'
 	for l in lines_list:
