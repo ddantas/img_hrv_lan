@@ -33,7 +33,7 @@ def infer_rr_intervals_from_ecg(file):
 			last_time = time_intervals[last_peak]
 
 			hr = heart_rate[i]
-			rr = (float(time) - float(last_time))*1000*1000/1024
+			rr = (float(time) - float(last_time))*1024
 			time = float(time)
 
 			rr_lines.append([time, hr, rr])
