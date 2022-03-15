@@ -5,42 +5,24 @@ import numpy as np
 
 from rr_inference import *
 
+import sys
+sys.path.append('../')
+import Data
+
 
 def construct_xy_from_file(file):
-  x = []
-  y = []
-
-  with open(file) as f_read:
-
-    lines = f_read.readlines()[1:]
-    t0 = float(lines[0].split()[0])
-    for line in lines:
-      time, _, value = line.split()
-      x.append(float(time) - t0)
-      y.append(float(value))
-
+  data = Data.Data.load_raw_data(file)
+  x = [val - data.time[0] for val in data.time]
+  y = data.rr_interval
   return x, y
 
 def construct_xy_from_file_ecg(file):
-  x = []
-  y = []
-  with open(file) as f_read:
-
-    lines = f_read.readlines()[1:]
-
-    raw_ecg = [int(line.split()[-1]) for line in lines]
-    signal = np.array(raw_ecg)
-
-    out = ecg.ecg(signal=signal, sampling_rate=130.0, show=False)
-    time_intervals = out[0]
-
-    for i in range(len(lines)):
-      _, _, value = lines[i].split()
-      x.append(time_intervals[i])
-      y.append(float(value))
+  data = Data.Data.load_raw_data(file)
+  y = data.ecg
+  out = ecg.ecg(signal=y, sampling_rate=130.0, show=False)
+  x = out[0].tolist()
 
   return x, y, out
-
 
 def plot_inferred_vs_real_rr(rr_values, inferred_rr_values, ecg_values):
 
@@ -86,7 +68,7 @@ def plot_inferred_vs_real_rr(rr_values, inferred_rr_values, ecg_values):
 
   skip = 0
   dt = i_rr_sliced[skip] - i_rr_sliced[0]
-  dt = 4.0
+  #dt = 4.0
   rr_sliced = [x - dt for x in rr_sliced]
 
   axs[1].vlines(x=rr_sliced, ymin=min(values), ymax=max(values), color='red')
@@ -95,11 +77,18 @@ def plot_inferred_vs_real_rr(rr_values, inferred_rr_values, ecg_values):
 
 if __name__ == '__main__':
 
-  rr_values = construct_xy_from_file('../data/a003/subj2_rr.tsv')
+  path = "../data/a003"
+  subj = 2
+  filename_rr  = "%s/subj%d_rr.tsv" % (path, subj)
+  filename_ecg = "%s/subj%d_ecg.tsv" % (path, subj)
+  filename_from_ecg = "%s/processed/subj%d_rr_inferred_from_ecg.tsv" % (path, subj)
 
-  infer_rr_intervals_from_ecg('../data/a003/subj2_ecg.tsv')
-  inferred_rr_values = construct_xy_from_file('../data/a003/processed/subj2_rr_inferred_from_ecg.tsv')
-  ecg_values = construct_xy_from_file_ecg('../data/a003/subj2_ecg.tsv')
+  rr_values = construct_xy_from_file(filename_rr)
+  infer_rr_intervals_from_ecg(filename_ecg)
+
+  inferred_rr_values = construct_xy_from_file(filename_from_ecg)
+  ecg_values = construct_xy_from_file_ecg(filename_ecg)
+
   plot_inferred_vs_real_rr(rr_values, inferred_rr_values, ecg_values)
 
 

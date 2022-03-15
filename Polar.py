@@ -362,6 +362,8 @@ class Polar():
 def main():
   polar = Polar()
   devices = polar.list_devices_polar()
+  ## Run as follows to find single specific device.
+  #devices = asyncio.run(polar.list_devices("Polar H10 4F5F6B2C"))
   msg = "Found %d device(s)" % (len(devices))
   polar.print_message(msg, "main", __file__)
   for d in devices:

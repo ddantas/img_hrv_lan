@@ -57,13 +57,24 @@ class Data:
     if os.path.exists(filename):
       os.remove(filename)
 
+  ## \brief Save data to file.
+  #
+  # Save the Polar H10 data to file. When obtaining data from streaming, first
+  # call remove() to reset the file, then, inside a loop, call save_raw_data() and
+  # clear() afterwards.
+  #
+  # If self.datatype == TYPE_RR then columns are
+  #   time: computer timestamp in seconds.
+  #   heart_rate: heart rate in beats per minute.
+  #   rr_interval: interval between two R peaks in mis (1/1024 s).
+  #
+  # If self.datatype == TYPE_ECG then columns are
+  #   time: computer timestamp in seconds.
+  #   timestamp: timestamp from Polar internal clock.
+  #   ecg: ECG potential in microvolts.
+  #
+  # @param filename File where data will be stored.
   def save_raw_data(self, filename):
-    '''
-    Save the all triples (time, hr, rr) received from the Polar H10.
-
-    Parameters:
-      filename (string): name from the output file
-    '''
     if os.path.exists(filename):
       if self.time == []:
         return
@@ -85,5 +96,37 @@ class Data:
     else:
       df.to_csv(filename, sep = '\t', index=False, mode = "a", header = False)
 
+  ## \brief Load data from file.
+  #
+  # Load Polar H10 data from file.
+  #
+  # Tries to autodetect the datatype from column names. Returns with error if
+  # unable to detect the datatype.
+  #
+  # @param filename File where data will be stored.
+  @staticmethod
+  def load_raw_data(filename):
+    if not os.path.exists(filename):
+      raise FileNotFoundError("File does not exixt: " + filename)
+
+    df = pd.read_csv(filename, sep="\t")
+
+    if len(df.columns) < 3:
+      raise ValueError("At least three columns expected.")
+
+    if (df.columns[2] == "rr_interval"):
+      data = Data(TYPE_RR)
+      data.time        = df.loc[:, "time"].tolist()
+      data.heart_rate  = df.loc[:, "heart_rate"].tolist()
+      data.rr_interval = df.loc[:, "rr_interval"].tolist()
+    elif (df.columns[2] == "ecg"):
+      data = Data(TYPE_ECG)
+      data.time        = df.loc[:, "time"].tolist()
+      data.timestamp   = df.loc[:, "timestamp"].tolist()
+      data.ecg         = df.loc[:, "ecg"].tolist()
+    else:
+      raise ValueError("Unable to detect datatype from column name: " + df.column[2])
+
+    return data
 
 
