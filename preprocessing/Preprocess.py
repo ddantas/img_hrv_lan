@@ -14,6 +14,7 @@ import os
 import xml.etree.ElementTree as et
 from queue import Queue
 from utils import get_ecg_tuple, get_hr_from_file
+import sys
 
 def print_tree_level(level, root):
   space = ""
@@ -158,14 +159,20 @@ def create_data_file(ecg_files, hr_files, eaf_file, output_file):
 ############################################################
 #########################################################"""
 
-def main(input_path):
-  pass
+def main(input_path, ecg_files, interp_rr_files, annotation_file, output_file):
 
+  ecg_files = [os.path.join(input_path, file) if input_path not in file else file for file in ecg_files]
+  interp_rr_files = [os.path.join(input_path, file) if input_path not in file else file for file in interp_rr_files]
+  annotation_file = os.path.join(input_path, annotation_file) if input_path not in annotation_file else annotation_file
+
+  create_data_file(ecg_files, interp_rr_files, annotation_file, output_file)
 
 if __name__ == "__main__":
-  input_path = "../data/a003"
-  #main(input_path)
-  elan_filename = os.path.join(input_path, "annotation.eaf")
-  tree = et.parse(elan_filename)
-  create_data_file(['../data/a003/subj1_ecg.tsv', '../data/a003/subj2_ecg.tsv'], ['../data/a003/processed/subj1_rr_nn.tsv',\
-                           '../data/a003/processed/subj2_rr_nn.tsv'], 'annotation.eaf', 'teste.tsv')
+
+  input_path = sys.argv[1]
+  ecg_files = [f for f in sys.argv[2:] if 'ecg' in f]
+  interp_rr_files = [f for f in sys.argv[len(ecg_files)+2:-2]]
+  annotation_file = sys.argv[-2]
+  output_file = sys.argv[-1]
+
+  main(input_path, ecg_files, interp_rr_files, annotation_file, output_file)
