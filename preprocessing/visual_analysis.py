@@ -19,7 +19,17 @@ def construct_xy_from_file(file):
 def construct_xy_from_file_ecg(file):
   data = Data.Data.load_raw_data(file)
   y = data.ecg
+
+  #from collections import Counter
+  #dic = Counter(data.time)
+  #packet_times = list(dic.keys())
+  #avg_packet_time = (packet_times[-1] - packet_times[0]) / (len(packet_times) - 1)
+  #dt = (packet_times[-1] - packet_times[0]) + avg_packet_time
+
+  #rate = len(y) / dt
   out = ecg.ecg(signal=y, sampling_rate=130.0, show=False)
+
+  #x_test = np.linspace(0.0, dt, len(y))
   x = out[0].tolist()
 
   return x, y, out
@@ -58,8 +68,10 @@ def plot_inferred_vs_real_rr(rr_values, inferred_rr_values, ecg_values):
     derivative_rr.append(x1)
     derivative_i_rr.append(x2)
 
-  axs[2].plot(x[:521], derivative_rr[:521], color='red')
-  axs[2].plot(x[:521], derivative_i_rr[:521], color='black')
+  m = len(derivative_rr)
+  axs[2].plot(x[:m], derivative_rr[:m], color='red')
+  n = len(derivative_i_rr)
+  axs[2].plot(x[:n], derivative_i_rr[:n], color='black')
 
   axs[0].plot(time_ecg, values, lw=4)
   axs[1].plot(time_ecg, values, lw=4)
@@ -69,6 +81,7 @@ def plot_inferred_vs_real_rr(rr_values, inferred_rr_values, ecg_values):
   skip = 0
   dt = i_rr_sliced[skip] - i_rr_sliced[0]
   #dt = 4.0
+  dt = 0.0
   rr_sliced = [x - dt for x in rr_sliced]
 
   axs[1].vlines(x=rr_sliced, ymin=min(values), ymax=max(values), color='red')
