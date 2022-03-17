@@ -2,9 +2,9 @@ import sys
 
 from utils import *
 
-def nearest_neighbor(file):
+def nearest_neighbor(filename):
 
-	with open(f) as f_read:
+	with open(filename) as f_read:
 		lines = f_read.readlines()[1:]
 		lines = sorted(set(lines))
 		nn_lines = []
@@ -16,14 +16,14 @@ def nearest_neighbor(file):
 			rr = int(rr)
 			nn_lines.append([time, hr, rr])
 
-		save_lines_to_file(nn_lines, f, '_nn.tsv')
+		save_lines_to_file(nn_lines, filename, '_nn.tsv')
 
-def linear_preprocess(file):
+def linear_preprocess(filename):
 
 	def linear_interpolate(x_values, y_values):
 		return lambda x: (y_values[0]*(x_values[1] - x) + y_values[1]*(x - x_values[0]))/(x_values[1] - x_values[0])
 
-	with open(f) as f_read:
+	with open(filename) as f_read:
 
 		lines = f_read.readlines()[1:]
 		lines = sorted(set(lines))
@@ -57,7 +57,14 @@ def linear_preprocess(file):
 			rr = interp_rr(x)
 			interp_lines.append([time, hr, rr])
 
-		save_lines_to_file(interp_lines, f, '_linear.tsv')
+		save_lines_to_file(interp_lines, filename, '_linear.tsv')
+
+def interpolate(filename):
+	print(f"Preprocessing RR intervals using nearest neighbor strategy for file {filename}")
+	nearest_neighbor(filename)
+	print(f"Preprocessing RR intervals with linear interpolation for file {filename}")
+	linear_preprocess(filename)
+
 
 if __name__ == '__main__':
 
@@ -69,11 +76,7 @@ if __name__ == '__main__':
 	for f in sys.argv[1:]:
 
 		if 'rr' in f:
-			print(f"Preprocessing RR intervals using nearest neighbor strategy for file {f}")
-			nearest_neighbor(f)
-			print(f"Preprocessing RR intervals with linear interpolation for file {f}")
-			linear_preprocess(f)
-
+                        interpolate(f)
 		else:
 			print(f'All files should contain RR values, ignoring file {f}.')
 

@@ -16,6 +16,8 @@ from queue import Queue
 from utils import get_ecg_tuple, get_hr_from_file
 import sys
 
+import rr_interpolation
+
 # Import module from parent folder
 filepath = os.path.dirname(__file__)
 modpathrel = os.path.join(filepath, "..")
@@ -93,19 +95,22 @@ def construct_dict_from_eaf(eaf_file):
   return tiers_dict, time_end
 
 
-def create_data_file(ecg_files, hr_files, eaf_file, output_file):
+def create_data_file(input_path,
+       filename_ecg1, filename_ecg2,
+       filename_rr_linear1, filename_rr_linear2,
+       filename_annot, filename_dataset):
 
-  tiers_dict, time_end = construct_dict_from_eaf(eaf_file)
-  hr1 = get_hr_from_file(hr_files[0])
-  hr2 = get_hr_from_file(hr_files[1])
-
-  ecg_tuple1 = get_ecg_tuple(ecg_files[0])
-  ecg_tuple2 = get_ecg_tuple(ecg_files[1])
-
+  ecg_tuple1 = get_ecg_tuple(filename_ecg1)
+  ecg_tuple2 = get_ecg_tuple(filename_ecg2)
   ecg_hr1 = ecg_tuple1[-1]
   ecg_hr2 = ecg_tuple2[-1]
 
-  with open(output_file, 'w') as f:
+  hr1 = get_hr_from_file(filename_rr_linear1)
+  hr2 = get_hr_from_file(filename_rr_linear2)
+
+  tiers_dict, time_end = construct_dict_from_eaf(filename_annot)
+
+  with open(filename_dataset, 'w') as f:
 
     print('sec\t', end='', file=f)
     print('hr_subj1' + '\t', end='', file=f)
@@ -166,17 +171,23 @@ def create_data_file(ecg_files, hr_files, eaf_file, output_file):
 ############################################################
 #########################################################"""
 
-def main(input_path, ecg_files, interp_rr_files, annotation_file, output_file):
+def main(input_path,
+       filename_ecg1, filename_ecg2,
+       filename_rr_linear1, filename_rr_linear2,
+       filename_annot, filename_dataset):
 
   folder_prep = os.path.join(input_path, k.FOLDER_PREP)
   if not os.path.exists(folder_prep):
     os.mkdir(folder_prep)
 
-  ecg_files = [os.path.join(input_path, file) if input_path not in file else file for file in ecg_files]
-  interp_rr_files = [os.path.join(input_path, file) if input_path not in file else file for file in interp_rr_files]
-  annotation_file = os.path.join(input_path, annotation_file) if input_path not in annotation_file else annotation_file
+  #ecg_files = [os.path.join(input_path, file) if input_path not in file else file for file in ecg_files]
+  #interp_rr_files = [os.path.join(input_path, file) if input_path not in file else file for file in interp_rr_files]
+  #annotation_file = os.path.join(input_path, annotation_file) if input_path not in annotation_file else annotation_file
 
-  create_data_file(ecg_files, interp_rr_files, annotation_file, output_file)
+  create_data_file(input_path,
+       filename_ecg1, filename_ecg2,
+       filename_rr_linear1, filename_rr_linear2,
+       filename_annot, filename_dataset)
 
 if __name__ == "__main__":
 
@@ -187,6 +198,19 @@ if __name__ == "__main__":
   input_path = sys.argv[1]
   filename_annot = sys.argv[2]
 
+  ## interpolate
+  #subj1_rr.tsv
+  filename_rr1 = os.path.join(input_path, k.FILENAME_RR_S1)
+  #subj2_rr.tsv
+  filename_rr2 = os.path.join(input_path, k.FILENAME_RR_S2)
+
+  print(filename_rr1)
+  print(filename_rr2)
+
+  rr_interpolation.interpolate(filename_rr1)
+  rr_interpolation.interpolate(filename_rr2)
+
+  ## generate dataset.tsv
   #subj1_ecg.tsv
   filename_ecg1 = os.path.join(input_path, k.FILENAME_ECG_S1)
   #subj2_ecg.tsv
@@ -200,7 +224,7 @@ if __name__ == "__main__":
   #dataset.tsv
   filename_dataset = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_DATASET)
 
-  ecg_files = [filename_ecg1, filename_ecg2]
-  interp_rr_files = [filename_rr_linear1, filename_rr_linear1]
-
-  main(input_path, ecg_files, interp_rr_files, filename_annot, filename_dataset)
+  main(input_path,
+       filename_ecg1, filename_ecg2,
+       filename_rr_linear1, filename_rr_linear2,
+       filename_annot, filename_dataset)
