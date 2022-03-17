@@ -15,8 +15,7 @@
 
 import matplotlib.pyplot as plt
 
-TYPE_RR  = "R"
-TYPE_ECG = "E"
+import const as k
 
 DATA_MAX_LEN = 500
 
@@ -45,7 +44,7 @@ class Plot():
     self.clear_ecg()
     
   def plot_incremental(self, data, datatype):
-    if (datatype == TYPE_RR):
+    if (datatype == k.TYPE_RR):
       if (len(self.data_rr) + len(data) > DATA_MAX_LEN):
         #self.data_rr = self.data_rr[-DATA_MAX_LEN]
         self.clear_rr()
@@ -54,7 +53,7 @@ class Plot():
       else:
         self.data_rr.extend(data)
       line_rr, = self.ax_rr.plot(self.data_rr, color="red")
-    elif (datatype == TYPE_ECG):
+    elif (datatype == k.TYPE_ECG):
       if (len(self.data_ecg) + len(data) > DATA_MAX_LEN):
         #self.data_ecg = self.data_ecg[-DATA_MAX_LEN]
         self.clear_ecg()

@@ -17,8 +17,7 @@ import numpy as np
 import pandas as pd
 import os
 
-TYPE_RR  = "R"
-TYPE_ECG = "E"
+import const as k
 
 TIME_UNINITIALIZED = -1
 
@@ -29,7 +28,7 @@ class Data:
 
   def __init__(self, datatype):
     self.datatype = datatype
-    if (datatype < TYPE_RR and datatype < TYPE_ECG):
+    if (datatype != k.TYPE_RR and datatype != k.TYPE_ECG):
       raise ValueError("Invalid datatype in Data constructor")
     self.t0 = TIME_UNINITIALIZED
     self.time = []
@@ -60,8 +59,8 @@ class Data:
   ## \brief Save data to file.
   #
   # Save the Polar H10 data to file. When obtaining data from streaming, first
-  # call remove() to reset the file, then, inside a loop, call save_raw_data() and
-  # clear() afterwards.
+  # call remove() to reset the file, then, inside a loop, call save_raw_data()
+  # and clear() afterwards.
   #
   # If self.datatype == TYPE_RR then columns are
   #   time: computer timestamp in seconds.
@@ -79,11 +78,11 @@ class Data:
       if self.time == []:
         return
 
-    if (self.datatype == TYPE_RR):
+    if (self.datatype == k.TYPE_RR):
       df = pd.DataFrame(data = {"time": self.time,
                                 "heart_rate": self.values_hr,
                                 "rr_interval": self.values_rr})
-    elif (self.datatype == TYPE_ECG):
+    elif (self.datatype == k.TYPE_ECG):
       df = pd.DataFrame(data = {"time": self.time,
                                 "timestamp": self.timestamp,
                                 "ecg": self.values_ecg})
@@ -115,12 +114,12 @@ class Data:
       raise ValueError("At least three columns expected.")
 
     if (df.columns[2] == "rr_interval"):
-      data = Data(TYPE_RR)
+      data = Data(k.TYPE_RR)
       data.time        = df.loc[:, "time"].tolist()
       data.heart_rate  = df.loc[:, "heart_rate"].tolist()
       data.rr_interval = df.loc[:, "rr_interval"].tolist()
     elif (df.columns[2] == "ecg"):
-      data = Data(TYPE_ECG)
+      data = Data(k.TYPE_ECG)
       data.time        = df.loc[:, "time"].tolist()
       data.timestamp   = df.loc[:, "timestamp"].tolist()
       data.ecg         = df.loc[:, "ecg"].tolist()

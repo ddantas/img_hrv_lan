@@ -1,5 +1,6 @@
 import struct
 import Data
+import const as k
 
 class Packet:
 	def __init__(self, tp, content):
@@ -30,8 +31,8 @@ class Packet:
 		self.content = self.content.replace('[','')
 		self.content = self.content.replace(']','')
 
-		if self.tp == Data.TYPE_ECG:
-			data = Data.Data(Data.TYPE_ECG)
+		if self.tp == k.TYPE_ECG:
+			data = Data.Data(k.TYPE_ECG)
 			values_time, values_timestamp, values_ecg = self.content.split(';')
 
 			values_time = [float(v) for v in values_time.split(',')]
@@ -43,7 +44,7 @@ class Packet:
 			data.values_ecg = values_ecg
 
 		else:
-			data = Data.Data(Data.TYPE_RR)
+			data = Data.Data(k.TYPE_RR)
 			values_time, values_hr, values_rr = self.content.split(';')
 
 			values_time = [float(v) for v in values_time.split(',')]

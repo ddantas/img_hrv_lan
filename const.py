@@ -12,6 +12,11 @@
 
 import os
 
+## Used mostly by Polar.py, Data.py and Plot.py
+TYPE_RR  = "R"
+TYPE_ECG = "E"
+
+## Used mostly by WinOp.py
 FOLDER_DATA = "data"
 FOLDER_DEBUG = os.path.join(FOLDER_DATA, "DEBUG")
 
@@ -31,6 +36,7 @@ FILENAME_VIDEO_S1 = "subj1.mp4"
 FILENAME_VIDEO_S2 = "subj2.mp4"
 
 
+## Used mostly by 01_sync/sync.py
 FOLDER_SYNC = "01_sync"
 FILENAME_VIDEO_SYNC    = "subj%d_sync.mp4"
 FILENAME_VIDEO_SYNC_S1 = "subj1_sync.mp4"

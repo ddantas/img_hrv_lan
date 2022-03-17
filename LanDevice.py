@@ -13,6 +13,7 @@ import signal
 import Polar
 import Data
 import Packet
+import const as k
 
 from bleak import BleakClient
 from PIL import Image
@@ -772,7 +773,7 @@ class Server(LanDevice):
                         ecg = self.polar.data_ecg.values_ecg
 
                         content = str(time) + ';' + str(timestamp) + ';' + str(ecg) 
-                        packet = Packet.Packet(Data.TYPE_ECG, content)
+                        packet = Packet.Packet(k.TYPE_ECG, content)
                         packet_encoded = packet.construct_packet()
 
                         conn.sendall(packet_encoded)
@@ -784,7 +785,7 @@ class Server(LanDevice):
                         rr = self.polar.data_rr.values_rr
 
                         content = str(time) + ';' + str(hr) + ';' + str(rr) 
-                        packet = Packet.Packet(Data.TYPE_RR, content)
+                        packet = Packet.Packet(k.TYPE_RR, content)
                         packet_encoded = packet.construct_packet()
 
                         conn.sendall(packet_encoded)

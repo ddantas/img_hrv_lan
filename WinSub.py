@@ -17,7 +17,7 @@ import sys
 from PIL import Image
 from PIL import ImageTk
 
-from LanDevice import *
+import LanDevice as dev
 
 WIN_TITLE = "Server Window"
 
@@ -41,8 +41,8 @@ class WinSub(tk.Frame):
         self.threads = []
         # self.root.attributes('-fullscreen', 1)
 
-        self.server = Server()
-        self.client = Client(HOST=self.host)
+        self.server = dev.Server()
+        self.client = dev.Client(HOST=self.host)
 
         self.init_server()
 

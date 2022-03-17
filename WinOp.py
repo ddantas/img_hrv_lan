@@ -26,12 +26,13 @@ import math as m
 import os
 import threading
 import time
-import datetime as dt
+import datetime
+import struct
 
 from PIL import Image
 from PIL import ImageTk
 
-from LanDevice import *
+import LanDevice as dev
 import Plot
 import Data
 import const as k
@@ -83,12 +84,12 @@ class HrvScreen(tk.Frame):
                 packet = self.client.recv_values()
                 data = packet.decode_packet()
 
-                if data.datatype == Data.TYPE_ECG:
+                if data.datatype == k.TYPE_ECG:
 
                     if self.recording:
                         data.save_raw_data(self.filename_ecg)
 
-                    self.plot.plot_incremental(data.values_ecg, Plot.TYPE_ECG)
+                    self.plot.plot_incremental(data.values_ecg, k.TYPE_ECG)
 
                     if(data.time != []):
                         data.clear()
@@ -97,7 +98,7 @@ class HrvScreen(tk.Frame):
                     if self.recording:
                         data.save_raw_data(self.filename_rr)
 
-                    self.plot.plot_incremental(data.values_hr, Plot.TYPE_RR)
+                    self.plot.plot_incremental(data.values_hr, k.TYPE_RR)
 
                     if(data.time != []):
                         data.clear()
@@ -226,9 +227,9 @@ class WinMainTk(tk.Frame):
         self.stop = False
         self.root = root
         self.path = ''
-        self.client1 = Client()
-        self.client2 = Client()
-        self.scanner = Client()
+        self.client1 = dev.Client()
+        self.client2 = dev.Client()
+        self.scanner = dev.Client()
 
         self.create_frame_main()
 
@@ -777,12 +778,12 @@ class WinMainTk(tk.Frame):
                 quit = True
             i -= 1
 
-        now = dt.datetime.now()
+        now = datetime.datetime.now()
         time_to_start = int(now.timestamp()) + int(time_to_start)
 
         self.setup_recording()
 
-        self.log(f"routine is schedule to start at {dt.datetime.fromtimestamp(time_to_start)}")
+        self.log(f"routine is schedule to start at {datetime.datetime.fromtimestamp(time_to_start)}")
 
         routine = str(time_to_start) + '\n' + routine
 

@@ -30,6 +30,7 @@ from bleak import BleakScanner
 
 import Data
 import Plot
+import const as k
 
 
 MODEL_NBR_UUID = '00002a24-0000-1000-8000-00805f9b34fb'
@@ -57,8 +58,8 @@ FLAG_PLOT_ECG = True
 
 class Polar():
   def __init__(self):
-    self.data_rr = Data.Data(Data.TYPE_RR)
-    self.data_ecg = Data.Data(Data.TYPE_ECG)
+    self.data_rr = Data.Data(k.TYPE_RR)
+    self.data_ecg = Data.Data(k.TYPE_ECG)
     self.plot = Plot.Plot()
 
   ## \brief Handles the interrupt signal.
@@ -306,9 +307,9 @@ class Polar():
         while not FLAG_INTERRUPT:
           await asyncio.sleep(0.2)
           if (FLAG_PLOT_ECG):
-            self.plot.plot_incremental(self.data_ecg.values_ecg, Plot.TYPE_ECG)
+            self.plot.plot_incremental(self.data_ecg.values_ecg, k.TYPE_ECG)
           if (FLAG_PLOT_RR):
-            self.plot.plot_incremental(self.data_rr.values_hr, Plot.TYPE_RR)
+            self.plot.plot_incremental(self.data_rr.values_hr, k.TYPE_RR)
           if FLAG_SAVE_ECG and filename_ecg != '':
             self.data_ecg.save_raw_data(filename_ecg)
           if FLAG_SAVE_RR and filename_rr != '':
