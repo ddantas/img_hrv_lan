@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-
 """#########################################################
 ############################################################
 ### Synchronize two videos of equal length by            ###
@@ -17,6 +16,13 @@ import sys
 import re
 import shlex
 import subprocess
+
+# Import module from parent folder
+filepath = os.path.dirname(__file__)
+modpathrel = os.path.join(filepath, "..")
+modpathabs = os.path.abspath(modpathrel)
+sys.path.append(modpathabs)
+import const as k
 
 def get_duration(filename):
 
@@ -87,17 +93,18 @@ def synchronize(input_routine, input_filename, output_filename):
 
 def main(input_path):
   
-  input_filename1 = os.path.join(input_path, "subj1.mp4")
-  input_filename2 = os.path.join(input_path, "subj2.mp4")
-  output_filename1 = os.path.join(input_path, "subj1_sync.mp4")
-  output_filename2 = os.path.join(input_path, "subj2_sync.mp4")
-  input_routine = os.path.join(input_path, "routine.txt")
+  filename_input1 = os.path.join(input_path, k.FILENAME_VIDEO_S1)
+  filename_input2 = os.path.join(input_path, k.FILENAME_VIDEO_S2)
+  filename_output1 = os.path.join(input_path, k.FOLDER_SYNC, k.FILENAME_VIDEO_SYNC_S1)
+  filename_output2 = os.path.join(input_path, k.FOLDER_SYNC, k.FILENAME_VIDEO_SYNC_S2)
+  input_routine = os.path.join(input_path, k.FILENAME_ROUTINE)
 
-  synchronize(input_routine, input_filename1, output_filename1)
-  synchronize(input_routine, input_filename2, output_filename2)
+  folder_sync = os.path.join(input_path, k.FOLDER_SYNC)
+  if not os.path.exists(folder_sync):
+    os.mkdir(folder_sync)
 
-  
-  pass
+  synchronize(input_routine, filename_input1, filename_output1)
+  synchronize(input_routine, filename_input2, filename_output2)
 
 
 if __name__ == "__main__":
