@@ -34,6 +34,7 @@ from PIL import ImageTk
 from LanDevice import *
 import Plot
 import Data
+import const as k
 
 WIN_TITLE = "Operator Window"
 IMG_DATA_SIZE = struct.calcsize('>L')
@@ -48,17 +49,17 @@ class HrvScreen(tk.Frame):
     #  @param window The object root, which will always be a Frame inside of a tkinter.Tk() object.
     #  @param client The Client which will receive the bluetooth data.
     #  @param path The path where the program will save the received bluetooth data.
-    #  @param name The name of the object, used to differentiate between different files.
-    def __init__(self, window, client, path, name='subj'):
+    #  @param subj Subject ID in {1, 2}, used to define filenames.
+    def __init__(self, window, client, path, subj=0):
         super().__init__(window)
         self.client = client
         self.window = window
         self.recording = False
         self.is_receiving_data = False
-        self.name = name
+        self.subj = subj
         self.path = path
-        self.filename_ecg = self.path + self.name + '_ecg.tsv'
-        self.filename_rr = self.path + self.name + '_rr.tsv'
+        self.filename_ecg = None #os.path.join(self.path, k.FILENAME_ECG % subj) ## REDUNDANT, ELIMINATE
+        self.filename_rr = None #os.path.join(self.path, k.FILENAME_RR % subj) ## REDUNDANT, ELIMINATE
         self.plot = Plot.Plot()
         self.init_plot()
         self.hrv_plot = FigureCanvasTkAgg(self.plot.fig, master=self.window)
@@ -77,7 +78,7 @@ class HrvScreen(tk.Frame):
         self.is_receiving_data = True
         while self.is_receiving_data:
             try:
-                n = self.name[-1]
+                n = self.subj
                 print(n, end="")
                 packet = self.client.recv_values()
                 data = packet.decode_packet()
@@ -125,23 +126,24 @@ class HrvScreen(tk.Frame):
 
     def setup_recording(self, path):
         self.path = path
-        self.filename_ecg = self.path + self.name + '_ecg.tsv'
-        self.filename_rr = self.path + self.name + '_rr.tsv'
+        self.filename_ecg = os.path.join(self.path, k.FILENAME_ECG % self.subj)
+        self.filename_rr = os.path.join(self.path, k.FILENAME_RR % self.subj)
 
 ## \brief CamScreen class
 # Class responsible for using a connected client to receive, save and display the video streaming data.
 class CamScreen(tk.Frame):
 
-    def __init__(self, window, client, path, name='subj'):
+    def __init__(self, window, client, path, subj=0):
         super().__init__(window)
         self.is_receiving_video = False
         self.recording = False
         self.client = client
         self.window = window
-        self.name = name
+        self.subj = subj
         self.path = path
+        self.filename = os.path.join(self.path, k.FILENAME_VIDEO % subj)
         self.width = 600
-        self.cap = cv2.VideoWriter(self.path + self.name + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (600,480))
+        self.cap = cv2.VideoWriter(self.filename, cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (640,480))
         self.height = 480
         self.frame = tk.Frame(self.window, bg='black', height=480, width=600)
         self.frame.grid_propagate(False)
@@ -209,7 +211,8 @@ class CamScreen(tk.Frame):
         if self.cap:
             self.cap.release()
 
-        self.cap = cv2.VideoWriter(self.path + self.name + '.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (640,480))
+        self.filename = os.path.join(self.path, k.FILENAME_VIDEO % self.subj)
+        self.cap = cv2.VideoWriter(self.filename, cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (640,480))
 
 
 class WinMainTk(tk.Frame):
@@ -239,25 +242,25 @@ class WinMainTk(tk.Frame):
         log_template = f'{now} Log:'
         print(log_template + text)
 
-        with open(self.path + 'log.txt', 'a') as log:
+        with open(os.path.join(self.path, k.FILENAME_LOG), 'a') as log:
             print(log_template + text, file=log)
 
     ## \brief Set automatically to what directory the received data (video and [ECG,RR]) will be saved to.
     #  @param self The object pointer.
-    def set_dir_name(self):
+    def set_path_name(self):
 
-        if not os.path.isdir('./data'):
-            os.mkdir('./data')
+        if not os.path.isdir(k.FOLDER_DATA):
+            os.mkdir(k.FOLDER_DATA)
 
         if DEBUG:
-            if not os.path.isdir('./data/DEBUG'):
-                os.mkdir('./data/DEBUG')
+            if not os.path.isdir(k.FOLDER_DEBUG):
+                os.mkdir(k.FOLDER_DEBUG)
 
-            self.path = 'data/DEBUG/'
+            self.path = k.FOLDER_DEBUG
             self.log(f"saving the recordings at {self.path}")
             return
 
-        dirs_ = os.listdir('./data')
+        dirs_ = os.listdir(k.FOLDER_DATA)
         dirs = []
 
         for d in dirs_:
@@ -273,8 +276,9 @@ class WinMainTk(tk.Frame):
                 break
             num+=1
 
-        new_dir = num+1
-        path =f'./data/{new_dir:03d}/'
+        new_dir = num + 1
+        new_dir_str = f"{new_dir:03d}"
+        path = os.path.join(k.FOLDER_DATA, new_dir_str)
         self.path = path 
         os.mkdir(self.path)
 
@@ -297,16 +301,16 @@ class WinMainTk(tk.Frame):
         self.frame1_parent.grid(row=0, column=0, stick='nsew')
         self.frame2_parent.grid(row=0, column=1, stick='nsew')
 
-        self.screen1 = CamScreen(self.frame1_parent, self.client1, self.path, name='subj1')
+        self.screen1 = CamScreen(self.frame1_parent, self.client1, self.path, subj=1)
         self.screen1.grid(row=0, column=0)
         
-        self.hrv_plot1 = HrvScreen(self.frame1_parent, self.client1, self.path, name='subj1')
+        self.hrv_plot1 = HrvScreen(self.frame1_parent, self.client1, self.path, subj=1)
         self.hrv_plot1.grid(row=1, column=0)
 
-        self.screen2 = CamScreen(self.frame2_parent, self.client2, self.path, name='subj2')
+        self.screen2 = CamScreen(self.frame2_parent, self.client2, self.path, subj=2)
         self.screen2.grid(row=0, column=0)
 
-        self.hrv_plot2 = HrvScreen(self.frame2_parent, self.client2, self.path, name='subj2')
+        self.hrv_plot2 = HrvScreen(self.frame2_parent, self.client2, self.path, subj=2)
         self.hrv_plot2.grid(row=1, column=0)
 
     ## \brief Create toolbox frame, with buttons and entry fields to use the tools.
@@ -796,7 +800,7 @@ class WinMainTk(tk.Frame):
         if self.screen2.is_receiving_video:
             self.client2.send_command(routine)
 
-        with open(self.path + 'routine.txt', 'w') as f:
+        with open(os.path.join(self.path, k.FILENAME_ROUTINE), 'w') as f:
             f.write(routine)
 
         self.routine_to_elan(self.routine_filename, self.path)
@@ -840,7 +844,7 @@ class WinMainTk(tk.Frame):
 
     def setup_recording(self):
 
-        self.set_dir_name()
+        self.set_path_name()
         self.screen1.setup_recording(self.path)
         self.screen2.setup_recording(self.path)
 
