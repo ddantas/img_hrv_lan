@@ -30,11 +30,11 @@ def save_lines_to_file(lines_list, filename, file_suffix):
 	filename = dir_tree[-1]
 	cur_dir = '/'.join(dir_tree[:-1])
 
-	if not os.path.exists(cur_dir + '/processed'):
-		os.mkdir(cur_dir + '/processed')
+	if not os.path.exists(cur_dir + '/02_preprocess'):
+		os.mkdir(cur_dir + '/02_preprocess')
 
 	new_file = filename[:-4] + file_suffix
-	save_dir = cur_dir + '/processed/'
+	save_dir = cur_dir + '/02_preprocess/'
 
 	content = 'time\theart_rate\trr_interval\n'
 	for l in lines_list:

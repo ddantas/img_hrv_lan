@@ -15,9 +15,10 @@ runsync:
 	python3 01_sync/sync.py data/a003
 
 runprep:
-	python3 preprocessing/rr_interpolation.py data/a003/subj1_rr.tsv
-	python3 preprocessing/rr_interpolation.py data/a003/subj2_rr.tsv
-	python3 preprocessing/Preprocess.py data/a003 subj1_ecg.tsv subj2_ecg.tsv processed/subj1_rr_linear.tsv processed/subj2_rr_linear.tsv annotation.eaf output.tsv
+	python3 02_preprocess/rr_interpolation.py data/a003/subj1_rr.tsv
+	python3 02_preprocess/rr_interpolation.py data/a003/subj2_rr.tsv
+	#python3 02_preprocess/preprocess.py data/a003 subj1_ecg.tsv subj2_ecg.tsv processed/subj1_rr_linear.tsv processed/subj2_rr_linear.tsv annotation.eaf output.tsv
+	python3 02_preprocess/preprocess.py data/a003 annotation.eaf
 
 # Profiling of WinOp.py
 profop:

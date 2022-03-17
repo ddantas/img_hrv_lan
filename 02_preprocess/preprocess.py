@@ -16,6 +16,13 @@ from queue import Queue
 from utils import get_ecg_tuple, get_hr_from_file
 import sys
 
+# Import module from parent folder
+filepath = os.path.dirname(__file__)
+modpathrel = os.path.join(filepath, "..")
+modpathabs = os.path.abspath(modpathrel)
+sys.path.append(modpathabs)
+import const as k
+
 def print_tree_level(level, root):
   space = ""
   for i in range(level):
@@ -161,6 +168,10 @@ def create_data_file(ecg_files, hr_files, eaf_file, output_file):
 
 def main(input_path, ecg_files, interp_rr_files, annotation_file, output_file):
 
+  folder_prep = os.path.join(input_path, k.FOLDER_PREP)
+  if not os.path.exists(folder_prep):
+    os.mkdir(folder_prep)
+
   ecg_files = [os.path.join(input_path, file) if input_path not in file else file for file in ecg_files]
   interp_rr_files = [os.path.join(input_path, file) if input_path not in file else file for file in interp_rr_files]
   annotation_file = os.path.join(input_path, annotation_file) if input_path not in annotation_file else annotation_file
@@ -169,10 +180,27 @@ def main(input_path, ecg_files, interp_rr_files, annotation_file, output_file):
 
 if __name__ == "__main__":
 
-  input_path = sys.argv[1]
-  ecg_files = [f for f in sys.argv[2:] if 'ecg' in f]
-  interp_rr_files = [f for f in sys.argv[len(ecg_files)+2:-2]]
-  annotation_file = sys.argv[-2]
-  output_file = sys.argv[-1]
+  if (len(sys.argv)) < 3:
+    print("Usage: preprocess.py <input_path> <annotation_file>")
+    sys.exit()
 
-  main(input_path, ecg_files, interp_rr_files, annotation_file, output_file)
+  input_path = sys.argv[1]
+  filename_annot = sys.argv[2]
+
+  #subj1_ecg.tsv
+  filename_ecg1 = os.path.join(input_path, k.FILENAME_ECG_S1)
+  #subj2_ecg.tsv
+  filename_ecg2 = os.path.join(input_path, k.FILENAME_ECG_S2)
+  #processed/subj1_rr_linear.tsv
+  filename_rr_linear1 = os.path.join(input_path, k.FOLDER_PREP, "subj1_rr_linear.tsv")
+  #processed/subj2_rr_linear.tsv
+  filename_rr_linear2 = os.path.join(input_path, k.FOLDER_PREP, "subj2_rr_linear.tsv")
+  #annotation.eaf
+  filename_annot = os.path.join(input_path, filename_annot)
+  #dataset.tsv
+  filename_dataset = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_DATASET)
+
+  ecg_files = [filename_ecg1, filename_ecg2]
+  interp_rr_files = [filename_rr_linear1, filename_rr_linear1]
+
+  main(input_path, ecg_files, interp_rr_files, filename_annot, filename_dataset)

@@ -41,3 +41,8 @@ FOLDER_SYNC = "01_sync"
 FILENAME_VIDEO_SYNC    = "subj%d_sync.mp4"
 FILENAME_VIDEO_SYNC_S1 = "subj1_sync.mp4"
 FILENAME_VIDEO_SYNC_S2 = "subj2_sync.mp4"
+
+## Used mostly by 02_preprocess/preprocess.py
+FOLDER_PREP = "02_preprocess"
+FILENAME_DATASET = "dataset.tsv"
+
