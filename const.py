@@ -31,6 +31,10 @@ FILENAME_RR       = "subj%d_rr.tsv"
 FILENAME_RR_S1    = "subj1_rr.tsv"
 FILENAME_RR_S2    = "subj2_rr.tsv"
 
+FILENAME_RR_ECG       = "subj%d_rr_inferred_from_ecg.tsv"
+FILENAME_RR_ECG_S1    = "subj1_rr_inferred_from_ecg.tsv"
+FILENAME_RR_ECG_S2    = "subj2_rr_inferred_from_ecg.tsv"
+
 FILENAME_VIDEO    = "subj%d.mp4"
 FILENAME_VIDEO_S1 = "subj1.mp4"
 FILENAME_VIDEO_S2 = "subj2.mp4"

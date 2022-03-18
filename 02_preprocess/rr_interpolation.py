@@ -12,8 +12,8 @@ def nearest_neighbor(filename):
 		for line in lines:
 			time, hr, rr = line.split()
 			time = round(float(time) - t0)
-			hr = int(hr)
-			rr = int(rr)
+			hr = float(hr)
+			rr = float(rr)
 			nn_lines.append([time, hr, rr])
 
 		save_lines_to_file(nn_lines, filename, '_nn.tsv')
@@ -44,8 +44,8 @@ def linear_preprocess(filename):
 			time1, hr1, rr1 = next_line.split()
 
 			x_values = [float(time0) - t0, float(time1) - t0]
-			y_values_rr = [int(rr0), int(rr1)]
-			y_values_hr = [int(hr0), int(hr1)]
+			y_values_rr = [float(rr0), float(rr1)]
+			y_values_hr = [float(hr0), float(hr1)]
 
 
 			interp_rr = linear_interpolate(x_values, y_values_rr)
@@ -76,7 +76,7 @@ if __name__ == '__main__':
 	for f in sys.argv[1:]:
 
 		if 'rr' in f:
-                        interpolate(f)
+                   interpolate(f)
 		else:
 			print(f'All files should contain RR values, ignoring file {f}.')
 

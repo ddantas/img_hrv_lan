@@ -17,6 +17,7 @@ from utils import get_ecg_tuple, get_hr_from_file
 import sys
 
 import rr_interpolation
+import rr_inference
 
 # Import module from parent folder
 filepath = os.path.dirname(__file__)
@@ -96,27 +97,55 @@ def construct_dict_from_eaf(eaf_file):
 
 
 def create_data_file(input_path,
-       filename_ecg1, filename_ecg2,
        filename_rr_linear1, filename_rr_linear2,
+       filename_rr_nn1, filename_rr_nn2,
+       filename_rr_ecg_linear1, filename_rr_ecg_linear2,
+       filename_rr_ecg_nn1, filename_rr_ecg_nn2,
        filename_annot, filename_dataset):
 
-  ecg_tuple1 = get_ecg_tuple(filename_ecg1)
-  ecg_tuple2 = get_ecg_tuple(filename_ecg2)
-  ecg_hr1 = ecg_tuple1[-1]
-  ecg_hr2 = ecg_tuple2[-1]
 
-  hr1 = get_hr_from_file(filename_rr_linear1)
-  hr2 = get_hr_from_file(filename_rr_linear2)
+  def print_value_to_file(array_name, array, index, file):
+    try:
+      print(array[index] + '\t', end='', file=file)
+    except:
+      print(f'Tried to acces index {index} {array_name} not long enough, appending repeated values...')
+      print(array[-1] + '\t', end='', file=file)
+
+  # ecg_tuple1 = get_ecg_tuple(filename_ecg1)
+  # ecg_tuple2 = get_ecg_tuple(filename_ecg2)
+  # ecg_hr1 = ecg_tuple1[-1]
+  # ecg_hr2 = ecg_tuple2[-1]
+
+  # hr1 = get_hr_from_file(filename_rr_linear1)
+  # hr2 = get_hr_from_file(filename_rr_linear2)
+
+  hr1_linear = get_hr_from_file(filename_rr_linear1)
+  hr2_linear = get_hr_from_file(filename_rr_linear2)
+
+  hr1_nn = get_hr_from_file(filename_rr_nn1)
+  hr2_nn = get_hr_from_file(filename_rr_nn2)
+
+  hr1_ecg_linear = get_hr_from_file(filename_rr_ecg_linear1)
+  hr2_ecg_linear = get_hr_from_file(filename_rr_ecg_linear2)
+
+  hr1_ecg_nn = get_hr_from_file(filename_rr_ecg_nn1)
+  hr2_ecg_nn = get_hr_from_file(filename_rr_ecg_nn2)
+
 
   tiers_dict, time_end = construct_dict_from_eaf(filename_annot)
 
   with open(filename_dataset, 'w') as f:
 
     print('sec\t', end='', file=f)
-    print('hr_subj1' + '\t', end='', file=f)
-    print('hr_subj2' + '\t', end='', file=f)
-    print('hr_subj1_ecg' + '\t', end='', file=f)
-    print('hr_subj2_ecg' + '\t', end='', file=f)
+    print('hr_subj1_linear' + '\t', end='', file=f)
+    print('hr_subj2_linear' + '\t', end='', file=f)
+    print('hr_subj1_nn' + '\t', end='', file=f)
+    print('hr_subj2_nn' + '\t', end='', file=f)
+    print('hr_subj1_ecg_linear' + '\t', end='', file=f)
+    print('hr_subj2_ecg_linear' + '\t', end='', file=f)
+    print('hr_subj1_ecg_nn' + '\t', end='', file=f)
+    print('hr_subj2_ecg_nn' + '\t', end='', file=f)
+
     for tier in tiers_dict.keys():
       print(tier + '\t', end='', file=f)
 
@@ -144,19 +173,31 @@ def create_data_file(input_path,
 
       print(str(i) + '\t', end='', file=f)
 
-      try:
-        print(hr1[i] + '\t', end='', file=f)
-      except:
-        print('hr1 not long enough')
-        print('\t', end='', file=f)
-      try:
-        print(hr2[i] + '\t', end='', file=f)
-      except:
-        print('hr2 not long enough')
-        print('\t', end='', file=f)
+      print_value_to_file('hr1_linear', hr1_linear, i, f)
+      print_value_to_file('hr2_linear', hr2_linear, i, f)
 
-      print(str(ecg_hr1[i]) + '\t', end='', file=f)
-      print(str(ecg_hr2[i]) + '\t', end='', file=f)
+      print_value_to_file('hr1_nn', hr1_nn, i, f)
+      print_value_to_file('hr2_nn', hr2_nn, i, f)
+
+      print_value_to_file('hr1_ecg_linear', hr1_ecg_linear, i, f)
+      print_value_to_file('hr2_ecg_linear', hr2_ecg_linear, i, f)
+
+      print_value_to_file('hr1_ecg_nn', hr1_ecg_nn, i, f)
+      print_value_to_file('hr2_ecg_nn', hr2_ecg_nn, i, f)
+
+      # try:
+      #   print(hr1[i] + '\t', end='', file=f)
+      # except:
+      #   print('hr1 not long enough')
+      #   print('\t', end='', file=f)
+      # try:
+      #   print(hr2[i] + '\t', end='', file=f)
+      # except:
+      #   print('hr2 not long enough')
+      #   print('\t', end='', file=f)
+
+      # print(str(ecg_hr1[i]) + '\t', end='', file=f)
+      # print(str(ecg_hr2[i]) + '\t', end='', file=f)
       
       for tier in tiers_dict.keys():
         print(content[tier] + '\t', end='', file=f)
@@ -172,8 +213,10 @@ def create_data_file(input_path,
 #########################################################"""
 
 def main(input_path,
-       filename_ecg1, filename_ecg2,
        filename_rr_linear1, filename_rr_linear2,
+       filename_rr_nn1, filename_rr_nn2,
+       filename_rr_ecg_linear1, filename_rr_ecg_linear2,
+       filename_rr_ecg_nn1, filename_rr_ecg_nn2,
        filename_annot, filename_dataset):
 
   folder_prep = os.path.join(input_path, k.FOLDER_PREP)
@@ -185,8 +228,10 @@ def main(input_path,
   #annotation_file = os.path.join(input_path, annotation_file) if input_path not in annotation_file else annotation_file
 
   create_data_file(input_path,
-       filename_ecg1, filename_ecg2,
-       filename_rr_linear1, filename_rr_linear2,
+       filename_rr_linear1, filename_rr_linear1,
+       filename_rr_nn1, filename_rr_nn2,
+       filename_rr_ecg_linear1, filename_rr_ecg_linear1,
+       filename_rr_ecg_nn1, filename_rr_ecg_nn2,
        filename_annot, filename_dataset)
 
 if __name__ == "__main__":
@@ -204,11 +249,32 @@ if __name__ == "__main__":
   #subj2_rr.tsv
   filename_rr2 = os.path.join(input_path, k.FILENAME_RR_S2)
 
+  #subj1_rr_inferred_from_ecg.tsv
+  filename_ecg1 = os.path.join(input_path, k.FILENAME_ECG_S1)
+  #subj2_rr_inferred_from_ecg.tsv
+  filename_ecg2 = os.path.join(input_path, k.FILENAME_ECG_S2)
+
+  #subj1_rr_inferred_from_ecg.tsv
+  filename_ecg_rr1 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_RR_ECG_S1)
+  #subj2_rr_inferred_from_ecg.tsv
+  filename_ecg_rr2 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_RR_ECG_S2)
+
   print(filename_rr1)
   print(filename_rr2)
 
+  print(filename_ecg_rr1)
+  print(filename_ecg_rr2)
+  print(filename_ecg1)
+  print(filename_ecg2)
+
   rr_interpolation.interpolate(filename_rr1)
   rr_interpolation.interpolate(filename_rr2)
+
+  rr_inference.infer_rr_intervals_from_ecg(filename_ecg1)
+  rr_inference.infer_rr_intervals_from_ecg(filename_ecg2)
+
+  rr_interpolation.interpolate(filename_ecg_rr1)
+  rr_interpolation.interpolate(filename_ecg_rr2)
 
   ## generate dataset.tsv
   #subj1_ecg.tsv
@@ -219,12 +285,28 @@ if __name__ == "__main__":
   filename_rr_linear1 = os.path.join(input_path, k.FOLDER_PREP, "subj1_rr_linear.tsv")
   #processed/subj2_rr_linear.tsv
   filename_rr_linear2 = os.path.join(input_path, k.FOLDER_PREP, "subj2_rr_linear.tsv")
+  #processed/subj1_rr_nn.tsv
+  filename_rr_nn1 = os.path.join(input_path, k.FOLDER_PREP, "subj1_rr_nn.tsv")
+  #processed/subj2_rr_nn.tsv
+  filename_rr_nn2 = os.path.join(input_path, k.FOLDER_PREP, "subj2_rr_nn.tsv")
+  #processed/subj1_rr_inferred_from_ecg_linear.tsv
+  filename_rr_ecg_linear1 = os.path.join(input_path, k.FOLDER_PREP, "subj1_rr_inferred_from_ecg_linear.tsv")
+  #processed/subj2_rr_inferred_from_ecg_linear.tsv
+  filename_rr_ecg_linear2 = os.path.join(input_path, k.FOLDER_PREP, "subj2_rr_inferred_from_ecg_linear.tsv")
+  #processed/subj1_rr_inferred_from_ecg_linear.tsv
+  filename_rr_ecg_nn1 = os.path.join(input_path, k.FOLDER_PREP, "subj1_rr_inferred_from_ecg_nn.tsv")
+  #processed/subj2_rr_inferred_from_ecg_linear.tsv
+  filename_rr_ecg_nn2 = os.path.join(input_path, k.FOLDER_PREP, "subj2_rr_inferred_from_ecg_nn.tsv")
   #annotation.eaf
   filename_annot = os.path.join(input_path, filename_annot)
   #dataset.tsv
   filename_dataset = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_DATASET)
 
+  print(filename_rr_ecg_nn2)
+
   main(input_path,
-       filename_ecg1, filename_ecg2,
-       filename_rr_linear1, filename_rr_linear2,
+       filename_rr_linear1, filename_rr_linear1,
+       filename_rr_nn1, filename_rr_nn2,
+       filename_rr_ecg_linear1, filename_rr_ecg_linear1,
+       filename_rr_ecg_nn1, filename_rr_ecg_nn2,
        filename_annot, filename_dataset)
