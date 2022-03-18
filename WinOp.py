@@ -98,7 +98,7 @@ class HrvScreen(tk.Frame):
                     if self.recording:
                         data.save_raw_data(self.filename_rr)
 
-                    self.plot.plot_incremental(data.values_hr, k.TYPE_RR)
+                    self.plot.plot_incremental(data.heart_rate, k.TYPE_RR)
 
                     if(data.time != []):
                         data.clear()

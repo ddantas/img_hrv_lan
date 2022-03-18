@@ -781,8 +781,8 @@ class Server(LanDevice):
                     if self.polar.data_rr.time != []:
 
                         time = self.polar.data_rr.time
-                        hr = self.polar.data_rr.values_hr
-                        rr = self.polar.data_rr.values_rr
+                        hr = self.polar.data_rr.heart_rate
+                        rr = self.polar.data_rr.rr_interval
 
                         content = str(time) + ';' + str(hr) + ';' + str(rr) 
                         packet = Packet.Packet(k.TYPE_RR, content)

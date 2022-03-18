@@ -33,8 +33,8 @@ class Data:
     self.t0 = TIME_UNINITIALIZED
     self.time = []
     #TYPE_RR
-    self.values_hr = []
-    self.values_rr = []
+    self.heart_rate = []
+    self.rr_interval = []
     #TYPE_ECG
     self.timestamp = []
     self.values_ecg = []
@@ -42,8 +42,8 @@ class Data:
   def clear(self):
     self.time = []
     #TYPE_RR
-    self.values_hr = []
-    self.values_rr = []
+    self.heart_rate = []
+    self.rr_interval = []
     #TYPE_ECG
     self.timestamp = []
     self.values_ecg = []
@@ -80,8 +80,8 @@ class Data:
 
     if (self.datatype == k.TYPE_RR):
       df = pd.DataFrame(data = {"time": self.time,
-                                "heart_rate": self.values_hr,
-                                "rr_interval": self.values_rr})
+                                "heart_rate": self.heart_rate,
+                                "rr_interval": self.rr_interval})
     elif (self.datatype == k.TYPE_ECG):
       df = pd.DataFrame(data = {"time": self.time,
                                 "timestamp": self.timestamp,
@@ -118,6 +118,7 @@ class Data:
       data.time        = df.loc[:, "time"].tolist()
       data.heart_rate  = df.loc[:, "heart_rate"].tolist()
       data.rr_interval = df.loc[:, "rr_interval"].tolist()
+
     elif (df.columns[2] == "ecg"):
       data = Data(k.TYPE_ECG)
       data.time        = df.loc[:, "time"].tolist()

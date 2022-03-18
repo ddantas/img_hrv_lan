@@ -45,15 +45,15 @@ class Packet:
 
 		else:
 			data = Data.Data(k.TYPE_RR)
-			values_time, values_hr, values_rr = self.content.split(';')
+			values_time, heart_rate, rr_interval = self.content.split(';')
 
 			values_time = [float(v) for v in values_time.split(',')]
-			values_hr = [int(v) for v in values_hr.split(',')]
-			values_rr = [int(v) for v in values_rr.split(',')]
+			heart_rate = [int(v) for v in heart_rate.split(',')]
+			rr_interval = [int(v) for v in rr_interval.split(',')]
 
 			data.time = values_time
-			data.values_hr = values_hr
-			data.values_rr = values_rr
+			data.heart_rate = heart_rate
+			data.rr_interval = rr_interval
 
 		return data
 

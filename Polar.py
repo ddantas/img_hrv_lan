@@ -225,8 +225,8 @@ class Polar():
       while (i < len_packet):
         rr = int.from_bytes(packet[2:4], byteorder='little', signed=False)
         self.data_rr.time.append(t)
-        self.data_rr.values_hr.append(hr)
-        self.data_rr.values_rr.append(rr)
+        self.data_rr.heart_rate.append(hr)
+        self.data_rr.rr_interval.append(rr)
         print("i = %d, rr = %f" %(i, rr))
         i += 2
 
@@ -309,7 +309,7 @@ class Polar():
           if (FLAG_PLOT_ECG):
             self.plot.plot_incremental(self.data_ecg.values_ecg, k.TYPE_ECG)
           if (FLAG_PLOT_RR):
-            self.plot.plot_incremental(self.data_rr.values_hr, k.TYPE_RR)
+            self.plot.plot_incremental(self.data_rr.heart_rate, k.TYPE_RR)
           if FLAG_SAVE_ECG and filename_ecg != '':
             self.data_ecg.save_raw_data(filename_ecg)
           if FLAG_SAVE_RR and filename_rr != '':
