@@ -111,14 +111,6 @@ def create_data_file(input_path,
       print(f'Tried to acces index {index} {array_name} not long enough, appending repeated values...')
       print(array[-1] + '\t', end='', file=file)
 
-  # ecg_tuple1 = get_ecg_tuple(filename_ecg1)
-  # ecg_tuple2 = get_ecg_tuple(filename_ecg2)
-  # ecg_hr1 = ecg_tuple1[-1]
-  # ecg_hr2 = ecg_tuple2[-1]
-
-  # hr1 = get_hr_from_file(filename_rr_linear1)
-  # hr2 = get_hr_from_file(filename_rr_linear2)
-
   hr1_linear = get_hr_from_file(filename_rr_linear1)
   hr2_linear = get_hr_from_file(filename_rr_linear2)
 

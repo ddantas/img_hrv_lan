@@ -24,7 +24,7 @@ def get_hr_from_file(file):
 
   return hr_values
 
-def save_lines_to_file(lines_list, filename, file_suffix):
+def adjust_filename(filename, file_suffix):
 
 	dir_tree = filename.split('/')
 	filename = dir_tree[-1]
@@ -40,13 +40,14 @@ def save_lines_to_file(lines_list, filename, file_suffix):
 	else:
 		save_dir = cur_dir + '/02_preprocess/'
 
-	content = 'time\theart_rate\trr_interval\n'
-	for l in lines_list:
-		new_line = str(l[0]) + '\t' + str(l[1]) + '\t' + str(l[2]) + '\n'
-		content += new_line
+	return save_dir + new_file
+	# content = 'time\theart_rate\trr_interval\n'
+	# for l in lines_list:
+	# 	new_line = str(l[0]) + '\t' + str(l[1]) + '\t' + str(l[2]) + '\n'
+	# 	content += new_line
 
 
-	with open(save_dir + new_file, 'w') as f_w:
-		print(f"Saving new file to {save_dir + new_file}")
-		f_w.write(str(content))
+	# with open(save_dir + new_file, 'w') as f_w:
+	# 	print(f"Saving new file to {save_dir + new_file}")
+	# 	f_w.write(str(content))
 
