@@ -13,6 +13,7 @@ import os
 import threading
 import time
 import sys
+import struct
 
 from PIL import Image
 from PIL import ImageTk
