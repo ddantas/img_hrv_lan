@@ -1,8 +1,9 @@
 import sys
 import pandas as pd
 import math as m
+import os
 
-from utils import *
+import utils
 
 filepath = os.path.dirname(__file__)
 modpathrel = os.path.join(filepath, "..")
@@ -55,7 +56,7 @@ def nearest_neighbor(filename):
 		new_data.heart_rate.append(df['heart_rate'].iat[i])
 		new_data.rr_interval.append(df['rr_interval'].iat[i])
 
-	new_data.save_raw_data(adjust_filename(filename, '_nn.tsv'))
+	new_data.save_raw_data(utils.adjust_filename(filename, '_nn.tsv'))
 
 def linear_preprocess(filename):
 
@@ -101,7 +102,7 @@ def linear_preprocess(filename):
 				new_data.heart_rate.append(hr)
 				new_data.rr_interval.append(rr)
 
-	new_data.save_raw_data(adjust_filename(filename, '_linear.tsv'))
+	new_data.save_raw_data(utils.adjust_filename(filename, '_linear.tsv'))
 
 def interpolate(filename):
 	print(f"Preprocessing RR intervals using nearest neighbor strategy for file {filename}")

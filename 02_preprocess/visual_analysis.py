@@ -3,7 +3,7 @@ from biosppy.signals import ecg
 import pandas as pd
 import numpy as np
 
-from rr_inference import *
+import rr_inference
 
 import sys
 sys.path.append('../')
@@ -94,10 +94,10 @@ if __name__ == '__main__':
   subj = 2
   filename_rr  = "%s/subj%d_rr.tsv" % (path, subj)
   filename_ecg = "%s/subj%d_ecg.tsv" % (path, subj)
-  filename_from_ecg = "%s/processed/subj%d_rr_inferred_from_ecg.tsv" % (path, subj)
+  filename_from_ecg = "%s/02_preprocess/subj%d_rr_inferred_from_ecg.tsv" % (path, subj)
 
   rr_values = construct_xy_from_file(filename_rr)
-  infer_rr_intervals_from_ecg(filename_ecg)
+  rr_inference.infer_rr_intervals_from_ecg(filename_ecg)
 
   inferred_rr_values = construct_xy_from_file(filename_from_ecg)
   ecg_values = construct_xy_from_file_ecg(filename_ecg)

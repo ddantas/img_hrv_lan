@@ -2,46 +2,47 @@ import sys
 
 from biosppy.signals import ecg
 import numpy as np
+import os
 
-from utils import *
+import utils
 
-def infer_rr_intervals_from_ecg(file):
-	
-	with open(file) as f_read:
+filepath = os.path.dirname(__file__)
+modpathrel = os.path.join(filepath, "..")
+modpathabs = os.path.abspath(modpathrel)
+sys.path.append(modpathabs)
 
-		lines = f_read.readlines()[1:]
-		print(file)
+import Data
+import const as k
 
-		raw_ecg = [int(line.split()[-1]) for line in lines]
+def infer_rr_intervals_from_ecg(filename):
 
-		signal = np.array(raw_ecg)
-		out = ecg.ecg(signal=signal, sampling_rate=130.0, show=False)
-		
-		time_intervals = out[0]
-		rpeaks = out[2]
-		heart_rate = out[-1]
+	data = Data.Data.load_raw_data(filename)
 
-		rr_lines = []
+	new_data = Data.Data(k.TYPE_RR)
+	signal = data.ecg
+	out = ecg.ecg(signal=signal, sampling_rate=130.0, show=False)
 
-		last_peak = rpeaks[0]
-		for i in range(1, len(heart_rate)):
+	time_intervals = out[0]
+	rpeaks = out[2]
+	heart_rate = out[-1]
 
-			peak_index = rpeaks[i]
+	last_peak = rpeaks[0]
+	for i in range(1, len(heart_rate)):
 
-			time = time_intervals[peak_index]
+		peak_index = rpeaks[i]
+		time = time_intervals[peak_index]
+		last_time = time_intervals[last_peak]
+		hr = heart_rate[i]
+		rr = (float(time) - float(last_time))*1024
+		time = float(time)
 
-			last_time = time_intervals[last_peak]
+		new_data.time.append(time)
+		new_data.heart_rate.append(hr)
+		new_data.rr_interval.append(rr)
 
-			hr = heart_rate[i]
-			rr = (float(time) - float(last_time))*1024
-			time = float(time)
+		last_peak = peak_index
 
-			rr_lines.append([time, hr, rr])
-			last_peak = peak_index
-
-		# use rr standard filename string
-		filename = file[:-7] + 'rr.tsv'
-		save_lines_to_file(rr_lines, filename, '_inferred_from_ecg.tsv')
+	new_data.save_raw_data(utils.adjust_filename(filename, '_inferred_from_ecg.tsv'))
 
 if __name__ == '__main__':
 
