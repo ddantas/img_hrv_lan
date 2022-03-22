@@ -1,18 +1,15 @@
 import sys
-
 from biosppy.signals import ecg
 import numpy as np
 import os
-
-import utils
 
 filepath = os.path.dirname(__file__)
 modpathrel = os.path.join(filepath, "..")
 modpathabs = os.path.abspath(modpathrel)
 sys.path.append(modpathabs)
-
 import Data
 import const as k
+import utils
 
 def infer_rr_intervals_from_ecg(filename_input, filename_output):
 

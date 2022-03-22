@@ -3,14 +3,13 @@ import pandas as pd
 import math as m
 import os
 
-import utils
-
 filepath = os.path.dirname(__file__)
 modpathrel = os.path.join(filepath, "..")
 modpathabs = os.path.abspath(modpathrel)
 sys.path.append(modpathabs)
 import Data
 import const as k
+import utils
 
 def nearest_neighbor(filename, output_nn):
 

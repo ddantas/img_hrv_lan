@@ -266,11 +266,7 @@ if __name__ == "__main__":
   filename_dataset = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_DATASET)
 
   ## Linear and NN interpolation
-  print("CHECK: " + filename_rr_nn1)
-  print("CHECK: " + filename_rr_linear1)
   rr_interpolation.interpolate(filename_rr1, filename_rr_nn1, filename_rr_linear1)
-  print("CHECK: " + filename_rr_nn2)
-  print("CHECK: " + filename_rr_linear2)
   rr_interpolation.interpolate(filename_rr2, filename_rr_nn2, filename_rr_linear2)
 
   rr_interpolation.interpolate(filename_ecg_rr1, filename_ecg_rr_nn1, filename_ecg_rr_linear1)
