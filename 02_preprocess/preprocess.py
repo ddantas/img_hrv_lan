@@ -14,6 +14,7 @@ import os
 import xml.etree.ElementTree as et
 from queue import Queue
 import sys
+import pandas as pd
 
 import rr_interpolation
 import rr_inference
@@ -103,94 +104,82 @@ def create_data_file(input_path,
        filename_rr_ecg_nn1, filename_rr_ecg_nn2,
        filename_annot, filename_dataset):
 
-
-  def print_value_to_file(array_name, array, index, file):
-    try:
-      print(str(array[index]) + '\t', end='', file=file)
-    except:
-      print(f'Tried to acces index {index} {array_name} not long enough, appending repeated values...')
-      print(str(array[-1]) + '\t', end='', file=file)
-
   data_hr1_linear = Data.Data.load_raw_data(filename_rr_linear1)
   data_hr2_linear = Data.Data.load_raw_data(filename_rr_linear2)
+  # hr1_linear = pd.Series(data_hr1_linear.heart_rate, name='hr_subj1_linear')
   hr1_linear = data_hr1_linear.heart_rate
+  # hr2_linear = pd.Series(data_hr2_linear.heart_rate, name='hr_subj2_linear')
   hr2_linear = data_hr2_linear.heart_rate
 
   data_hr1_nn = Data.Data.load_raw_data(filename_rr_nn1)
   data_hr2_nn = Data.Data.load_raw_data(filename_rr_nn2)
+  # hr1_nn = pd.Series(data_hr1_nn.heart_rate, name='hr_subj1_nn')
   hr1_nn = data_hr1_nn.heart_rate
-  hr2_nn = data_hr2_nn.heart_rate
+
+  # hr2_nn = pd.Series(data_hr2_nn.heart_rate, name='hr_subj2_nn')
+  hr2_nn = data_hr1_nn.heart_rate
 
   data_hr1_ecg_linear = Data.Data.load_raw_data(filename_rr_ecg_linear1)
   data_hr2_ecg_linear = Data.Data.load_raw_data(filename_rr_ecg_linear2)
+  # hr1_ecg_linear = pd.Series(data_hr1_ecg_linear.heart_rate, name='hr_subj1_ecg_linear')
   hr1_ecg_linear = data_hr1_ecg_linear.heart_rate
+  # hr2_ecg_linear = pd.Series(data_hr2_ecg_linear.heart_rate, name='hr_subj2_ecg_linear')
   hr2_ecg_linear = data_hr2_ecg_linear.heart_rate
 
   data_hr1_ecg_nn = Data.Data.load_raw_data(filename_rr_ecg_nn1)
   data_hr2_ecg_nn = Data.Data.load_raw_data(filename_rr_ecg_nn2)
+  # hr1_ecg_nn = pd.Series(data_hr1_ecg_nn.heart_rate, name='hr_subj1_ecg_nn')
   hr1_ecg_nn = data_hr1_ecg_nn.heart_rate
+  # hr2_ecg_nn = pd.Series(data_hr2_ecg_nn.heart_rate, name='hr_subj2_ecg_nn')
   hr2_ecg_nn = data_hr2_ecg_nn.heart_rate
-
 
   tiers_dict, time_end = construct_dict_from_eaf(filename_annot)
 
-  with open(filename_dataset, 'w') as f:
-
-    print('sec\t', end='', file=f)
-    print('hr_subj1_linear' + '\t', end='', file=f)
-    print('hr_subj2_linear' + '\t', end='', file=f)
-    print('hr_subj1_nn' + '\t', end='', file=f)
-    print('hr_subj2_nn' + '\t', end='', file=f)
-    print('hr_subj1_ecg_linear' + '\t', end='', file=f)
-    print('hr_subj2_ecg_linear' + '\t', end='', file=f)
-    print('hr_subj1_ecg_nn' + '\t', end='', file=f)
-    print('hr_subj2_ecg_nn' + '\t', end='', file=f)
+  sec = []
+  content = {}
+  for i in range(time_end):
+    sec.append(i)
 
     for tier in tiers_dict.keys():
-      print(tier + '\t', end='', file=f)
 
-    print('\n', end='', file=f)
+      for annot_id, annot_dict in tiers_dict[tier].items():
 
-    for i in range(time_end):
+        begin_ts = annot_dict['TIME_SLOT_BEGIN']
+        end_ts = annot_dict['TIME_SLOT_END']
+        value = annot_dict['ANNOTATION_VALUE']
 
-      content = {}
+        if i >= int(begin_ts)//1000 and i <= int(end_ts)//1000:
+          v = value
+          break
+        else:
+          v = ''
 
-      for tier in tiers_dict.keys():
+      try :
+        content[tier].append(v)
+      except:
+        content[tier] = [v]
 
-        for annot_id, annot_dict in tiers_dict[tier].items():
+  content['sec'] = sec
+  content['hr_subj1_linear'] = hr1_linear
+  content['hr_subj2_linear'] = hr2_linear
 
-          begin_ts = annot_dict['TIME_SLOT_BEGIN']
-          end_ts = annot_dict['TIME_SLOT_END']
-          value = annot_dict['ANNOTATION_VALUE']
+  content['hr_subj1_nn'] = hr1_nn
+  content['hr_subj2_nn'] = hr2_nn
 
-          if i >= int(begin_ts)//1000 and i <= int(end_ts)//1000:
-            v = value
-            break
-          else:
-            v = ''
+  content['hr_subj1_ecg_linear'] = hr1_ecg_linear
+  content['hr_subj2_ecg_linear'] = hr2_ecg_linear
 
-        content[tier] = v
+  content['hr_subj1_ecg_nn'] = hr1_ecg_nn
+  content['hr_subj2_ecg_nn'] = hr2_ecg_nn
 
-      print(str(i) + '\t', end='', file=f)
+  dfs = []
+  for k, v in content.items():
+    print(k)
+    dfs.append(pd.Series(v, name=k))
 
-      print_value_to_file('hr1_linear', hr1_linear, i, f)
-      print_value_to_file('hr2_linear', hr2_linear, i, f)
-
-      print_value_to_file('hr1_nn', hr1_nn, i, f)
-      print_value_to_file('hr2_nn', hr2_nn, i, f)
-
-      print_value_to_file('hr1_ecg_linear', hr1_ecg_linear, i, f)
-      print_value_to_file('hr2_ecg_linear', hr2_ecg_linear, i, f)
-
-      print_value_to_file('hr1_ecg_nn', hr1_ecg_nn, i, f)
-      print_value_to_file('hr2_ecg_nn', hr2_ecg_nn, i, f)
-      
-      for tier in tiers_dict.keys():
-        print(content[tier] + '\t', end='', file=f)
-
-
-      print('\n', end='', file=f)
-
+  df = pd.concat(dfs, axis=1)
+  
+  df.to_csv(filename_dataset, sep = '\t', index=False, mode = "w", header = True)
 
 """#########################################################
 ############################################################
@@ -276,13 +265,13 @@ if __name__ == "__main__":
   #processed/subj2_rr_nn.tsv
   filename_rr_nn2 = os.path.join(input_path, k.FOLDER_PREP, "subj2_rr_nn.tsv")
   #processed/subj1_rr_inferred_from_ecg_linear.tsv
-  filename_rr_ecg_linear1 = os.path.join(input_path, k.FOLDER_PREP, "subj1_rr_inferred_from_ecg_linear.tsv")
+  filename_rr_ecg_linear1 = os.path.join(input_path, k.FOLDER_PREP, "subj1_ecg_adjusted_rr_linear.tsv")
   #processed/subj2_rr_inferred_from_ecg_linear.tsv
-  filename_rr_ecg_linear2 = os.path.join(input_path, k.FOLDER_PREP, "subj2_rr_inferred_from_ecg_linear.tsv")
+  filename_rr_ecg_linear2 = os.path.join(input_path, k.FOLDER_PREP, "subj1_ecg_adjusted_rr_linear.tsv")
   #processed/subj1_rr_inferred_from_ecg_linear.tsv
-  filename_rr_ecg_nn1 = os.path.join(input_path, k.FOLDER_PREP, "subj1_rr_inferred_from_ecg_nn.tsv")
+  filename_rr_ecg_nn1 = os.path.join(input_path, k.FOLDER_PREP, "subj1_ecg_adjusted_rr_nn.tsv")
   #processed/subj2_rr_inferred_from_ecg_linear.tsv
-  filename_rr_ecg_nn2 = os.path.join(input_path, k.FOLDER_PREP, "subj2_rr_inferred_from_ecg_nn.tsv")
+  filename_rr_ecg_nn2 = os.path.join(input_path, k.FOLDER_PREP, "subj1_ecg_adjusted_rr_nn.tsv")
   #annotation.eaf
   filename_annot = os.path.join(input_path, filename_annot)
   #dataset.tsv
