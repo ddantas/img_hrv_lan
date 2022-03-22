@@ -42,7 +42,7 @@ def infer_rr_intervals_from_ecg(filename):
 
 		last_peak = peak_index
 
-	new_data.save_raw_data(utils.adjust_filename(filename, '_inferred_from_ecg.tsv'))
+	new_data.save_raw_data(utils.adjust_filename(filename, '_adjusted_rr.tsv'))
 
 if __name__ == '__main__':
 

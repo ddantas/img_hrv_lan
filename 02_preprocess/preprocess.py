@@ -13,7 +13,6 @@
 import os
 import xml.etree.ElementTree as et
 from queue import Queue
-from utils import get_ecg_tuple, get_hr_from_file
 import sys
 
 import rr_interpolation
@@ -24,6 +23,7 @@ filepath = os.path.dirname(__file__)
 modpathrel = os.path.join(filepath, "..")
 modpathabs = os.path.abspath(modpathrel)
 sys.path.append(modpathabs)
+import Data
 import const as k
 
 def print_tree_level(level, root):
@@ -106,22 +106,30 @@ def create_data_file(input_path,
 
   def print_value_to_file(array_name, array, index, file):
     try:
-      print(array[index] + '\t', end='', file=file)
+      print(str(array[index]) + '\t', end='', file=file)
     except:
       print(f'Tried to acces index {index} {array_name} not long enough, appending repeated values...')
-      print(array[-1] + '\t', end='', file=file)
+      print(str(array[-1]) + '\t', end='', file=file)
 
-  hr1_linear = get_hr_from_file(filename_rr_linear1)
-  hr2_linear = get_hr_from_file(filename_rr_linear2)
+  data_hr1_linear = Data.Data.load_raw_data(filename_rr_linear1)
+  data_hr2_linear = Data.Data.load_raw_data(filename_rr_linear2)
+  hr1_linear = data_hr1_linear.heart_rate
+  hr2_linear = data_hr2_linear.heart_rate
 
-  hr1_nn = get_hr_from_file(filename_rr_nn1)
-  hr2_nn = get_hr_from_file(filename_rr_nn2)
+  data_hr1_nn = Data.Data.load_raw_data(filename_rr_nn1)
+  data_hr2_nn = Data.Data.load_raw_data(filename_rr_nn2)
+  hr1_nn = data_hr1_nn.heart_rate
+  hr2_nn = data_hr2_nn.heart_rate
 
-  hr1_ecg_linear = get_hr_from_file(filename_rr_ecg_linear1)
-  hr2_ecg_linear = get_hr_from_file(filename_rr_ecg_linear2)
+  data_hr1_ecg_linear = Data.Data.load_raw_data(filename_rr_ecg_linear1)
+  data_hr2_ecg_linear = Data.Data.load_raw_data(filename_rr_ecg_linear2)
+  hr1_ecg_linear = data_hr1_ecg_linear.heart_rate
+  hr2_ecg_linear = data_hr2_ecg_linear.heart_rate
 
-  hr1_ecg_nn = get_hr_from_file(filename_rr_ecg_nn1)
-  hr2_ecg_nn = get_hr_from_file(filename_rr_ecg_nn2)
+  data_hr1_ecg_nn = Data.Data.load_raw_data(filename_rr_ecg_nn1)
+  data_hr2_ecg_nn = Data.Data.load_raw_data(filename_rr_ecg_nn2)
+  hr1_ecg_nn = data_hr1_ecg_nn.heart_rate
+  hr2_ecg_nn = data_hr2_ecg_nn.heart_rate
 
 
   tiers_dict, time_end = construct_dict_from_eaf(filename_annot)
@@ -176,20 +184,6 @@ def create_data_file(input_path,
 
       print_value_to_file('hr1_ecg_nn', hr1_ecg_nn, i, f)
       print_value_to_file('hr2_ecg_nn', hr2_ecg_nn, i, f)
-
-      # try:
-      #   print(hr1[i] + '\t', end='', file=f)
-      # except:
-      #   print('hr1 not long enough')
-      #   print('\t', end='', file=f)
-      # try:
-      #   print(hr2[i] + '\t', end='', file=f)
-      # except:
-      #   print('hr2 not long enough')
-      #   print('\t', end='', file=f)
-
-      # print(str(ecg_hr1[i]) + '\t', end='', file=f)
-      # print(str(ecg_hr2[i]) + '\t', end='', file=f)
       
       for tier in tiers_dict.keys():
         print(content[tier] + '\t', end='', file=f)
@@ -293,8 +287,6 @@ if __name__ == "__main__":
   filename_annot = os.path.join(input_path, filename_annot)
   #dataset.tsv
   filename_dataset = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_DATASET)
-
-  print(filename_rr_ecg_nn2)
 
   main(input_path,
        filename_rr_linear1, filename_rr_linear1,

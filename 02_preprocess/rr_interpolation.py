@@ -36,7 +36,7 @@ def nearest_neighbor(filename):
 		changed = True
 		j_min = j
 		j += 1
-		while changed:
+		while changed and j < len_time:
 			diff = abs(df['time'].iat[j] - i)
 			if diff < min_diff:
 				min_diff = diff
