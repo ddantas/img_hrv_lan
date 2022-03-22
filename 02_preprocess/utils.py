@@ -2,7 +2,9 @@ import os
 import numpy as np
 from biosppy.signals import ecg
 
-def adjust_filename(filename, file_suffix):
+
+# Remove?
+def adjust_filename_old(filename, file_suffix):
 
 	dir_tree = filename.split('/')
 	filename = dir_tree[-1]
@@ -19,3 +21,8 @@ def adjust_filename(filename, file_suffix):
 		save_dir = cur_dir + '/02_preprocess/'
 
 	return save_dir + new_file
+
+def adjust_filename(filename, file_suffix):
+        basename, file_extension = os.path.splitext(filename)
+        result = basename + file_suffix
+        return result

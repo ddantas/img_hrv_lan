@@ -12,6 +12,11 @@
 
 import os
 
+EXT_TSV = ".tsv"
+EXT_LIN = "_linear.tsv"
+EXT_NN  = "_nn.tsv"
+EXT_INFERRED  = "_inferred_rr.tsv"
+
 ## Used mostly by Polar.py, Data.py and Plot.py
 TYPE_RR  = "R"
 TYPE_ECG = "E"
@@ -31,9 +36,10 @@ FILENAME_RR       = "subj%d_rr.tsv"
 FILENAME_RR_S1    = "subj1_rr.tsv"
 FILENAME_RR_S2    = "subj2_rr.tsv"
 
-FILENAME_RR_ECG       = "subj%d_ecg_adjusted_rr.tsv"
-FILENAME_RR_ECG_S1    = "subj1_ecg_adjusted_rr.tsv"
-FILENAME_RR_ECG_S2    = "subj2_ecg_adjusted_rr.tsv"
+# "subj%d_ecg_inferred_rr.tsv"
+FILENAME_ECG_RR       = FILENAME_ECG.replace(EXT_TSV, EXT_INFERRED)
+FILENAME_ECG_RR_S1    = FILENAME_ECG_S1.replace(EXT_TSV, EXT_INFERRED)
+FILENAME_ECG_RR_S2    = FILENAME_ECG_S2.replace(EXT_TSV, EXT_INFERRED)
 
 FILENAME_VIDEO    = "subj%d.mp4"
 FILENAME_VIDEO_S1 = "subj1.mp4"
@@ -50,3 +56,22 @@ FILENAME_VIDEO_SYNC_S2 = "subj2_sync.mp4"
 FOLDER_PREP = "02_preprocess"
 FILENAME_DATASET = "dataset.tsv"
 
+# "subj%d_rr_linear.tsv"
+FILENAME_RR_LIN          = FILENAME_RR.replace(EXT_TSV, EXT_LIN)
+FILENAME_RR_LIN_S1       = FILENAME_RR_S1.replace(EXT_TSV, EXT_LIN)
+FILENAME_RR_LIN_S2       = FILENAME_RR_S2.replace(EXT_TSV, EXT_LIN)
+
+# "subj%d_rr_nn.tsv"
+FILENAME_RR_NN           = FILENAME_RR.replace(EXT_TSV, EXT_NN)
+FILENAME_RR_NN_S1        = FILENAME_RR_S1.replace(EXT_TSV, EXT_NN)
+FILENAME_RR_NN_S2        = FILENAME_RR_S2.replace(EXT_TSV, EXT_NN)
+
+# "subj%d_ecg_inferred_rr_linear.tsv"
+FILENAME_ECG_RR_LIN      = FILENAME_ECG_RR.replace(EXT_TSV, EXT_LIN)
+FILENAME_ECG_RR_LIN_S1   = FILENAME_ECG_RR_S1.replace(EXT_TSV, EXT_LIN)
+FILENAME_ECG_RR_LIN_S2   = FILENAME_ECG_RR_S2.replace(EXT_TSV, EXT_LIN)
+
+# "subj%d_ecg_inferred_rr_nn.tsv"
+FILENAME_ECG_RR_NN       = FILENAME_ECG_RR.replace(EXT_TSV, EXT_NN)
+FILENAME_ECG_RR_NN_S1    = FILENAME_ECG_RR_S1.replace(EXT_TSV, EXT_NN)
+FILENAME_ECG_RR_NN_S2    = FILENAME_ECG_RR_S2.replace(EXT_TSV, EXT_NN)

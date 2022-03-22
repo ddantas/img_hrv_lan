@@ -100,8 +100,8 @@ def construct_dict_from_eaf(eaf_file):
 def create_data_file(input_path,
        filename_rr_linear1, filename_rr_linear2,
        filename_rr_nn1, filename_rr_nn2,
-       filename_rr_ecg_linear1, filename_rr_ecg_linear2,
-       filename_rr_ecg_nn1, filename_rr_ecg_nn2,
+       filename_ecg_rr_linear1, filename_ecg_rr_linear2,
+       filename_ecg_rr_nn1, filename_ecg_rr_nn2,
        filename_annot, filename_dataset):
 
   data_hr1_linear = Data.Data.load_raw_data(filename_rr_linear1)
@@ -119,15 +119,15 @@ def create_data_file(input_path,
   # hr2_nn = pd.Series(data_hr2_nn.heart_rate, name='hr_subj2_nn')
   hr2_nn = data_hr1_nn.heart_rate
 
-  data_hr1_ecg_linear = Data.Data.load_raw_data(filename_rr_ecg_linear1)
-  data_hr2_ecg_linear = Data.Data.load_raw_data(filename_rr_ecg_linear2)
+  data_hr1_ecg_linear = Data.Data.load_raw_data(filename_ecg_rr_linear1)
+  data_hr2_ecg_linear = Data.Data.load_raw_data(filename_ecg_rr_linear2)
   # hr1_ecg_linear = pd.Series(data_hr1_ecg_linear.heart_rate, name='hr_subj1_ecg_linear')
   hr1_ecg_linear = data_hr1_ecg_linear.heart_rate
   # hr2_ecg_linear = pd.Series(data_hr2_ecg_linear.heart_rate, name='hr_subj2_ecg_linear')
   hr2_ecg_linear = data_hr2_ecg_linear.heart_rate
 
-  data_hr1_ecg_nn = Data.Data.load_raw_data(filename_rr_ecg_nn1)
-  data_hr2_ecg_nn = Data.Data.load_raw_data(filename_rr_ecg_nn2)
+  data_hr1_ecg_nn = Data.Data.load_raw_data(filename_ecg_rr_nn1)
+  data_hr2_ecg_nn = Data.Data.load_raw_data(filename_ecg_rr_nn2)
   # hr1_ecg_nn = pd.Series(data_hr1_ecg_nn.heart_rate, name='hr_subj1_ecg_nn')
   hr1_ecg_nn = data_hr1_ecg_nn.heart_rate
   # hr2_ecg_nn = pd.Series(data_hr2_ecg_nn.heart_rate, name='hr_subj2_ecg_nn')
@@ -190,8 +190,8 @@ def create_data_file(input_path,
 def main(input_path,
        filename_rr_linear1, filename_rr_linear2,
        filename_rr_nn1, filename_rr_nn2,
-       filename_rr_ecg_linear1, filename_rr_ecg_linear2,
-       filename_rr_ecg_nn1, filename_rr_ecg_nn2,
+       filename_ecg_rr_linear1, filename_ecg_rr_linear2,
+       filename_ecg_rr_nn1, filename_ecg_rr_nn2,
        filename_annot, filename_dataset):
 
   folder_prep = os.path.join(input_path, k.FOLDER_PREP)
@@ -203,10 +203,10 @@ def main(input_path,
   #annotation_file = os.path.join(input_path, annotation_file) if input_path not in annotation_file else annotation_file
 
   create_data_file(input_path,
-       filename_rr_linear1, filename_rr_linear1,
+       filename_rr_linear1, filename_rr_linear2,
        filename_rr_nn1, filename_rr_nn2,
-       filename_rr_ecg_linear1, filename_rr_ecg_linear1,
-       filename_rr_ecg_nn1, filename_rr_ecg_nn2,
+       filename_ecg_rr_linear1, filename_ecg_rr_linear2,
+       filename_ecg_rr_nn1, filename_ecg_rr_nn2,
        filename_annot, filename_dataset)
 
 if __name__ == "__main__":
@@ -219,20 +219,17 @@ if __name__ == "__main__":
   filename_annot = sys.argv[2]
 
   ## interpolate
-  #subj1_rr.tsv
+  # subj%d_rr.tsv
   filename_rr1 = os.path.join(input_path, k.FILENAME_RR_S1)
-  #subj2_rr.tsv
   filename_rr2 = os.path.join(input_path, k.FILENAME_RR_S2)
 
-  #subj1_rr_inferred_from_ecg.tsv
+  # subj%d_rr_inferred_from_ecg.tsv
   filename_ecg1 = os.path.join(input_path, k.FILENAME_ECG_S1)
-  #subj2_rr_inferred_from_ecg.tsv
   filename_ecg2 = os.path.join(input_path, k.FILENAME_ECG_S2)
 
-  #subj1_rr_inferred_from_ecg.tsv
-  filename_ecg_rr1 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_RR_ECG_S1)
-  #subj2_rr_inferred_from_ecg.tsv
-  filename_ecg_rr2 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_RR_ECG_S2)
+  # subj%d_rr_inferred_from_ecg.tsv
+  filename_ecg_rr1 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_ECG_RR_S1)
+  filename_ecg_rr2 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_ECG_RR_S2)
 
   print(filename_rr1)
   print(filename_rr2)
@@ -242,44 +239,47 @@ if __name__ == "__main__":
   print(filename_ecg1)
   print(filename_ecg2)
 
-  rr_interpolation.interpolate(filename_rr1)
-  rr_interpolation.interpolate(filename_rr2)
+  ## Infer RR intervals from ECG
+  rr_inference.infer_rr_intervals_from_ecg(filename_ecg1, filename_ecg_rr1)
+  rr_inference.infer_rr_intervals_from_ecg(filename_ecg2, filename_ecg_rr2)
+  print("CHECK")
 
-  rr_inference.infer_rr_intervals_from_ecg(filename_ecg1)
-  rr_inference.infer_rr_intervals_from_ecg(filename_ecg2)
-
-  rr_interpolation.interpolate(filename_ecg_rr1)
-  rr_interpolation.interpolate(filename_ecg_rr2)
-
-  ## generate dataset.tsv
-  #subj1_ecg.tsv
+  ## Generate filenames
+  # subj%d_ecg.tsv
   filename_ecg1 = os.path.join(input_path, k.FILENAME_ECG_S1)
-  #subj2_ecg.tsv
   filename_ecg2 = os.path.join(input_path, k.FILENAME_ECG_S2)
-  #processed/subj1_rr_linear.tsv
-  filename_rr_linear1 = os.path.join(input_path, k.FOLDER_PREP, "subj1_rr_linear.tsv")
-  #processed/subj2_rr_linear.tsv
-  filename_rr_linear2 = os.path.join(input_path, k.FOLDER_PREP, "subj2_rr_linear.tsv")
-  #processed/subj1_rr_nn.tsv
-  filename_rr_nn1 = os.path.join(input_path, k.FOLDER_PREP, "subj1_rr_nn.tsv")
-  #processed/subj2_rr_nn.tsv
-  filename_rr_nn2 = os.path.join(input_path, k.FOLDER_PREP, "subj2_rr_nn.tsv")
-  #processed/subj1_rr_inferred_from_ecg_linear.tsv
-  filename_rr_ecg_linear1 = os.path.join(input_path, k.FOLDER_PREP, "subj1_ecg_adjusted_rr_linear.tsv")
-  #processed/subj2_rr_inferred_from_ecg_linear.tsv
-  filename_rr_ecg_linear2 = os.path.join(input_path, k.FOLDER_PREP, "subj1_ecg_adjusted_rr_linear.tsv")
-  #processed/subj1_rr_inferred_from_ecg_linear.tsv
-  filename_rr_ecg_nn1 = os.path.join(input_path, k.FOLDER_PREP, "subj1_ecg_adjusted_rr_nn.tsv")
-  #processed/subj2_rr_inferred_from_ecg_linear.tsv
-  filename_rr_ecg_nn2 = os.path.join(input_path, k.FOLDER_PREP, "subj1_ecg_adjusted_rr_nn.tsv")
-  #annotation.eaf
+  # 02_preprocess/subj%d_rr_linear.tsv
+  filename_rr_linear1 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_RR_LIN_S1)
+  filename_rr_linear2 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_RR_LIN_S2)
+  # 02_preprocess/subj%d_rr_nn.tsv
+  filename_rr_nn1 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_RR_NN_S1)
+  filename_rr_nn2 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_RR_NN_S2)
+  # 02_preprocess/subj%d_ecg_inferred_rr_linear.tsv
+  filename_ecg_rr_linear1 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_ECG_RR_LIN_S1)
+  filename_ecg_rr_linear2 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_ECG_RR_LIN_S2)
+  # 02_preprocess/subj%d_ecg_inferred_rr_nn.tsv
+  filename_ecg_rr_nn1 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_ECG_RR_NN_S1)
+  filename_ecg_rr_nn2 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_ECG_RR_NN_S2)
+  # annotation.eaf
   filename_annot = os.path.join(input_path, filename_annot)
-  #dataset.tsv
+  # dataset.tsv
   filename_dataset = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_DATASET)
 
+  ## Linear and NN interpolation
+  print("CHECK: " + filename_rr_nn1)
+  print("CHECK: " + filename_rr_linear1)
+  rr_interpolation.interpolate(filename_rr1, filename_rr_nn1, filename_rr_linear1)
+  print("CHECK: " + filename_rr_nn2)
+  print("CHECK: " + filename_rr_linear2)
+  rr_interpolation.interpolate(filename_rr2, filename_rr_nn2, filename_rr_linear2)
+
+  rr_interpolation.interpolate(filename_ecg_rr1, filename_ecg_rr_nn1, filename_ecg_rr_linear1)
+  rr_interpolation.interpolate(filename_ecg_rr2, filename_ecg_rr_nn2, filename_ecg_rr_linear2)
+
+  ## Generate dataset.tsv
   main(input_path,
-       filename_rr_linear1, filename_rr_linear1,
+       filename_rr_linear1, filename_rr_linear2,
        filename_rr_nn1, filename_rr_nn2,
-       filename_rr_ecg_linear1, filename_rr_ecg_linear1,
-       filename_rr_ecg_nn1, filename_rr_ecg_nn2,
+       filename_ecg_rr_linear1, filename_ecg_rr_linear2,
+       filename_ecg_rr_nn1, filename_ecg_rr_nn2,
        filename_annot, filename_dataset)

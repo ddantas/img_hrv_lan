@@ -14,9 +14,9 @@ sys.path.append(modpathabs)
 import Data
 import const as k
 
-def infer_rr_intervals_from_ecg(filename):
+def infer_rr_intervals_from_ecg(filename_input, filename_output):
 
-	data = Data.Data.load_raw_data(filename)
+	data = Data.Data.load_raw_data(filename_input)
 
 	new_data = Data.Data(k.TYPE_RR)
 	signal = data.ecg
@@ -42,14 +42,17 @@ def infer_rr_intervals_from_ecg(filename):
 
 		last_peak = peak_index
 
-	new_data.save_raw_data(utils.adjust_filename(filename, '_adjusted_rr.tsv'))
+	#filename_output = utils.adjust_filename(filename, k.EXT_INFERRED)
+	#filename_output = os.path.join(os.path.dirname(filename_output), k.FOLDER_PREP, os.path.basename(filename_output))
+	print("Saving to "+ filename_output)
+	overwrite = 1
+	new_data.save_raw_data(filename_output, overwrite)
 
 if __name__ == '__main__':
 
 	if len(sys.argv) < 2:
 		print("Usage: `python rr_inference.py <data_file.tsv>`")
 		print("\tYou can pass in one or more files.")
-		exit(1)
 
 	files = sys.argv[1:]
 

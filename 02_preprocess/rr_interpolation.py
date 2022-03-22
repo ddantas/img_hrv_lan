@@ -12,7 +12,7 @@ sys.path.append(modpathabs)
 import Data
 import const as k
 
-def nearest_neighbor(filename):
+def nearest_neighbor(filename, output_nn):
 
 	data = Data.Data.load_raw_data(filename)
 
@@ -56,9 +56,10 @@ def nearest_neighbor(filename):
 		new_data.heart_rate.append(df['heart_rate'].iat[i])
 		new_data.rr_interval.append(df['rr_interval'].iat[i])
 
-	new_data.save_raw_data(utils.adjust_filename(filename, '_nn.tsv'))
+	overwrite = 1
+	new_data.save_raw_data(output_nn, overwrite)
 
-def linear_preprocess(filename):
+def linear_preprocess(filename, output_linear):
 
 	def linear_interpolate(x_values, y_values):
 		return lambda x: (y_values[0]*(x_values[1] - x) + y_values[1]*(x - x_values[0]))/(x_values[1] - x_values[0])
@@ -102,13 +103,14 @@ def linear_preprocess(filename):
 				new_data.heart_rate.append(hr)
 				new_data.rr_interval.append(rr)
 
-	new_data.save_raw_data(utils.adjust_filename(filename, '_linear.tsv'))
+	overwrite = 1
+	new_data.save_raw_data(output_linear, overwrite)
 
-def interpolate(filename):
+def interpolate(filename, output_nn, output_linear):
 	print(f"Preprocessing RR intervals using nearest neighbor strategy for file {filename}")
-	nearest_neighbor(filename)
+	nearest_neighbor(filename, output_nn)
 	print(f"Preprocessing RR intervals with linear interpolation for file {filename}")
-	linear_preprocess(filename)
+	linear_preprocess(filename, output_linear)
 
 
 if __name__ == '__main__':

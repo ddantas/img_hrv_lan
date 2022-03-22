@@ -58,7 +58,10 @@ class Data:
 
   ## \brief Save data to file.
   #
-  # Save the Polar H10 data to file. When obtaining data from streaming, first
+  # Save the Polar H10 data to file. If file does not exist, it is created.
+  # If file exists, data is appended to the end.
+  #
+  # When obtaining data from streaming, first
   # call remove() to reset the file, then, inside a loop, call save_raw_data()
   # and clear() afterwards.
   #
@@ -73,10 +76,14 @@ class Data:
   #   ecg: ECG potential in microvolts.
   #
   # @param filename File where data will be stored.
-  def save_raw_data(self, filename):
+  # @param overwrite If nonzero, remove file before writing.
+  def save_raw_data(self, filename, overwrite=0):
     if os.path.exists(filename):
       if self.time == []:
         return
+
+    if (overwrite != 0):
+      self.remove(filename)
 
     if (self.datatype == k.TYPE_RR):
       df = pd.DataFrame(data = {"time": self.time,
