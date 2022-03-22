@@ -42,9 +42,6 @@ def infer_rr_intervals_from_ecg(filename_input, filename_output):
 
 		last_peak = peak_index
 
-	#filename_output = utils.adjust_filename(filename, k.EXT_INFERRED)
-	#filename_output = os.path.join(os.path.dirname(filename_output), k.FOLDER_PREP, os.path.basename(filename_output))
-	print("Saving to "+ filename_output)
 	overwrite = 1
 	new_data.save_raw_data(filename_output, overwrite)
 
