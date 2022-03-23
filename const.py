@@ -25,8 +25,8 @@ TYPE_ECG = "E"
 FOLDER_DATA = "data"
 FOLDER_DEBUG = os.path.join(FOLDER_DATA, "DEBUG")
 
-FILENAME_ROUTINE  = "log.txt"
-FILENAME_LOG      = "routine.txt"
+FILENAME_ROUTINE  = "routine.txt"
+FILENAME_LOG      = "log.txt"
 
 FILENAME_ECG      = "subj%d_ecg.tsv"
 FILENAME_ECG_S1   = "subj1_ecg.tsv"
