@@ -24,8 +24,10 @@ filepath = os.path.dirname(__file__)
 modpathrel = os.path.join(filepath, "..")
 modpathabs = os.path.abspath(modpathrel)
 sys.path.append(modpathabs)
+
 import Data
 import const as k
+import utils
 
 def print_tree_level(level, root):
   space = ""
@@ -106,31 +108,22 @@ def create_data_file(input_path,
 
   data_hr1_linear = Data.Data.load_raw_data(filename_rr_linear1)
   data_hr2_linear = Data.Data.load_raw_data(filename_rr_linear2)
-  # hr1_linear = pd.Series(data_hr1_linear.heart_rate, name='hr_subj1_linear')
   hr1_linear = data_hr1_linear.heart_rate
-  # hr2_linear = pd.Series(data_hr2_linear.heart_rate, name='hr_subj2_linear')
   hr2_linear = data_hr2_linear.heart_rate
 
   data_hr1_nn = Data.Data.load_raw_data(filename_rr_nn1)
   data_hr2_nn = Data.Data.load_raw_data(filename_rr_nn2)
-  # hr1_nn = pd.Series(data_hr1_nn.heart_rate, name='hr_subj1_nn')
   hr1_nn = data_hr1_nn.heart_rate
-
-  # hr2_nn = pd.Series(data_hr2_nn.heart_rate, name='hr_subj2_nn')
-  hr2_nn = data_hr1_nn.heart_rate
+  hr2_nn = data_hr2_nn.heart_rate
 
   data_hr1_ecg_linear = Data.Data.load_raw_data(filename_ecg_rr_linear1)
   data_hr2_ecg_linear = Data.Data.load_raw_data(filename_ecg_rr_linear2)
-  # hr1_ecg_linear = pd.Series(data_hr1_ecg_linear.heart_rate, name='hr_subj1_ecg_linear')
   hr1_ecg_linear = data_hr1_ecg_linear.heart_rate
-  # hr2_ecg_linear = pd.Series(data_hr2_ecg_linear.heart_rate, name='hr_subj2_ecg_linear')
   hr2_ecg_linear = data_hr2_ecg_linear.heart_rate
 
   data_hr1_ecg_nn = Data.Data.load_raw_data(filename_ecg_rr_nn1)
   data_hr2_ecg_nn = Data.Data.load_raw_data(filename_ecg_rr_nn2)
-  # hr1_ecg_nn = pd.Series(data_hr1_ecg_nn.heart_rate, name='hr_subj1_ecg_nn')
   hr1_ecg_nn = data_hr1_ecg_nn.heart_rate
-  # hr2_ecg_nn = pd.Series(data_hr2_ecg_nn.heart_rate, name='hr_subj2_ecg_nn')
   hr2_ecg_nn = data_hr2_ecg_nn.heart_rate
 
   tiers_dict, time_end = construct_dict_from_eaf(filename_annot)
@@ -173,9 +166,14 @@ def create_data_file(input_path,
   content['hr_subj2_ecg_nn'] = hr2_ecg_nn
 
   dfs = []
-  for k, v in content.items():
+  features = ['sec', 'hr_subj1_linear', 'hr_subj2_linear', 'hr_subj1_nn', 'hr_subj2_nn', \
+              'hr_subj1_ecg_linear', 'hr_subj2_ecg_linear', 'hr_subj1_ecg_nn', 'hr_subj2_ecg_nn', \
+              *tiers_dict.keys()]
+
+
+  for k in features:
     print(k)
-    dfs.append(pd.Series(v, name=k))
+    dfs.append(pd.Series(content[k], name=k))
 
   df = pd.concat(dfs, axis=1)
   
@@ -217,6 +215,9 @@ if __name__ == "__main__":
 
   input_path = sys.argv[1]
   filename_annot = sys.argv[2]
+
+  routine_filename = os.path.join(input_path, k.FILENAME_ROUTINE)
+  t0, duration = utils.get_t0_and_duration(routine_filename)
 
   ## interpolate
   # subj%d_rr.tsv
@@ -266,11 +267,11 @@ if __name__ == "__main__":
   filename_dataset = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_DATASET)
 
   ## Linear and NN interpolation
-  rr_interpolation.interpolate(filename_rr1, filename_rr_nn1, filename_rr_linear1)
-  rr_interpolation.interpolate(filename_rr2, filename_rr_nn2, filename_rr_linear2)
+  rr_interpolation.interpolate(filename_rr1, filename_rr_nn1, filename_rr_linear1, t0)
+  rr_interpolation.interpolate(filename_rr2, filename_rr_nn2, filename_rr_linear2, t0)
 
-  rr_interpolation.interpolate(filename_ecg_rr1, filename_ecg_rr_nn1, filename_ecg_rr_linear1)
-  rr_interpolation.interpolate(filename_ecg_rr2, filename_ecg_rr_nn2, filename_ecg_rr_linear2)
+  rr_interpolation.interpolate(filename_ecg_rr1, filename_ecg_rr_nn1, filename_ecg_rr_linear1, t0)
+  rr_interpolation.interpolate(filename_ecg_rr2, filename_ecg_rr_nn2, filename_ecg_rr_linear2, t0)
 
   ## Generate dataset.tsv
   main(input_path,

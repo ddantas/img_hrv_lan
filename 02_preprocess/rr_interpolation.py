@@ -11,14 +11,17 @@ import Data
 import const as k
 import utils
 
-def nearest_neighbor(filename, output_nn):
+def nearest_neighbor(filename, output_nn, t0):
 
 	data = Data.Data.load_raw_data(filename)
-
 	df = pd.DataFrame({'time' : data.time, 'heart_rate' : data.heart_rate,\
 										 'rr_interval' : data.rr_interval})
 	df = df.drop_duplicates(ignore_index=True)
-	df['time'] = df['time'] - df['time'].iat[0]
+
+	df['time'] = df['time'] - t0
+	df = df[df['time'] >= 0]
+	dt = df['time'].iat[0]
+	df['time'] = df['time'] - dt
 
 	new_data = Data.Data(k.TYPE_RR)
 
@@ -58,21 +61,20 @@ def nearest_neighbor(filename, output_nn):
 	overwrite = 1
 	new_data.save_raw_data(output_nn, overwrite)
 
-def linear_preprocess(filename, output_linear):
+def linear_preprocess(filename, output_linear, t0):
 
 	def linear_interpolate(x_values, y_values):
 		return lambda x: (y_values[0]*(x_values[1] - x) + y_values[1]*(x - x_values[0]))/(x_values[1] - x_values[0])
 
-	data = Data.Data.load_raw_data(filename)
-	time = [val - data.time[0] for val in data.time]
-
-	time = [-0.5] + time + [time[-1] + 0.5]
-	heart_rate = [data.heart_rate[0]] + data.heart_rate + [data.heart_rate[-1]]
-	rr_interval = [data.rr_interval[0]] + data.rr_interval + [data.rr_interval[-1]]
-
-	df = pd.DataFrame({'time' : time, 'heart_rate' : heart_rate,\
-										 'rr_interval' : rr_interval})
+	data = Data.Data.load_raw_data(filename) 
+	df = pd.DataFrame({'time' : data.time, 'heart_rate' : data.heart_rate,\
+										 'rr_interval' : data.rr_interval})
 	df = df.drop_duplicates(ignore_index=True)
+
+	df['time'] = df['time'] - t0
+	df = df[df['time'] >= 0]
+	dt = df['time'].iat[0]
+	df['time'] = df['time'] - dt
 
 	new_data = Data.Data(k.TYPE_RR)
 
@@ -105,11 +107,11 @@ def linear_preprocess(filename, output_linear):
 	overwrite = 1
 	new_data.save_raw_data(output_linear, overwrite)
 
-def interpolate(filename, output_nn, output_linear):
+def interpolate(filename, output_nn, output_linear, t0):
 	print(f"Preprocessing RR intervals using nearest neighbor strategy for file {filename}")
-	nearest_neighbor(filename, output_nn)
+	nearest_neighbor(filename, output_nn, t0)
 	print(f"Preprocessing RR intervals with linear interpolation for file {filename}")
-	linear_preprocess(filename, output_linear)
+	linear_preprocess(filename, output_linear, t0)
 
 
 if __name__ == '__main__':
