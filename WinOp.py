@@ -806,21 +806,26 @@ class WinMainTk(tk.Frame):
 
         self.routine_to_elan(self.routine_filename, self.path)
             
+        self.hrv_plot1.start_recording()
+        self.hrv_plot2.start_recording()
+
         now = datetime.datetime.now().timestamp()
         delay = int(time_to_start) - now
+
         time.sleep(delay)
 
         self.screen1.start_recording()
-        self.hrv_plot1.start_recording()
         self.screen2.start_recording()
-        self.hrv_plot2.start_recording()
 
         time_to_end = routine_lines[i].split(';')[0]
         time.sleep(float(time_to_end))
 
         self.screen1.stop_recording()
-        self.hrv_plot1.stop_recording()
         self.screen2.stop_recording()
+
+        time.sleep(1)
+
+        self.hrv_plot1.stop_recording()
         self.hrv_plot2.stop_recording()
         
     ## \brief Stop all threads and clients in order to exit the program cleanly.
