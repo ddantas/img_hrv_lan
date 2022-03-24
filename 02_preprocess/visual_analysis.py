@@ -2,12 +2,18 @@ import matplotlib.pyplot as plt
 from biosppy.signals import ecg
 import pandas as pd
 import numpy as np
+import sys
+import os
 
 import rr_inference
 
-import sys
-sys.path.append('../')
+# Import module from parent folder
+filepath = os.path.dirname(__file__)
+modpathrel = os.path.join(filepath, "..")
+modpathabs = os.path.abspath(modpathrel)
+sys.path.append(modpathabs)
 import Data
+import const as k
 
 
 def construct_xy_from_file(file):
@@ -92,12 +98,12 @@ if __name__ == '__main__':
 
   path = "../data/a003"
   subj = 2
-  filename_rr  = "%s/subj%d_rr.tsv" % (path, subj)
-  filename_ecg = "%s/subj%d_ecg.tsv" % (path, subj)
-  filename_from_ecg = "%s/02_preprocess/subj%d_rr_inferred_from_ecg.tsv" % (path, subj)
+  filename_rr       = os.path.join(path, k.FILENAME_RR % subj)
+  filename_ecg      = os.path.join(path, k.FILENAME_ECG % subj)
+  filename_from_ecg = os.path.join(path, k.FOLDER_PREP, k.FILENAME_ECG_RR % subj)
 
   rr_values = construct_xy_from_file(filename_rr)
-  rr_inference.infer_rr_intervals_from_ecg(filename_ecg)
+  rr_inference.infer_rr_intervals_from_ecg(filename_ecg, filename_from_ecg)
 
   inferred_rr_values = construct_xy_from_file(filename_from_ecg)
   ecg_values = construct_xy_from_file_ecg(filename_ecg)
