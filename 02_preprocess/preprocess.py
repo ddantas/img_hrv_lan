@@ -187,9 +187,9 @@ def create_data_file(input_path,
 
 def main(input_path, path_prep, filename_annot):
 
-  routine_filename = os.path.join(input_path, k.FILENAME_ROUTINE)
-  t0 = utils.get_time_start(routine_filename)
-  duration = utils.get_duration_ideal(routine_filename)
+  filename_routine = os.path.join(input_path, k.FILENAME_ROUTINE)
+  t0 = utils.get_time_start(filename_routine)
+  duration = utils.get_duration_ideal(filename_routine)
 
   ## interpolate
   # subj%d_rr.tsv
@@ -204,18 +204,21 @@ def main(input_path, path_prep, filename_annot):
   filename_ecg_rr1 = os.path.join(path_prep, k.FILENAME_ECG_RR_S1)
   filename_ecg_rr2 = os.path.join(path_prep, k.FILENAME_ECG_RR_S2)
 
+  print("Input files:")
   print(filename_rr1)
   print(filename_rr2)
-
-  print(filename_ecg_rr1)
-  print(filename_ecg_rr2)
   print(filename_ecg1)
   print(filename_ecg2)
 
+  print("Output files:")
+  print(filename_ecg_rr1)
+  print(filename_ecg_rr2)
+
   ## Infer RR intervals from ECG
+  print("Inferring intervals from ECG...")
   rr_inference.infer_rr_intervals_from_ecg(filename_ecg1, filename_ecg_rr1)
   rr_inference.infer_rr_intervals_from_ecg(filename_ecg2, filename_ecg_rr2)
-  print("CHECK")
+  print("Done.")
 
   ## Generate filenames
   # subj%d_ecg.tsv
@@ -239,19 +242,21 @@ def main(input_path, path_prep, filename_annot):
   filename_dataset = os.path.join(path_prep, k.FILENAME_DATASET)
 
   ## Linear and NN interpolation
-  rr_interpolation.interpolate(filename_rr1, filename_rr_nn1, filename_rr_linear1, t0)
-  rr_interpolation.interpolate(filename_rr2, filename_rr_nn2, filename_rr_linear2, t0)
+  rr_interpolation.interpolate(filename_rr1, filename_rr_nn1, filename_rr_linear1, t0, duration)
+  rr_interpolation.interpolate(filename_rr2, filename_rr_nn2, filename_rr_linear2, t0, duration)
 
-  rr_interpolation.interpolate(filename_ecg_rr1, filename_ecg_rr_nn1, filename_ecg_rr_linear1, t0)
-  rr_interpolation.interpolate(filename_ecg_rr2, filename_ecg_rr_nn2, filename_ecg_rr_linear2, t0)
+  rr_interpolation.interpolate(filename_ecg_rr1, filename_ecg_rr_nn1, filename_ecg_rr_linear1, t0, duration)
+  rr_interpolation.interpolate(filename_ecg_rr2, filename_ecg_rr_nn2, filename_ecg_rr_linear2, t0, duration)
 
   ## Generate dataset.tsv
+  print("Generating complete dataset...")
   create_data_file(input_path,
        filename_rr_linear1, filename_rr_linear2,
        filename_rr_nn1, filename_rr_nn2,
        filename_ecg_rr_linear1, filename_ecg_rr_linear2,
        filename_ecg_rr_nn1, filename_ecg_rr_nn2,
        filename_annot, filename_dataset)
+  print("Done.")
 
 if __name__ == "__main__":
 
