@@ -46,35 +46,12 @@ def get_duration(filename):
   return duration_sec
   
 
-def get_duration_ideal(filename):
-
-  if not(os.path.exists(filename)):
-    print("Error opening file: " + filename)
-
-  f = open(filename)
-  routine_lines = f.readlines()
-  # First line stores timestamp
-  routine_lines[0] = "#" + routine_lines[0]
-
-  max_time = 0.0
-  for l in routine_lines:
-    if l[0] == "#":
-      continue
-
-    cols = l.split(";")
-    t = float(cols[0])
-    if t > max_time:
-      max_time = t
-
-  print("Ideal duration: %f" % max_time)
-  return max_time
-  
-
 def synchronize(input_routine, input_filename, output_filename):
 
   print(input_filename)
   actual = get_duration(input_filename)
   ideal  = get_duration_ideal(input_routine)
+  print("Ideal duration: %f" % ideal)
   r = ideal / actual
 
   cmd = 'ffmpeg -i %s -filter:v "setpts=%f*PTS" %s' % (input_filename, r, output_filename)

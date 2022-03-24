@@ -12,19 +12,52 @@ def adjust_filename(filename, file_suffix):
   result = basename + file_suffix
   return result
 
-## \brief Get the time of start of the specified routine file and its duration.
+## \brief Get the time of start of the specified routine file.
 #
-#  @param routinefile File where a copy of the routine was saved. Contains the timestamp for when the capture started.
-def get_t0_and_duration(routinefile):
+#  Get the time of start of the specified routine file. It is
+#  stored in the first line of the file
+#
+#  @param filename_routine File where a copy of the routine was
+#    saved. Contains the timestamp for when the capture started.
+def get_time_start(filename_routine):
 
-  with open(routinefile) as f:
+  if not(os.path.exists(filename_routine)):
+    print("Error opening file: " + filename_routine)
+
+  with open(filename_routine) as f:
     lines = f.readlines()
     # first line of the routine file is the timestamp of the start of the routine
     start_timestamp = float(lines[0])
-    # get last line, first value
-    duration = float(lines[-1].strip(';')[0])
+    return start_timestamp
 
-    return start_timestamp, duration
+
+## \brief Get the maximum time in routine file.
+#
+#  Get the maximum time in routine file. Commented lines are
+#  ignored.
+#
+#  @param filename_routine File where a copy of the routine was saved.
+def get_duration_ideal(filename_routine):
+
+  if not(os.path.exists(filename_routine)):
+    print("Error opening file: " + filename_routine)
+
+  f = open(filename_routine)
+  routine_lines = f.readlines()
+  # First line stores timestamp
+  routine_lines[0] = "#" + routine_lines[0]
+
+  max_time = 0.0
+  for l in routine_lines:
+    if l[0] == "#":
+      continue
+
+    cols = l.split(";")
+    t = float(cols[0])
+    if t > max_time:
+      max_time = t
+
+  return max_time
 
 ## \brief Print exception message preceded with file and function name.
 #

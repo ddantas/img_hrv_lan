@@ -185,39 +185,11 @@ def create_data_file(input_path,
 ############################################################
 #########################################################"""
 
-def main(input_path,
-       filename_rr_linear1, filename_rr_linear2,
-       filename_rr_nn1, filename_rr_nn2,
-       filename_ecg_rr_linear1, filename_ecg_rr_linear2,
-       filename_ecg_rr_nn1, filename_ecg_rr_nn2,
-       filename_annot, filename_dataset):
-
-  folder_prep = os.path.join(input_path, k.FOLDER_PREP)
-  if not os.path.exists(folder_prep):
-    os.mkdir(folder_prep)
-
-  #ecg_files = [os.path.join(input_path, file) if input_path not in file else file for file in ecg_files]
-  #interp_rr_files = [os.path.join(input_path, file) if input_path not in file else file for file in interp_rr_files]
-  #annotation_file = os.path.join(input_path, annotation_file) if input_path not in annotation_file else annotation_file
-
-  create_data_file(input_path,
-       filename_rr_linear1, filename_rr_linear2,
-       filename_rr_nn1, filename_rr_nn2,
-       filename_ecg_rr_linear1, filename_ecg_rr_linear2,
-       filename_ecg_rr_nn1, filename_ecg_rr_nn2,
-       filename_annot, filename_dataset)
-
-if __name__ == "__main__":
-
-  if (len(sys.argv)) < 3:
-    print("Usage: preprocess.py <input_path> <annotation_file>")
-    sys.exit()
-
-  input_path = sys.argv[1]
-  filename_annot = sys.argv[2]
+def main(input_path, path_prep, filename_annot):
 
   routine_filename = os.path.join(input_path, k.FILENAME_ROUTINE)
-  t0, duration = utils.get_t0_and_duration(routine_filename)
+  t0 = utils.get_time_start(routine_filename)
+  duration = utils.get_duration_ideal(routine_filename)
 
   ## interpolate
   # subj%d_rr.tsv
@@ -229,8 +201,8 @@ if __name__ == "__main__":
   filename_ecg2 = os.path.join(input_path, k.FILENAME_ECG_S2)
 
   # subj%d_rr_inferred_from_ecg.tsv
-  filename_ecg_rr1 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_ECG_RR_S1)
-  filename_ecg_rr2 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_ECG_RR_S2)
+  filename_ecg_rr1 = os.path.join(path_prep, k.FILENAME_ECG_RR_S1)
+  filename_ecg_rr2 = os.path.join(path_prep, k.FILENAME_ECG_RR_S2)
 
   print(filename_rr1)
   print(filename_rr2)
@@ -250,21 +222,21 @@ if __name__ == "__main__":
   filename_ecg1 = os.path.join(input_path, k.FILENAME_ECG_S1)
   filename_ecg2 = os.path.join(input_path, k.FILENAME_ECG_S2)
   # 02_preprocess/subj%d_rr_linear.tsv
-  filename_rr_linear1 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_RR_LIN_S1)
-  filename_rr_linear2 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_RR_LIN_S2)
+  filename_rr_linear1 = os.path.join(path_prep, k.FILENAME_RR_LIN_S1)
+  filename_rr_linear2 = os.path.join(path_prep, k.FILENAME_RR_LIN_S2)
   # 02_preprocess/subj%d_rr_nn.tsv
-  filename_rr_nn1 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_RR_NN_S1)
-  filename_rr_nn2 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_RR_NN_S2)
+  filename_rr_nn1 = os.path.join(path_prep, k.FILENAME_RR_NN_S1)
+  filename_rr_nn2 = os.path.join(path_prep, k.FILENAME_RR_NN_S2)
   # 02_preprocess/subj%d_ecg_inferred_rr_linear.tsv
-  filename_ecg_rr_linear1 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_ECG_RR_LIN_S1)
-  filename_ecg_rr_linear2 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_ECG_RR_LIN_S2)
+  filename_ecg_rr_linear1 = os.path.join(path_prep, k.FILENAME_ECG_RR_LIN_S1)
+  filename_ecg_rr_linear2 = os.path.join(path_prep, k.FILENAME_ECG_RR_LIN_S2)
   # 02_preprocess/subj%d_ecg_inferred_rr_nn.tsv
-  filename_ecg_rr_nn1 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_ECG_RR_NN_S1)
-  filename_ecg_rr_nn2 = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_ECG_RR_NN_S2)
+  filename_ecg_rr_nn1 = os.path.join(path_prep, k.FILENAME_ECG_RR_NN_S1)
+  filename_ecg_rr_nn2 = os.path.join(path_prep, k.FILENAME_ECG_RR_NN_S2)
   # annotation.eaf
   filename_annot = os.path.join(input_path, filename_annot)
   # dataset.tsv
-  filename_dataset = os.path.join(input_path, k.FOLDER_PREP, k.FILENAME_DATASET)
+  filename_dataset = os.path.join(path_prep, k.FILENAME_DATASET)
 
   ## Linear and NN interpolation
   rr_interpolation.interpolate(filename_rr1, filename_rr_nn1, filename_rr_linear1, t0)
@@ -274,9 +246,24 @@ if __name__ == "__main__":
   rr_interpolation.interpolate(filename_ecg_rr2, filename_ecg_rr_nn2, filename_ecg_rr_linear2, t0)
 
   ## Generate dataset.tsv
-  main(input_path,
+  create_data_file(input_path,
        filename_rr_linear1, filename_rr_linear2,
        filename_rr_nn1, filename_rr_nn2,
        filename_ecg_rr_linear1, filename_ecg_rr_linear2,
        filename_ecg_rr_nn1, filename_ecg_rr_nn2,
        filename_annot, filename_dataset)
+
+if __name__ == "__main__":
+
+  if (len(sys.argv)) < 3:
+    print("Usage: preprocess.py <input_path> <annotation_file>")
+    sys.exit()
+
+  input_path = sys.argv[1]
+  filename_annot = sys.argv[2]
+
+  path_prep = os.path.join(input_path, k.FOLDER_PREP)
+  if not os.path.exists(path_prep):
+    os.mkdir(path_prep)
+
+  main(input_path, path_prep, filename_annot)
