@@ -14,9 +14,7 @@ import utils
 def nearest_neighbor(filename, output_nn, t0, duration):
 
 	data = Data.Data.load_raw_data(filename)
-	df = pd.DataFrame({'time' : data.time,                      \
-				'heart_rate' : data.heart_rate,     \
-				'rr_interval' : data.rr_interval})
+	df = data.as_dataframe()
 	df = df.drop_duplicates(ignore_index=True)
 
 	df['time'] = df['time'] - t0
@@ -69,9 +67,7 @@ def linear_preprocess(filename, output_linear, t0, duration):
 		return lambda x: (y_values[0]*(x_values[1] - x) + y_values[1]*(x - x_values[0]))/(x_values[1] - x_values[0])
 
 	data = Data.Data.load_raw_data(filename)
-	df = pd.DataFrame({'time' : data.time,                     \
-				'heart_rate' : data.heart_rate,    \
-				'rr_interval' : data.rr_interval})
+	df = data.as_dataframe()
 	df = df.drop_duplicates(ignore_index=True)
 
 	df['time'] = df['time'] - t0

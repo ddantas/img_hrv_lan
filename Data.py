@@ -85,14 +85,7 @@ class Data:
     if (overwrite != 0):
       self.remove(filename)
 
-    if (self.datatype == k.TYPE_RR):
-      df = pd.DataFrame(data = {"time": self.time,
-                                "heart_rate": self.heart_rate,
-                                "rr_interval": self.rr_interval})
-    elif (self.datatype == k.TYPE_ECG):
-      df = pd.DataFrame(data = {"time": self.time,
-                                "timestamp": self.timestamp,
-                                "ecg": self.values_ecg})
+    df = self.as_dataframe()
 
     # print(df)
 
@@ -101,6 +94,24 @@ class Data:
       df.to_csv(filename, sep = '\t', index=False, mode = "w", header = True)
     else:
       df.to_csv(filename, sep = '\t', index=False, mode = "a", header = False)
+
+
+  ## \brief Return data as dataframe.
+  #
+  # Return data in dataframe format compatible with pandas.
+  #
+  #
+  def as_dataframe(self):
+    if (self.datatype == k.TYPE_RR):
+      df = pd.DataFrame(data = {"time": self.time,
+                                "heart_rate": self.heart_rate,
+                                "rr_interval": self.rr_interval})
+    elif (self.datatype == k.TYPE_ECG):
+      df = pd.DataFrame(data = {"time": self.time,
+                                "timestamp": self.timestamp,
+                                "ecg": self.values_ecg})
+    return df
+
 
   ## \brief Load data from file.
   #
@@ -136,4 +147,55 @@ class Data:
 
     return data
 
+  ## \brief Find list of ECG packet times.
+  #
+  # Find list of ECG packet times. The number of items corresponds to
+  # the number of packages received from the Polar sensor.
+  #
+  # The object must have datatype == TYPE_ECG.
+  def find_ecg_packet_times(self):
+    if self.datatype != k.TYPE_ECG:
+      return None
+    from collections import Counter
+    dic = Counter(self.time)
+    packet_times = list(dic.keys())
+    return packet_times
 
+  ## \brief Find average packet time interval.
+  #
+  # Find average packet time interval of ECG data. The
+  # object must have datatype == TYPE_ECG.
+  #
+  # The object must have datatype == TYPE_ECG.
+  def find_ecg_avg_packet_interval(self):
+    if self.datatype != k.TYPE_ECG:
+      return None
+    packet_times = self.find_ecg_packet_times()
+    avg_packet_interval = (packet_times[-1] - packet_times[0]) / (len(packet_times) - 1)
+    return avg_packet_interval
+
+  ## \brief Find ECG full length.
+  #
+  # Find full time length of ECG data, equals to the maximum timestamp
+  # minus the minimum timestamp plus an averate packet interval.
+  #
+  # The object must have datatype == TYPE_ECG.
+  def find_ecg_time_length(self):
+    if self.datatype != k.TYPE_ECG:
+      return None
+    avg_packet_interval = self.find_ecg_avg_packet_interval()
+    packet_times = self.find_ecg_packet_times()
+    full_length = (packet_times[-1] - packet_times[0]) + avg_packet_interval
+    return full_length
+
+  ## \brief Find ECG sampling rate.
+  #
+  # Find ECG sampling rate as quotient of number of samples by
+  # full time length.
+  #
+  # The object must have datatype == TYPE_ECG.
+  def find_ecg_sampling_rate(self):
+    if self.datatype != k.TYPE_ECG:
+      return None
+    time_length = self.find_ecg_time_length()
+    return len(self.ecg) / time_length
