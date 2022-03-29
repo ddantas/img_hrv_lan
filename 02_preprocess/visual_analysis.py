@@ -16,6 +16,12 @@ import Data
 import const as k
 
 
+## \brief Read RR data from TSV file.
+#
+#  Read RR data from TSV file, and return two vectors, x and y: x has the time a packet
+#  was received by the computer, and; y has the RR peak intervals in mis (1/1024 * s)
+#
+#  @param file TSV filename with RR data.
 def construct_xy_from_file(file):
   data = Data.Data.load_raw_data(file)
   x = [val - data.time[0] for val in data.time]
@@ -33,7 +39,8 @@ def construct_xy_from_file_ecg(file):
   #dt = (packet_times[-1] - packet_times[0]) + avg_packet_time
 
   #rate = len(y) / dt
-  out = ecg.ecg(signal=y, sampling_rate=130.0, show=False)
+  #out = ecg.ecg(signal=y, sampling_rate=130.0, show=False)
+  out = rr_inference.process_ecg_signal(data)
 
   #x_test = np.linspace(0.0, dt, len(y))
   x = out[0].tolist()
@@ -48,46 +55,38 @@ def plot_inferred_vs_real_rr(rr_values, inferred_rr_values, ecg_values):
   rpeaks = out[2]
   time_intervals = out[0]
 
-  rr = [v/(1024.0) for v in rr_values[1]]
-  rr = np.array([sum(rr[:i]) for i in range(len(rr))])
+  ## Multiply by 60.0 to obtain beats per minute.
+  del_rr   = [(v / 1024) for v in rr_values[1]]
+  del_irr = [(v / 1024) for v in inferred_rr_values[1]]
+
+  rr = np.array([sum(del_rr[:i]) for i in range(len(del_rr)+1)]) # rr is missing a beat in t = 0.0
   rr += time_intervals[rpeaks[0]]
-  i_rr = [v/(1024.0) for v in inferred_rr_values[1]]
-  i_rr = np.array([sum(i_rr[:i]) for i in range(len(i_rr))])
+  i_rr = np.array([sum(del_irr[:i]) for i in range(len(del_irr)+1)])
   i_rr += time_intervals[rpeaks[0]]
 
   print(rr, i_rr)
 
-  delta_t = 470
-  time_ecg = [x for x in ecg_values[0] if x <= delta_t]
-  i_rr_sliced = [x for x in i_rr if x <= delta_t]
-  rr_sliced = [x for x in rr if x <= delta_t]
+  time_ecg = [x for x in ecg_values[0]]
+  i_rr_sliced = [x for x in i_rr]
+  rr_sliced = [x for x in rr]
   values = ecg_values[1][:len(time_ecg)]
 
   x = [i for i in range(len(rr))]
 
-  derivative_rr = []
-  derivative_i_rr = []
-
-  for i in range(len(i_rr)-1):
-    x1 = rr[i+1] - rr[i]/(i+1 - i)
-    x2 = i_rr[i+1] - i_rr[i]/(i+1 - i)
-    derivative_rr.append(x1)
-    derivative_i_rr.append(x2)
-
-  m = len(derivative_rr)
-  axs[2].plot(x[:m], derivative_rr[:m], color='red')
-  n = len(derivative_i_rr)
-  axs[2].plot(x[:n], derivative_i_rr[:n], color='black')
+  m = len(del_rr)
+  axs[2].plot(x[:m], del_rr[:m], color='red')
+  n = len(del_irr)
+  axs[2].plot(x[:n], del_irr[:n], color='black')
 
   axs[0].plot(time_ecg, values, lw=4)
   axs[1].plot(time_ecg, values, lw=4)
   axs[0].vlines(x=i_rr_sliced, ymin=min(values), ymax=max(values), color='black')
   #axs[1].vlines(x=rr_sliced, ymin=min(values), ymax=max(values), color='red')
 
-  skip = 0
+  skip = 5
   dt = i_rr_sliced[skip] - i_rr_sliced[0]
   #dt = 4.0
-  dt = 0.0
+  #dt = 0.0
   rr_sliced = [x - dt for x in rr_sliced]
 
   axs[1].vlines(x=rr_sliced, ymin=min(values), ymax=max(values), color='red')

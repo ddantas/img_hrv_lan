@@ -11,6 +11,19 @@ import Data
 import const as k
 import utils
 
+
+def process_ecg_signal(data):
+	ECG_SAMPLING_FREQ = 130
+	if data.datatype != k.TYPE_ECG:
+		return None
+	signal = data.ecg
+	#rate = 130.0
+	#rate = 140.0
+	rate = data.find_ecg_sampling_rate()
+	#rate = (rate - ECG_SAMPLING_FREQ) * 2.0 + ECG_SAMPLING_FREQ
+	out = ecg.ecg(signal=signal, sampling_rate=rate, show=False)
+	return out
+
 def infer_rr_intervals_from_ecg(filename_input, filename_output):
 
 	data = Data.Data.load_raw_data(filename_input)
@@ -19,8 +32,7 @@ def infer_rr_intervals_from_ecg(filename_input, filename_output):
 	signal = data.ecg
 	file_t0 = data.time[0]
 
-	out = ecg.ecg(signal=signal, sampling_rate=130.0, show=False)
-
+	out = process_ecg_signal(data)
 
 	time_intervals = out[0]
 	rpeaks = out[2]
