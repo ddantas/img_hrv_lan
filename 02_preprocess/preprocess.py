@@ -66,11 +66,11 @@ def construct_dict_from_eaf(eaf_file):
     root = q.pop()
     first_time = 0
 
-    for child in root:
+    if root.tag == 'TIER':
+      cur_tier = root.attrib['TIER_ID'].strip()
+      tiers_dict[cur_tier] = {}
 
-      if root.tag == 'TIER':
-        cur_tier = root.attrib['TIER_ID'].strip()
-        tiers_dict[cur_tier] = {}
+    for child in root:
 
       if child.tag == 'TIME_SLOT':
         time_slots_dict[child.attrib['TIME_SLOT_ID']] = child.attrib['TIME_VALUE']
@@ -83,8 +83,8 @@ def construct_dict_from_eaf(eaf_file):
         tiers_dict[cur_tier][child.attrib['ANNOTATION_ID']] = {'TIME_SLOT_BEGIN': child.attrib['TIME_SLOT_REF1'], \
                                                                     'TIME_SLOT_END': child.attrib['TIME_SLOT_REF2'], \
                                                                     'ANNOTATION_VALUE': value}
-      q.append(child)
 
+      q.append(child)
 
   for tier, tier_dict in tiers_dict.items():
     for annot_id in tier_dict.keys():
@@ -96,6 +96,7 @@ def construct_dict_from_eaf(eaf_file):
 
   time_end = max(time_slots_dict.values())
   time_end = int(time_end)//1000+1
+
   return tiers_dict, time_end
 
 
@@ -135,6 +136,7 @@ def create_data_file(input_path,
 
     for tier in tiers_dict.keys():
 
+      v = ''
       for annot_id, annot_dict in tiers_dict[tier].items():
 
         begin_ts = annot_dict['TIME_SLOT_BEGIN']
@@ -146,13 +148,14 @@ def create_data_file(input_path,
           break
         else:
           v = ''
-
       try :
         content[tier].append(v)
       except:
         content[tier] = [v]
 
+  folder = os.path.basename(os.path.normpath(input_path))
   content['time'] = time
+  content['folder'] = [folder for i in range(len(content['time']))]
   content['hr_subj1_linear'] = hr1_linear
   content['hr_subj2_linear'] = hr2_linear
 
@@ -166,13 +169,14 @@ def create_data_file(input_path,
   content['hr_subj2_ecg_nn'] = hr2_ecg_nn
 
   dfs = []
-  features = ['time', 'hr_subj1_linear', 'hr_subj2_linear', 'hr_subj1_nn', 'hr_subj2_nn', \
-              'hr_subj1_ecg_linear', 'hr_subj2_ecg_linear', 'hr_subj1_ecg_nn', 'hr_subj2_ecg_nn', \
-              *tiers_dict.keys()]
-
   for key in tiers_dict.keys():
     content[key] = [val.strip() for val in content[key]]
-    
+
+  features = ['folder', 'block', 'label', 'time', 'IsImit', 'IsSync', 'Imitator',\
+               'Model', 'hr_subj1_linear', 'hr_subj2_linear', 'hr_subj1_nn', 'hr_subj2_nn', \
+              'hr_subj1_ecg_linear', 'hr_subj2_ecg_linear', 'hr_subj1_ecg_nn', 'hr_subj2_ecg_nn', \
+              'msg1', 'msg2']
+
   for k in features:
     print(k)
     dfs.append(pd.Series(content[k], name=k))
