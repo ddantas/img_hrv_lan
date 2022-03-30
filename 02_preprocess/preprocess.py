@@ -128,10 +128,10 @@ def create_data_file(input_path,
 
   tiers_dict, time_end = construct_dict_from_eaf(filename_annot)
 
-  sec = []
+  time = []
   content = {}
   for i in range(time_end):
-    sec.append(i)
+    time.append(i)
 
     for tier in tiers_dict.keys():
 
@@ -152,7 +152,7 @@ def create_data_file(input_path,
       except:
         content[tier] = [v]
 
-  content['sec'] = sec
+  content['time'] = time
   content['hr_subj1_linear'] = hr1_linear
   content['hr_subj2_linear'] = hr2_linear
 
@@ -166,11 +166,13 @@ def create_data_file(input_path,
   content['hr_subj2_ecg_nn'] = hr2_ecg_nn
 
   dfs = []
-  features = ['sec', 'hr_subj1_linear', 'hr_subj2_linear', 'hr_subj1_nn', 'hr_subj2_nn', \
+  features = ['time', 'hr_subj1_linear', 'hr_subj2_linear', 'hr_subj1_nn', 'hr_subj2_nn', \
               'hr_subj1_ecg_linear', 'hr_subj2_ecg_linear', 'hr_subj1_ecg_nn', 'hr_subj2_ecg_nn', \
               *tiers_dict.keys()]
 
-
+  for key in tiers_dict.keys():
+    content[key] = [val.strip() for val in content[key]]
+    
   for k in features:
     print(k)
     dfs.append(pd.Series(content[k], name=k))
