@@ -1,33 +1,36 @@
 
 load_data <- function(filename){
+
 	data = read.table(filename, header=TRUE, sep='	')
 
 	return(data)
 }
 
-get_synchrony_stats <- function(filename) {
+get_synchrony_stats <- function(filename, imit, sync) {
+
+	# select what values you want based on the truth values of 'imit' and 'sync'
 
 	df = load_data(filename)
 
-	isimit_si = df['IsImit'][df['label'] == 'SI']
-	issync_si = df['IsSync'][df['label'] == 'SI']
+	isimit_si = df$IsImit[df['label'] == 'SI']
+	issync_si = df$IsSync[df['label'] == 'SI']
 
 	df_si = data.frame(IsImit=isimit_si, IsSync=issync_si)
-
-	# change T to 1, F and NA to 0 in 'IsImit'
-
-	df_si['IsSync' == 'T' & 'IsImit' == 'T'] = 1
-	df_si[!('IsSync' == 'T' & 'IsImit' == 'T')] = 0
 	
-	imit_sync = df_si['IsImit'][df_si['IsSync' == 'T']]
-	imit_notsync = df_si['IsImit'][df_si['IsSync' == 'F']]	
+	# SANITY CHECKING CODE
+	# l = c(42, 43, 44)
+	# df_si['IsSync'][l,] = TRUE
+	# nrows = 1:nrow(df_si)
+	# aux = nrows[!(nrows %in% l)]	
+	# df_si['IsSync'][aux, ] = FALSE
+	# print(df_si)
 
-	# change T and NA to 0, F to 1 in 'IsImit'
-	notimit_sync = df_si['IsImit'][df_si['IsSync' == 'T']]	
-	notimit_notsync = df_si['IsImit'][df_si['IsSync' == 'F']]
+	# get a list of indexes where values are 'IsImit' == imit and 'IsSync' == sync
+	indexes_true = intersect(which(df_si['IsImit'] == imit), which(df_si['IsSync'] == sync))
 
-	# df_sd_si = sd(isimit_si)
-	# df_mean_si = mean(isimit_si)
+	# create a vector with 1's only on indexes that match our conditions
+	res = rep(0, nrow(df_si))
+	res[indexes_true] = 1
 
-	# return(c(df_sd_si, df_mean_si, df_sd_ii, df_mean_ii))
+	return(c(mean(res), sd(res)))
 }
