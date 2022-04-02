@@ -36,8 +36,9 @@ create_SI_dataframe <- function(filename) {
 
 	names = c("Synchrony/Imitation", "Synchrony/Non-Imitation", "Non-Synchrony/Imitation", 
 				"Non-Synchrony/Non-Imitation")
+
 	stats_df = data.frame(Mean=c(imit_sync[1], imit_notsync[1], notimit_sync[1], notimit_notsync[1]),
-				SD=c(imit_sync[2], imit_notsync[2], notimit_sync[2], notimit_notsync[2]), Beahviour=names)
+				SD=c(imit_sync[2], imit_notsync[2], notimit_sync[2], notimit_notsync[2]), Behaviour=names)
 
 	return(stats_df)
 }
