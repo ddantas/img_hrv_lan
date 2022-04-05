@@ -14,7 +14,7 @@ import os
 
 EXT_TSV = ".tsv"
 EXT_LIN = "_linear.tsv"
-EXT_NN  = "_nn.tsv"
+EXT_NN  = "_nearest.tsv"
 EXT_INFERRED  = "_inferred_rr.tsv"
 
 ## Used mostly by Polar.py, Data.py and Plot.py
@@ -61,7 +61,7 @@ FILENAME_RR_LIN          = FILENAME_RR.replace(EXT_TSV, EXT_LIN)
 FILENAME_RR_LIN_S1       = FILENAME_RR_S1.replace(EXT_TSV, EXT_LIN)
 FILENAME_RR_LIN_S2       = FILENAME_RR_S2.replace(EXT_TSV, EXT_LIN)
 
-# "subj%d_rr_nn.tsv"
+# "subj%d_rr_nearest.tsv"
 FILENAME_RR_NN           = FILENAME_RR.replace(EXT_TSV, EXT_NN)
 FILENAME_RR_NN_S1        = FILENAME_RR_S1.replace(EXT_TSV, EXT_NN)
 FILENAME_RR_NN_S2        = FILENAME_RR_S2.replace(EXT_TSV, EXT_NN)
@@ -71,7 +71,7 @@ FILENAME_ECG_RR_LIN      = FILENAME_ECG_RR.replace(EXT_TSV, EXT_LIN)
 FILENAME_ECG_RR_LIN_S1   = FILENAME_ECG_RR_S1.replace(EXT_TSV, EXT_LIN)
 FILENAME_ECG_RR_LIN_S2   = FILENAME_ECG_RR_S2.replace(EXT_TSV, EXT_LIN)
 
-# "subj%d_ecg_inferred_rr_nn.tsv"
+# "subj%d_ecg_inferred_rr_nearest.tsv"
 FILENAME_ECG_RR_NN       = FILENAME_ECG_RR.replace(EXT_TSV, EXT_NN)
 FILENAME_ECG_RR_NN_S1    = FILENAME_ECG_RR_S1.replace(EXT_TSV, EXT_NN)
 FILENAME_ECG_RR_NN_S2    = FILENAME_ECG_RR_S2.replace(EXT_TSV, EXT_NN)

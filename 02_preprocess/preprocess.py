@@ -102,9 +102,9 @@ def construct_dict_from_eaf(eaf_file):
 
 def create_data_file(input_path,
        filename_rr_linear1, filename_rr_linear2,
-       filename_rr_nn1, filename_rr_nn2,
+       filename_rr_nearest1, filename_rr_nearest2,
        filename_ecg_rr_linear1, filename_ecg_rr_linear2,
-       filename_ecg_rr_nn1, filename_ecg_rr_nn2,
+       filename_ecg_rr_nearest1, filename_ecg_rr_nearest2,
        filename_annot, filename_dataset):
 
   data_hr1_linear = Data.Data.load_raw_data(filename_rr_linear1)
@@ -112,20 +112,20 @@ def create_data_file(input_path,
   hr1_linear = data_hr1_linear.heart_rate
   hr2_linear = data_hr2_linear.heart_rate
 
-  data_hr1_nn = Data.Data.load_raw_data(filename_rr_nn1)
-  data_hr2_nn = Data.Data.load_raw_data(filename_rr_nn2)
-  hr1_nn = data_hr1_nn.heart_rate
-  hr2_nn = data_hr2_nn.heart_rate
+  data_hr1_nearest = Data.Data.load_raw_data(filename_rr_nearest1)
+  data_hr2_nearest = Data.Data.load_raw_data(filename_rr_nearest2)
+  hr1_nearest = data_hr1_nearest.heart_rate
+  hr2_nearest = data_hr2_nearest.heart_rate
 
   data_hr1_ecg_linear = Data.Data.load_raw_data(filename_ecg_rr_linear1)
   data_hr2_ecg_linear = Data.Data.load_raw_data(filename_ecg_rr_linear2)
   hr1_ecg_linear = data_hr1_ecg_linear.heart_rate
   hr2_ecg_linear = data_hr2_ecg_linear.heart_rate
 
-  data_hr1_ecg_nn = Data.Data.load_raw_data(filename_ecg_rr_nn1)
-  data_hr2_ecg_nn = Data.Data.load_raw_data(filename_ecg_rr_nn2)
-  hr1_ecg_nn = data_hr1_ecg_nn.heart_rate
-  hr2_ecg_nn = data_hr2_ecg_nn.heart_rate
+  data_hr1_ecg_nearest = Data.Data.load_raw_data(filename_ecg_rr_nearest1)
+  data_hr2_ecg_nearest = Data.Data.load_raw_data(filename_ecg_rr_nearest2)
+  hr1_ecg_nearest = data_hr1_ecg_nearest.heart_rate
+  hr2_ecg_nearest = data_hr2_ecg_nearest.heart_rate
 
   tiers_dict, time_end = construct_dict_from_eaf(filename_annot)
 
@@ -159,22 +159,22 @@ def create_data_file(input_path,
   content['hr_subj1_linear'] = hr1_linear
   content['hr_subj2_linear'] = hr2_linear
 
-  content['hr_subj1_nn'] = hr1_nn
-  content['hr_subj2_nn'] = hr2_nn
+  content['hr_subj1_nearest'] = hr1_nearest
+  content['hr_subj2_nearest'] = hr2_nearest
 
   content['hr_subj1_ecg_linear'] = hr1_ecg_linear
   content['hr_subj2_ecg_linear'] = hr2_ecg_linear
 
-  content['hr_subj1_ecg_nn'] = hr1_ecg_nn
-  content['hr_subj2_ecg_nn'] = hr2_ecg_nn
+  content['hr_subj1_ecg_nearest'] = hr1_ecg_nearest
+  content['hr_subj2_ecg_nearest'] = hr2_ecg_nearest
 
   dfs = []
   for key in tiers_dict.keys():
     content[key] = [val.strip() for val in content[key]]
 
   features = ['folder', 'block', 'label', 'time', 'IsImit', 'IsSync', 'Imitator',\
-               'Model', 'hr_subj1_linear', 'hr_subj2_linear', 'hr_subj1_nn', 'hr_subj2_nn', \
-              'hr_subj1_ecg_linear', 'hr_subj2_ecg_linear', 'hr_subj1_ecg_nn', 'hr_subj2_ecg_nn', \
+               'Model', 'hr_subj1_linear', 'hr_subj2_linear', 'hr_subj1_nearest', 'hr_subj2_nearest', \
+              'hr_subj1_ecg_linear', 'hr_subj2_ecg_linear', 'hr_subj1_ecg_nearest', 'hr_subj2_ecg_nearest', \
               'msg1', 'msg2']
 
   for k in features:
@@ -233,34 +233,34 @@ def main(input_path, path_prep, filename_annot):
   # 02_preprocess/subj%d_rr_linear.tsv
   filename_rr_linear1 = os.path.join(path_prep, k.FILENAME_RR_LIN_S1)
   filename_rr_linear2 = os.path.join(path_prep, k.FILENAME_RR_LIN_S2)
-  # 02_preprocess/subj%d_rr_nn.tsv
-  filename_rr_nn1 = os.path.join(path_prep, k.FILENAME_RR_NN_S1)
-  filename_rr_nn2 = os.path.join(path_prep, k.FILENAME_RR_NN_S2)
+  # 02_preprocess/subj%d_rr_nearest.tsv
+  filename_rr_nearest1 = os.path.join(path_prep, k.FILENAME_RR_NN_S1)
+  filename_rr_nearest2 = os.path.join(path_prep, k.FILENAME_RR_NN_S2)
   # 02_preprocess/subj%d_ecg_inferred_rr_linear.tsv
   filename_ecg_rr_linear1 = os.path.join(path_prep, k.FILENAME_ECG_RR_LIN_S1)
   filename_ecg_rr_linear2 = os.path.join(path_prep, k.FILENAME_ECG_RR_LIN_S2)
-  # 02_preprocess/subj%d_ecg_inferred_rr_nn.tsv
-  filename_ecg_rr_nn1 = os.path.join(path_prep, k.FILENAME_ECG_RR_NN_S1)
-  filename_ecg_rr_nn2 = os.path.join(path_prep, k.FILENAME_ECG_RR_NN_S2)
+  # 02_preprocess/subj%d_ecg_inferred_rr_nearest.tsv
+  filename_ecg_rr_nearest1 = os.path.join(path_prep, k.FILENAME_ECG_RR_NN_S1)
+  filename_ecg_rr_nearest2 = os.path.join(path_prep, k.FILENAME_ECG_RR_NN_S2)
   # annotation.eaf
   filename_annot = os.path.join(input_path, filename_annot)
   # dataset.tsv
   filename_dataset = os.path.join(path_prep, k.FILENAME_DATASET)
 
   ## Linear and NN interpolation
-  rr_interpolation.interpolate(filename_rr1, filename_rr_nn1, filename_rr_linear1, t0, duration)
-  rr_interpolation.interpolate(filename_rr2, filename_rr_nn2, filename_rr_linear2, t0, duration)
+  rr_interpolation.interpolate(filename_rr1, filename_rr_nearest1, filename_rr_linear1, t0, duration)
+  rr_interpolation.interpolate(filename_rr2, filename_rr_nearest2, filename_rr_linear2, t0, duration)
 
-  rr_interpolation.interpolate(filename_ecg_rr1, filename_ecg_rr_nn1, filename_ecg_rr_linear1, t0, duration)
-  rr_interpolation.interpolate(filename_ecg_rr2, filename_ecg_rr_nn2, filename_ecg_rr_linear2, t0, duration)
+  rr_interpolation.interpolate(filename_ecg_rr1, filename_ecg_rr_nearest1, filename_ecg_rr_linear1, t0, duration)
+  rr_interpolation.interpolate(filename_ecg_rr2, filename_ecg_rr_nearest2, filename_ecg_rr_linear2, t0, duration)
 
   ## Generate dataset.tsv
   print("Generating complete dataset...")
   create_data_file(input_path,
        filename_rr_linear1, filename_rr_linear2,
-       filename_rr_nn1, filename_rr_nn2,
+       filename_rr_nearest1, filename_rr_nearest2,
        filename_ecg_rr_linear1, filename_ecg_rr_linear2,
-       filename_ecg_rr_nn1, filename_ecg_rr_nn2,
+       filename_ecg_rr_nearest1, filename_ecg_rr_nearest2,
        filename_annot, filename_dataset)
   print("Done.")
 

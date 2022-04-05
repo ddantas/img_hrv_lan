@@ -128,33 +128,33 @@ def main(input_path, path_prep):
   # 02_preprocess/subj%d_rr_linear.tsv
   filename_rr_linear1 = os.path.join(path_prep, k.FILENAME_RR_LIN_S1)
   filename_rr_linear2 = os.path.join(path_prep, k.FILENAME_RR_LIN_S2)
-  # 02_preprocess/subj%d_rr_nn.tsv
-  filename_rr_nn1 = os.path.join(path_prep, k.FILENAME_RR_NN_S1)
-  filename_rr_nn2 = os.path.join(path_prep, k.FILENAME_RR_NN_S2)
+  # 02_preprocess/subj%d_rr_nearest.tsv
+  filename_rr_nearest1 = os.path.join(path_prep, k.FILENAME_RR_NN_S1)
+  filename_rr_nearest2 = os.path.join(path_prep, k.FILENAME_RR_NN_S2)
   # 02_preprocess/subj%d_ecg_inferred_rr_linear.tsv
   filename_ecg_rr_linear1 = os.path.join(path_prep, k.FILENAME_ECG_RR_LIN_S1)
   filename_ecg_rr_linear2 = os.path.join(path_prep, k.FILENAME_ECG_RR_LIN_S2)
-  # 02_preprocess/subj%d_ecg_inferred_rr_nn.tsv
-  filename_ecg_rr_nn1 = os.path.join(path_prep, k.FILENAME_ECG_RR_NN_S1)
-  filename_ecg_rr_nn2 = os.path.join(path_prep, k.FILENAME_ECG_RR_NN_S2)
+  # 02_preprocess/subj%d_ecg_inferred_rr_nearest.tsv
+  filename_ecg_rr_nearest1 = os.path.join(path_prep, k.FILENAME_ECG_RR_NN_S1)
+  filename_ecg_rr_nearest2 = os.path.join(path_prep, k.FILENAME_ECG_RR_NN_S2)
 
   interp = 0
   print_stats_file(filename_rr1, interp)
   print_stats_file(filename_ecg_rr1, interp)
   interp = 1
   print_stats_file(filename_rr_linear1, interp)
-  print_stats_file(filename_rr_nn1, interp)
+  print_stats_file(filename_rr_nearest1, interp)
   print_stats_file(filename_ecg_rr_linear1, interp)
-  print_stats_file(filename_ecg_rr_nn1, interp)
+  print_stats_file(filename_ecg_rr_nearest1, interp)
   print()
   interp = 0
   print_stats_file(filename_rr2, interp)
   print_stats_file(filename_ecg_rr2, interp)
   interp = 1
   print_stats_file(filename_rr_linear2, interp)
-  print_stats_file(filename_rr_nn2, interp)
+  print_stats_file(filename_rr_nearest2, interp)
   print_stats_file(filename_ecg_rr_linear2, interp)
-  print_stats_file(filename_ecg_rr_nn2, interp)
+  print_stats_file(filename_ecg_rr_nearest2, interp)
 
   
 

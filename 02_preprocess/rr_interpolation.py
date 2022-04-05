@@ -11,7 +11,7 @@ import Data
 import const as k
 import utils
 
-def nearest_neighbor(filename, output_nn, t0, duration):
+def nearest_neighbor(filename, output_nearest, t0, duration):
 
 	data = Data.Data.load_raw_data(filename)
 	df = data.as_dataframe()
@@ -59,7 +59,7 @@ def nearest_neighbor(filename, output_nn, t0, duration):
 		new_data.rr_interval.append(df['rr_interval'].iat[j_min])
 
 	overwrite = 1
-	new_data.save_raw_data(output_nn, overwrite)
+	new_data.save_raw_data(output_nearest, overwrite)
 
 def linear_preprocess(filename, output_linear, t0, duration):
 
@@ -115,9 +115,9 @@ def linear_preprocess(filename, output_linear, t0, duration):
 	overwrite = 1
 	new_data.save_raw_data(output_linear, overwrite)
 
-def interpolate(filename, output_nn, output_linear, t0, duration):
+def interpolate(filename, output_nearest, output_linear, t0, duration):
 	print(f"Preprocessing RR intervals using nearest neighbor strategy for file {filename}")
-	nearest_neighbor(filename, output_nn, t0, duration)
+	nearest_neighbor(filename, output_nearest, t0, duration)
 	print(f"Preprocessing RR intervals with linear interpolation for file {filename}")
 	linear_preprocess(filename, output_linear, t0, duration)
 
@@ -132,7 +132,7 @@ if __name__ == '__main__':
 	for f in sys.argv[1:]:
 
 		if 'rr' in f:
-			output_nn = utils.adjust_filename(f, k.EXT_NN)
+			output_nearest = utils.adjust_filename(f, k.EXT_NN)
 			output_linear = utils.adjust_filename(f, k.EXT_LIN)
 			input_path = os.path.dirname(f)
 			filename_routine = os.path.join(input_path, k.FILENAME_ROUTINE)
