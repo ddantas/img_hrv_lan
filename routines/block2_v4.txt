@@ -1,0 +1,50 @@
+## Block 2.1
+# No View No Motion
+0.0; label; block2; NVNM
+0.0; message; all; “Seja bem vindo!”
+0.0; clear; all; #E033FF
+10.0; message; all; “Por favor, assista este vídeo com exemplos de gestos.”
+10.0; play; all; “videos/instructions_90s.mp4”
+## Block 2.2
+#No View Motion
+100.0; label; block2; NVM
+100.0; message; all; “Gesticule as mãos.”
+## Block 2.3
+# No View No Motion
+190.0; label; block2; NVNM
+190.0; message; all; “Descanse as mãos e aguarde.”
+190.0; clear; all; #E033FF
+## Block 2.4
+#Spontaneous Imitation
+280.0; label; block2; SI
+280.0; message; all; “Gesticule as mãos. Imite seu colega se quiser.”
+280.0; show; s1; c2
+280.0; show; s2; c1
+## Block 2.5
+# No View No Motion
+370.0; label; block2; NVNM
+370.0; message; all; “Descanse as mãos e aguarde.”
+370.0; clear; all; #E033FF
+## Block 2.6
+#Induced Imitation Imitator 2 Model 1
+460.0; label; block2; IImitator2
+460.0; message; s2; “Por favor, imite seu colega.”
+460.0; message; s1; “Gesticule as mãos.”
+460.0; show; s1; c2
+460.0; show; s2; c1
+## Block 2.7
+# No View No Motion
+550.0; label; block2; NVNM
+550.0; message; all; “Descanse as mãos e aguarde.”
+550.0; clear; all; #E033FF
+## Block 2.8
+#Induced Imitation Imitator 1 Model 2
+640.0; label; block2; IImitator1
+640.0; message; s1; “Por favor, imite seu colega.”
+640.0; message; s2; “Gesticule as mãos.”
+640.0; show; s1; c2
+640.0; show; s2; c1
+## End of routine
+730.0; message; all; “Muito obrigado pela colaboração!”
+730.0; clear; all; #E033FF
+#730.0; stop; all
