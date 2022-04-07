@@ -154,6 +154,7 @@ def create_data_file(input_path,
         content[tier] = [v]
 
   folder = os.path.basename(os.path.normpath(input_path))
+
   content['time'] = time
   content['folder'] = [folder for i in range(len(content['time']))]
   content['hr_subj1_linear'] = hr1_linear
@@ -172,18 +173,13 @@ def create_data_file(input_path,
   for key in tiers_dict.keys():
     content[key] = [val.strip() for val in content[key]]
 
-  features = ['folder', 'block', 'label', 'time', 'IsImit', 'IsSync', 'Imitator',\
-               'Model', 'hr_subj1_linear', 'hr_subj2_linear', 'hr_subj1_nearest', 'hr_subj2_nearest', \
-              'hr_subj1_ecg_linear', 'hr_subj2_ecg_linear', 'hr_subj1_ecg_nearest', 'hr_subj2_ecg_nearest', \
-              'msg1', 'msg2']
-
-  for k in features:
-    print(k)
-    dfs.append(pd.Series(content[k], name=k))
+  for h in k.DATASET_HEADERS:
+    print(h)
+    dfs.append(pd.Series(content[h], name=h))
 
   df = pd.concat(dfs, axis=1)
   
-  df.to_csv(filename_dataset, sep = '\t', index=False, mode = "w", header = True)
+  df.to_csv(filename_dataset, sep = '\t', index=False, mode = "a", header = False)
 
 """#########################################################
 ############################################################
@@ -191,7 +187,7 @@ def create_data_file(input_path,
 ############################################################
 #########################################################"""
 
-def main(input_path, path_prep, filename_annot):
+def write_to_dataset(input_path, path_prep, filename_dataset, filename_annot):
 
   filename_routine = os.path.join(input_path, k.FILENAME_ROUTINE)
   t0 = utils.get_time_start(filename_routine)
@@ -244,8 +240,6 @@ def main(input_path, path_prep, filename_annot):
   filename_ecg_rr_nearest2 = os.path.join(path_prep, k.FILENAME_ECG_RR_NN_S2)
   # annotation.eaf
   filename_annot = os.path.join(input_path, filename_annot)
-  # dataset.tsv
-  filename_dataset = os.path.join(path_prep, k.FILENAME_DATASET)
 
   ## Linear and NN interpolation
   rr_interpolation.interpolate(filename_rr1, filename_rr_nearest1, filename_rr_linear1, t0, duration)
@@ -264,17 +258,30 @@ def main(input_path, path_prep, filename_annot):
        filename_annot, filename_dataset)
   print("Done.")
 
+def main(data_dir, filename_dataset, filename_annot):
+
+  # create empty dataframe file for appending
+  df = pd.DataFrame(columns=k.DATASET_HEADERS)
+  df.to_csv(filename_dataset, sep = '\t', index=False, mode = "w", header = True)
+
+  for d in os.listdir(data_dir):
+    input_path = os.path.join(data_dir, d)
+
+    if d.isnumeric():
+      path_prep = os.path.join(input_path, k.FOLDER_PREP)
+      if not os.path.exists(path_prep):
+        os.mkdir(path_prep)
+
+      write_to_dataset(input_path, path_prep, filename_dataset, filename_annot)
+
 if __name__ == "__main__":
 
-  if (len(sys.argv)) < 3:
-    print("Usage: preprocess.py <input_path> <annotation_file>")
-    sys.exit()
+  # data/output
+  path_dataset = os.path.join(k.FOLDER_DATA, k.FOLDER_OUTPUT)
+  if not os.path.exists(path_dataset):
+    os.mkdir(path_dataset)
 
-  input_path = sys.argv[1]
-  filename_annot = sys.argv[2]
+  # data/output/dataset.tsv
+  filename_dataset = os.path.join(path_dataset, k.FILENAME_DATASET)
 
-  path_prep = os.path.join(input_path, k.FOLDER_PREP)
-  if not os.path.exists(path_prep):
-    os.mkdir(path_prep)
-
-  main(input_path, path_prep, filename_annot)
+  main(k.FOLDER_DATA, filename_dataset, k.FILENAME_ANNOTATION)
