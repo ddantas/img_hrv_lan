@@ -258,25 +258,31 @@ def write_to_dataset(input_path, path_prep, filename_dataset, filename_annot):
        filename_annot, filename_dataset)
   print("Done.")
 
-def main(data_dir, filename_dataset, filename_annot):
+def main(dir_list, filename_dataset, filename_annot):
 
   # create empty dataframe file for appending
   df = pd.DataFrame(columns=k.DATASET_HEADERS)
   df.to_csv(filename_dataset, sep = '\t', index=False, mode = "w", header = True)
 
-  for d in os.listdir(data_dir):
-    input_path = os.path.join(data_dir, d)
+  for d in dir_list:
+    input_path = d
 
-    if d.isnumeric():
-      path_prep = os.path.join(input_path, k.FOLDER_PREP)
-      if not os.path.exists(path_prep):
-        os.mkdir(path_prep)
+    path_prep = os.path.join(input_path, k.FOLDER_PREP)
+    if not os.path.exists(path_prep):
+      os.mkdir(path_prep)
 
-      write_to_dataset(input_path, path_prep, filename_dataset, filename_annot)
+    write_to_dataset(input_path, path_prep, filename_dataset, filename_annot)
 
 if __name__ == "__main__":
 
   # data/output
+  print(sys.argv)
+  if len(sys.argv) < 2:
+    print(f"Usage: python3 preprocess.py <dir(s)_to_preprocess>") 
+    exit(1)
+
+  dir_list = sys.argv[1:]
+
   path_dataset = os.path.join(k.FOLDER_DATA, k.FOLDER_OUTPUT)
   if not os.path.exists(path_dataset):
     os.mkdir(path_dataset)
@@ -284,4 +290,4 @@ if __name__ == "__main__":
   # data/output/dataset.tsv
   filename_dataset = os.path.join(path_dataset, k.FILENAME_DATASET)
 
-  main(k.FOLDER_DATA, filename_dataset, k.FILENAME_ANNOTATION)
+  main(dir_list, filename_dataset, k.FILENAME_ANNOTATION)

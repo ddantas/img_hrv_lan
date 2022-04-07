@@ -15,7 +15,7 @@ runsync:
 	python3 01_sync/sync.py data/a004
 
 runprep:
-	python3 02_preprocess/preprocess.py
+	python3 02_preprocess/preprocess.py data/a*
 
 # Profiling of WinOp.py
 profop:
