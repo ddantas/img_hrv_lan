@@ -739,6 +739,10 @@ class WinMainTk(tk.Frame):
         of.write("%f\t %f\t block\t %s\n" % (arr_label_time[0], max_time, block))
         for i in range(len(arr_label_str)):
             of.write("%f\t %f\t label\t %s\n" % (arr_label_time[i], arr_label_time[i+1], arr_label_str[i]))
+        of.write("%f\t %f\t IsImit\t \n" % (0.0, 0.0))
+        of.write("%f\t %f\t Imitator\t \n" % (0.0, 0.0))
+        of.write("%f\t %f\t Model\t \n" % (0.0, 0.0))
+        of.write("%f\t %f\t IsSync\t \n" % (0.0, 0.0))
         for i in range(len(arr_msg1_str)):
             of.write("%f\t %f\t msg1\t %s\n" % (arr_msg1_time[i], arr_msg1_time[i+1], arr_msg1_str[i]))
         for i in range(len(arr_msg2_str)):

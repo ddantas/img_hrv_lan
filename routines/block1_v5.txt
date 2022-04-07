@@ -3,12 +3,13 @@
 0.0; label; block1; NVNM
 0.0; message; all; “Seja bem vindo!”
 0.0; clear; all; #FF5733
-10.0; message; all; “Por favor, assista este vídeo com exemplos de gestos.”
+10.0; message; all; “Por favor, assista este vídeo com exemplos de gestos enquanto descansa as mãos. Durante o experimento você pode usar esses gestos ou quaisquer outros.”
 10.0; play; all; “videos/instructions_90s.mp4”
 ## Block 1.2
 #No View Motion
 100.0; label; block1; NVM
 100.0; message; all; “Gesticule as mãos.”
+100.0; clear; all; #FF5733
 ## Block 1.3
 # No View No Motion
 190.0; label; block1; NVNM

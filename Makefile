@@ -12,7 +12,7 @@ runsub:
 # Synchronization of videos of both subjects.
 # Force both videos to have the same length.
 runsync:
-	python3 01_sync/sync.py data/a003
+	python3 01_sync/sync.py data/a004
 
 runprep:
 	python3 02_preprocess/preprocess.py data/a003 annotation.eaf

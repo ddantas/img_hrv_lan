@@ -23,6 +23,7 @@ modpathrel = os.path.join(filepath, "..")
 modpathabs = os.path.abspath(modpathrel)
 sys.path.append(modpathabs)
 import const as k
+import utils
 
 def get_duration(filename):
 
@@ -50,7 +51,7 @@ def synchronize(input_routine, input_filename, output_filename):
 
   print(input_filename)
   actual = get_duration(input_filename)
-  ideal  = get_duration_ideal(input_routine)
+  ideal  = utils.get_duration_ideal(input_routine)
   print("Ideal duration: %f" % ideal)
   r = ideal / actual
 

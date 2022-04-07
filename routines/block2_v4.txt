@@ -9,6 +9,7 @@
 #No View Motion
 100.0; label; block2; NVM
 100.0; message; all; “Gesticule as mãos.”
+100.0; clear; all; #E033FF
 ## Block 2.3
 # No View No Motion
 190.0; label; block2; NVNM
