@@ -1,6 +1,6 @@
 source('./utils.R')
 
-get_SI_stats <- function(df_si, imit, sync) {
+get_SI_imitation_pcent <- function(df_si, imit, sync) {
 	
   # SANITY CHECKING CODE
   # l = c(42, 43, 44)
@@ -16,28 +16,70 @@ get_SI_stats <- function(df_si, imit, sync) {
   res = rep(0, nrow(df_si))
   res[indexes_true] = 1
 
-  return(c(mean(res), sd(res)))
+  return(mean(res))
 }
 
-create_SI_dataframe <- function(df) {
+get_SI_pcents <- function(df_si) {
 
-  isimit_si = df$IsImit[df['label'] == 'SI']
-  issync_si = df$IsSync[df['label'] == 'SI']
+  # "Synchrony/Imitation"
+  imit_sync = get_SI_imitation_pcent(df_si, TRUE, TRUE)
+  # "Synchrony/Non-Imitation"
+  imit_notsync = get_SI_imitation_pcent(df_si, TRUE, FALSE)
 
-  df_si = data.frame(IsImit=isimit_si, IsSync=issync_si)
-  df_si[is.na(df_si)]  <- FALSE
+  # "Non-Synchrony/Imitation"
+  notimit_sync = get_SI_imitation_pcent(df_si, FALSE, TRUE)
+  # "Non-Synchrony/Non-Imitation"
+  notimit_notsync = get_SI_imitation_pcent(df_si, FALSE, FALSE)
 
-  imit_sync = get_SI_stats(df_si, TRUE, TRUE)
-  imit_notsync = get_SI_stats(df_si, TRUE, FALSE)
+  return(c(imit_sync, imit_notsync, notimit_sync, notimit_notsync))
+}
 
-  notimit_sync = get_SI_stats(df_si, FALSE, TRUE)
-  notimit_notsync = get_SI_stats(df_si, FALSE, FALSE)
+create_SI_dataframe <- function(df, folder_names) {
 
-  names = c("Synchrony/Imitation", "Synchrony/Non-Imitation", "Non-Synchrony/Imitation", 
-        "Non-Synchrony/Non-Imitation")
 
-  stats_df = data.frame(Mean=c(imit_sync[1], imit_notsync[1], notimit_sync[1], notimit_notsync[1]),
-        SD=c(imit_sync[2], imit_notsync[2], notimit_sync[2], notimit_notsync[2]), Behaviour=names)
+  # "Synchrony/Imitation", "Synchrony/Non-Imitation", "Non-Synchrony/Imitation", 
+  #       "Non-Synchrony/Non-Imitation"
+  columns = c("S_I", "S_NI", "NS_I", "NS_NI")
+
+  stats_df = data.frame(matrix(nrow=0, ncol=length(columns)))
+  colnames(stats_df) <- columns
+
+  for (f in folder_names) {
+
+    isimit_si = df$IsImit[df['label'] == 'SI' & df['folder'] == f]
+    issync_si = df$IsSync[df['label'] == 'SI' & df['folder'] == f]
+
+    df_si = data.frame(IsImit=isimit_si, IsSync=issync_si)
+    df_si[is.na(df_si)] <- FALSE
+
+    stats = get_SI_pcents(df_si)
+
+    stats_df[nrow(stats_df) + 1,] = stats
+
+  }
 
   return(stats_df)
+}
+
+get_stats <- function(stats_df) {
+
+  mean_si = mean(stats_df$S_I)
+  sd_si = sd(stats_df$S_I)
+
+  mean_sni = mean(stats_df$S_NI)
+  sd_sni = sd(stats_df$S_NI)
+
+  mean_nsi = mean(stats_df$NS_I)
+  sd_nsi = sd(stats_df$NS_I)
+
+  mean_nsni = mean(stats_df$NS_NI)
+  sd_nsni = sd(stats_df$NS_NI)
+
+  behaviour = c("S_I", "S_NI", "NS_I", "NS_NI")
+
+  df = data.frame(Mean=c(mean_si, mean_sni, mean_nsi, mean_nsni),
+                  SD=c(sd_si, sd_sni, sd_nsi, sd_nsni),
+                  Behaviour=behaviour)
+
+  return(df)
 }
