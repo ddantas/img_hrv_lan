@@ -29,8 +29,11 @@ def nearest_neighbor(filename, output_nearest, t0, duration):
     return
 
   j = 0
+  j_last = len(df) - 1
+
   #duration = round(df['time'].iat[-1] - df['time'].iat[0])+1
   print("duration = %d" % duration)
+  print("j_last   = %d" % j_last)
 
   if (df['time'].iat[-1] < duration):
     df.loc[len(df)] = [duration + 1.0, df['heart_rate'].iat[-1], df['rr_interval'].iat[-1]]
@@ -41,7 +44,7 @@ def nearest_neighbor(filename, output_nearest, t0, duration):
     changed = True
     j_min = j
     j += 1
-    while changed and j < duration:
+    while changed and j < j_last:
       diff = abs(df['time'].iat[j] - i)
       if diff < min_diff:
         min_diff = diff
@@ -51,7 +54,7 @@ def nearest_neighbor(filename, output_nearest, t0, duration):
       else:
         changed = False
 
-      if j == duration:
+      if j == j_last:
         break
 
     j-=1

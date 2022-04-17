@@ -258,11 +258,10 @@ def write_to_dataset(input_path, path_prep, filename_dataset, filename_annot):
        filename_annot, filename_dataset)
   print("Done.")
 
-def main(dir_list, filename_dataset, filename_annot):
+def main(dir_list, filename_annot):
 
   # create empty dataframe file for appending
   df = pd.DataFrame(columns=k.DATASET_HEADERS)
-  df.to_csv(filename_dataset, sep = '\t', index=False, mode = "w", header = True)
 
   for d in dir_list:
     input_path = d
@@ -271,6 +270,9 @@ def main(dir_list, filename_dataset, filename_annot):
     if not os.path.exists(path_prep):
       os.mkdir(path_prep)
 
+    filename_dataset = os.path.join(d, k.FOLDER_PREP, k.FILENAME_DATASET)
+    print(filename_dataset)
+    #df.to_csv(filename_dataset, sep = '\t', index=False, mode = "w", header = True)
     write_to_dataset(input_path, path_prep, filename_dataset, filename_annot)
 
 if __name__ == "__main__":
@@ -290,4 +292,4 @@ if __name__ == "__main__":
   # data/output/dataset.tsv
   filename_dataset = os.path.join(path_dataset, k.FILENAME_DATASET)
 
-  main(dir_list, filename_dataset, k.FILENAME_ANNOTATION)
+  main(dir_list, k.FILENAME_ANNOTATION)
