@@ -1,5 +1,6 @@
 source("utils.R")
 source("analysis.R")
+source("group_roles.R")
 
 folders = commandArgs(trailingOnly=TRUE)
 print("Getting datasets from folders")
@@ -26,3 +27,7 @@ folder_names = get_folder_names(df)
 stats_df = create_SI_dataframe(df, folder_names)
 result = get_stats(stats_df)
 print(result)
+
+###############################################################3
+
+group_roles(filename)

@@ -1,6 +1,6 @@
 source('./utils.R')
 
-normalize_dataset <- function(filename) {
+group_roles <- function(filename) {
 
 	df = load_data(filename)
 
