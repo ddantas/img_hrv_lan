@@ -1,0 +1,9 @@
+## Block 0.2
+# No View No Motion
+0.0; label; block1; Interlude
+0.0; message; all; "Descanse as mãos e aguarde."
+0.0; clear; all; #808080
+## End of routine
+600.0; message; all; "Descanse as mãos e aguarde."
+600.0; clear; all; #FFFFFF
+#600.0; stop; all

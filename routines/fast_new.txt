@@ -3,10 +3,12 @@
 0.0; message; all; "Welcome!"
 0.0; clear; all;         #FFFF00
 #Primary colors
-1.0; message; all; "Color 00FF00"
-1.0; clear; all;         #00FF00
+1.0; play; all; "videos/instructions.mp4"
+1.0; message; all; "Please watch this video..."
 2.0; message; all; "Color 00FF00"
 2.0; clear; all;         #00FF00
+2.5; message; all; "Color 00FF00"
+2.5; clear; all;         #00FF00
 3.0; message; all; "Color 0000FF"
 3.0; clear; all;         #0000FF
 4.0; message; all; "Color FFFF00"
@@ -16,10 +18,12 @@
 6.0; message; all; "Color FFFF00"
 6.0; clear; all;         #FFFF00
 #Grayscale
-7.0; message; all; "Color EEEEEE"
-7.0; clear; all;         #EEEEEE
-8.0; message; all; "Color CCCCCC"
-8.0; clear; all;         #CCCCCC
+7.0; play; all; "videos/instructions.mp4"
+7.0; message; all; "Please watch this video..."
+8.0; message; all; "Color EEEEEE"
+8.0; clear; all;         #EEEEEE
+8.5; message; all; "Color CCCCCC"
+8.5; clear; all;         #CCCCCC
 9.0; message; all; "Color AAAAAA"
 9.0; clear; all;         #AAAAAA
 10.0; message; all; "Color 888888"

@@ -1,0 +1,9 @@
+## Block 0.1
+# No View No Motion
+0.0; label; block1; Prelude
+0.0; message; all; "Seja bem vindo!"
+0.0; clear; all; #808080
+## End of routine
+300.0; message; all; "Seja bem vindo!"
+300.0; clear; all; #FFFFFF
+#300.0; stop; all

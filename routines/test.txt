@@ -1,14 +1,14 @@
-0.0; message; all; “Welcome!”
+0.0; message; all; "Welcome!"
 0.0; clear; all; #00FFA0
-5.0; message; all; “Please watch this video”
-5.0; play; all; “videos/instructions.mp4”
-30.0; message; all; “No View No Motion”
-45.0; message; all; “No View Motion”
-60.0; message; s1; “Please gesticulate”
-60.0; message; s2; “Spontaneous Imitation”
+5.0; message; all; "Please watch this video"
+5.0; play; all; "videos/instructions.mp4"
+30.0; message; all; "No View No Motion"
+45.0; message; all; "No View Motion"
+60.0; message; s1; "Please gesticulate"
+60.0; message; s2; "Spontaneous Imitation"
 60.0; show; s1; c2
 60.0; show; s2; c1
-90.0; message; s2; “Induced Imitation”
-120.0; message; all; “Please stop. Thank you!”
+90.0; message; s2; "Induced Imitation"
+120.0; message; all; "Please stop. Thank you!"
 120.0; clear; all; #00FFA0
 #120.0; stop; all
