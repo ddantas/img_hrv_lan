@@ -108,7 +108,10 @@ class Polar():
           print("%s: %s" % (s, bleak.uuids.uuidstr_to_str(s)))
           try:
             result = await client.read_gatt_char(s)
-            print(result)
+            if (s == BATTERY_LEVEL_UUID):
+              print(int(result[0]))
+            else:
+              print(result)
           except Exception as e:
             self.print_exception(e, "print_uuids", __file__)
         # Will disconnect

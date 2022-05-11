@@ -171,7 +171,7 @@ def create_data_file(input_path,
 
   dfs = []
   for key in tiers_dict.keys():
-    content[key] = [val.strip() for val in content[key]]
+    content[key] = ["" if val is None else val.strip() for val in content[key]]
 
   for h in k.DATASET_HEADERS:
     print(h)

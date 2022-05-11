@@ -12,11 +12,12 @@ runsub:
 # Synchronization of videos of both subjects.
 # Force both videos to have the same length.
 runsync:
-	python3 01_sync/sync.py data/a004
+	python3 01_sync/sync.py data/b046
+	python3 01_sync/sync.py data/b048
 
 runprep:
-	python3 02_preprocess/preprocess.py data/a*
-	#python3 02_preprocess/preprocess.py data/a003
+	#python3 02_preprocess/preprocess.py data/b*
+	python3 02_preprocess/preprocess.py data/b001
 
 # Profiling of WinOp.py
 profop:

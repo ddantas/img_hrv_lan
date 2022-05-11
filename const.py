@@ -57,6 +57,7 @@ FOLDER_PREP = "02_preprocess"
 FOLDER_OUTPUT = "output"
 FILENAME_DATASET = "dataset.tsv"
 FILENAME_ANNOTATION = "annotation.eaf"
+FILENAME_ANNOTATION = "annotation_dd.eaf"
 DATASET_HEADERS = ['folder', 'block', 'label', 'time', 'IsImit', 'IsSync', 'Imitator',\
 					'Model', 'hr_subj1_linear', 'hr_subj2_linear', 'hr_subj1_nearest', 'hr_subj2_nearest', \
 					'hr_subj1_ecg_linear', 'hr_subj2_ecg_linear', 'hr_subj1_ecg_nearest', 'hr_subj2_ecg_nearest', \
