@@ -34,6 +34,6 @@
 460.0; show; s1; c2
 460.0; show; s2; c1
 ## End of routine
-640.0; message; all; "Muito obrigado pela colaboração!"
-640.0; clear; all; #FF5733
+640.0; message; all; "Por favor, aguarde."
+640.0; clear; all; #FFFFFF
 #640.0; stop; all
