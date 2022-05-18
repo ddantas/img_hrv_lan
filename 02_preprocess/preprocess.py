@@ -175,17 +175,14 @@ def create_data_file(input_path,
 
   for h in k.DATASET_HEADERS:
     print(h)
+    if (h == "msg1" or h == "msg2"):
+      for i in range(len(content[h])):
+        content[h][i] = content[h][i].replace('"', '')
     dfs.append(pd.Series(content[h], name=h))
 
   df = pd.concat(dfs, axis=1)
   
-  df.to_csv(filename_dataset, sep = '\t', index=False, mode = "a", header = False)
-
-"""#########################################################
-############################################################
-### Main function                                        ###
-############################################################
-#########################################################"""
+  df.to_csv(filename_dataset, sep = '\t', index=False, mode = "w", header = True)
 
 def write_to_dataset(input_path, path_prep, filename_dataset, filename_annot):
 
@@ -257,6 +254,12 @@ def write_to_dataset(input_path, path_prep, filename_dataset, filename_annot):
        filename_ecg_rr_nearest1, filename_ecg_rr_nearest2,
        filename_annot, filename_dataset)
   print("Done.")
+
+"""#########################################################
+############################################################
+### Main function                                        ###
+############################################################
+#########################################################"""
 
 def main(dir_list, filename_annot):
 

@@ -17,7 +17,9 @@ concatenate_datasets <- function(folders, filename_output) {
   final_df = data.frame(matrix(nrow=0, ncol=length(columns)))
   colnames(final_df) = columns
 
+  print(folders)
   for (f in folders){
+    writeLines(paste("Folder: ", f))
     ds_path = file.path(f, default_ds_subpath)
     df = load_data(ds_path)
     # If IsImit is FALSE, IsSync must be NA

@@ -8,11 +8,47 @@ print(folders)
 
 if (length(folders) == 0)
 {
-  folders = c("../data/a001",
-              "../data/a003",
-              "../data/a004",
-              "../data/a005",
-              "../data/a006")
+  folders = c("../data/b001",
+              "../data/b002",
+              "../data/b003",
+              "../data/b004",
+              "../data/b009",
+              "../data/b010",
+              "../data/b011",
+              "../data/b012",
+              "../data/b013",
+              "../data/b014",
+              "../data/b015",
+              "../data/b016",
+              "../data/b017",
+              "../data/b018",
+              "../data/b019",
+              "../data/b020",
+              "../data/b021",
+              "../data/b022",
+              "../data/b023",
+              "../data/b024",
+              "../data/b025",
+              "../data/b026",
+              "../data/b027",
+              "../data/b028",
+              "../data/b029",
+              "../data/b030",
+              "../data/b031",
+              "../data/b032",
+              "../data/b033",
+              "../data/b034",
+              "../data/b035",
+              "../data/b036",
+              "../data/b037",
+              "../data/b038",
+              "../data/b039",
+              "../data/b040",
+              "../data/b041",
+              "../data/b042",
+              "../data/b043",
+              "../data/b044")
+  #folders = c("../data/b044")
 }
 
 filename = "output.tsv"
@@ -22,12 +58,12 @@ imit = TRUE
 sync = NA
 
 df = load_data(filename)
-folder_names = get_folder_names(df)
 
-stats_df = create_SI_dataframe(df, folder_names)
-result = get_stats(stats_df)
-print(result)
+#folder_names = get_folder_names(df)
+#stats_df = create_SI_dataframe(df, folder_names)
+#result = get_stats(stats_df)
+#print(result)
 
 ###############################################################3
 
-group_roles(filename)
+#group_roles(filename)
