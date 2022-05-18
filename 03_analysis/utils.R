@@ -5,14 +5,15 @@ load_data <- function(filename){
   return(data)
 }
 
-concatenate_datasets <- function(folders, filename_output) {
+concatenate_datasets <- function(folders, filename_output, ds_files) {
 
-  columns = c("folder", "block", "label", "time", "IsImit", "IsSync", "Imitator", "Model", 
-            "hr_subj1_linear", "hr_subj2_linear", "hr_subj1_nearest", "hr_subj2_nearest", 
-            "hr_subj1_ecg_linear", "hr_subj2_ecg_linear", "hr_subj1_ecg_nearest", 
-            "hr_subj2_ecg_nearest", "msg1", "msg2")
+  columns = c("folder", "annotator", "block", "label", "time",
+              "IsImit", "IsSync", "Imitator", "Model",
+              "hr_subj1_linear", "hr_subj2_linear", "hr_subj1_nearest", "hr_subj2_nearest",
+              "hr_subj1_ecg_linear", "hr_subj2_ecg_linear", "hr_subj1_ecg_nearest",
+              "hr_subj2_ecg_nearest", "msg1", "msg2")
 
-  default_ds_subpath = "02_preprocess/dataset.tsv"
+  for (default_ds_subpath in ds_files)
 
   final_df = data.frame(matrix(nrow=0, ncol=length(columns)))
   colnames(final_df) = columns

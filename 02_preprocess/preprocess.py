@@ -107,6 +107,15 @@ def create_data_file(input_path,
        filename_ecg_rr_nearest1, filename_ecg_rr_nearest2,
        filename_annot, filename_dataset):
 
+  print("Annotation filename: " + filename_annot)
+  print("Dataset filename: " + filename_dataset)
+  filename = os.path.basename(filename_annot)
+  print("Filename: " + filename)
+  basename = os.path.splitext(filename)[0]
+  print("Basename: " + basename)
+  annotator_name = basename.split("_")[-1]
+  print("Annotator: " + annotator_name)
+
   data_hr1_linear = Data.Data.load_raw_data(filename_rr_linear1)
   data_hr2_linear = Data.Data.load_raw_data(filename_rr_linear2)
   hr1_linear = data_hr1_linear.heart_rate
@@ -130,9 +139,11 @@ def create_data_file(input_path,
   tiers_dict, time_end = construct_dict_from_eaf(filename_annot)
 
   time = []
+  annotator = []
   content = {}
   for i in range(time_end):
     time.append(i)
+    annotator.append(annotator_name)
 
     for tier in tiers_dict.keys():
 
@@ -156,6 +167,7 @@ def create_data_file(input_path,
   folder = os.path.basename(os.path.normpath(input_path))
 
   content['time'] = time
+  content['annotator'] = annotator
   content['folder'] = [folder for i in range(len(content['time']))]
   content['hr_subj1_linear'] = hr1_linear
   content['hr_subj2_linear'] = hr2_linear

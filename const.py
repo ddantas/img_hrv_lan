@@ -55,10 +55,11 @@ FILENAME_VIDEO_SYNC_S2 = "subj2_sync.mp4"
 ## Used mostly by 02_preprocess/preprocess.py
 FOLDER_PREP = "02_preprocess"
 FOLDER_OUTPUT = "output"
-FILENAME_DATASET = "dataset.tsv"
-FILENAME_ANNOTATION = "annotation.eaf"
+FILENAME_DATASET = "dataset_jf.tsv"
+FILENAME_DATASET = "dataset_dd.tsv"
+FILENAME_ANNOTATION = "annotation_jf.eaf"
 FILENAME_ANNOTATION = "annotation_dd.eaf"
-DATASET_HEADERS = ['folder', 'block', 'label', 'time', 'IsImit', 'IsSync', 'Imitator',\
+DATASET_HEADERS = ['folder', 'annotator', 'block', 'label', 'time', 'IsImit', 'IsSync', 'Imitator',\
 					'Model', 'hr_subj1_linear', 'hr_subj2_linear', 'hr_subj1_nearest', 'hr_subj2_nearest', \
 					'hr_subj1_ecg_linear', 'hr_subj2_ecg_linear', 'hr_subj1_ecg_nearest', 'hr_subj2_ecg_nearest', \
 					'msg1', 'msg2']
