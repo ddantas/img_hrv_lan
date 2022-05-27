@@ -1,10 +1,10 @@
 source("utils.R")
 source("analysis.R")
 source("group_roles.R")
+source("script.R")
 
 folders = commandArgs(trailingOnly=TRUE)
 print("Getting datasets from folders")
-print(folders)
 
 if (length(folders) == 0)
 {
@@ -47,7 +47,9 @@ if (length(folders) == 0)
               "../data/b041",
               "../data/b042",
               "../data/b043",
-              "../data/b044")
+              "../data/b044",
+              "../data/b045",
+              "../data/b046")
   #folders = c("../data/b044")
 }
 
@@ -55,12 +57,14 @@ if (length(folders) == 0)
 ds_files = c("02_preprocess/dataset_dd.tsv")
 
 filename = "output.tsv"
-concatenate_datasets(folders, filename, ds_files)
+# filename = "../data/b046/02_preprocess/dataset_jf.tsv"
+
+# concatenate_datasets(folders, filename, ds_files)
 
 imit = TRUE
 sync = NA
 
-df = load_data(filename)
+create_correlation_df(folders, ds_files, "corr_dd.tsv")
 
 #folder_names = get_folder_names(df)
 #stats_df = create_SI_dataframe(df, folder_names)

@@ -83,3 +83,31 @@ get_stats <- function(stats_df) {
 
   return(df)
 }
+
+create_correlation_df <- function(folders, ds_files, output_file) {
+
+  headers = rbind(c("hr_subj1_linear", "hr_subj2_linear"), c("hr_subj1_nearest", "hr_subj2_nearest"),
+              c("hr_subj1_ecg_linear", "hr_subj2_ecg_linear"))#, c("hr_subj1_ecg_nearest",
+              #"hr_subj2_ecg_nearest"))
+
+  columns = c("folder", "linear", "nearest")#, "ecg_linear", "ecg_nearest")
+
+  corr_df = data.frame((matrix(nrow=0, ncol=length(columns))))
+  for (f in folders) {
+    fname = file.path(f, ds_files)
+    print(fname)
+    df = load_data(fname)
+    data_h = c(f)
+    for (h in seq(nrow(headers))){
+      writeLines(paste("Looking at", headers[h, 1], headers[h, 2], "for correlation"))
+      # print(df[c(headers[h, 1], headers[h, 2])])
+      corr = main(df[c(headers[h, 1], headers[h, 2])])
+      writeLines(paste("Result correlation:", corr))
+      data_h = append(data_h, corr)
+    }
+    corr_df = rbind(corr_df, data_h)
+  }
+
+  write.table(corr_df, file=output_file, sep="\t", col.names=NA)
+
+}

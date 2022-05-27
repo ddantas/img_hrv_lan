@@ -36,12 +36,12 @@ concatenate_datasets <- function(folders, filename_output, ds_files) {
       {
         writeLines(paste("Found", n, "lines with IsImit = FALSE and IsSync != NA. Correcting..."))
         writeLines("")
-        df[(df$IsImit == FALSE & !is.na(df$IsSync)), "IsSync"] = NA
+          df[(df$IsImit == FALSE & !is.na(df$IsSync)), "IsSync"] = NA
       }
       # Fill Model column
       df$Model = 3 - df$Imitator
       # Fill Gender column
-      if (df$folder %in% set_male)
+      if (unique(df$folder) %in% set_male)
       {
         df$Gender = "M"
       }
