@@ -30,13 +30,52 @@ concatenate_datasets <- function(folders, filename_output, ds_files) {
       writeLines(paste("Folder: ", f))
       ds_path = file.path(f, default_ds_subpath)
       df = load_data(ds_path)
+
+      # Changing NA to ""
+      #df2[is.na(df2$IsImit), 'IsImit'] = ""
+      #df2[is.na(df2$IsSync), 'IsSync'] = ""
+      #df2[is.na(df2$Imitator), 'Imitator'] = ""
+      #df2[is.na(df2$Model), 'Model'] = ""
+
+      # If IsImit is TRUE, Imitator must not be NA
+      n = length(df[(!is.na(df$IsImit) & df$IsImit == TRUE & is.na(df$Imitator)), "IsSync"])
+      if (n > 0)
+      {
+        writeLines(paste("Found", n, "lines with IsImit = TRUE and Imitator == NA. Fatal error. Please review annotation..."))
+        writeLines("")
+        stop
+      }
+      # If IsImit is TRUE, IsSync must not be NA
+      n = length(df[(!is.na(df$IsImit) & df$IsImit == TRUE & is.na(df$IsSync)), "IsSync"])
+      if (n > 0)
+      {
+        writeLines(paste("Found", n, "lines with IsImit = TRUE and IsSync == NA. Correcting..."))
+        writeLines("")
+        df[(!is.na(df$IsImit) & df$IsImit == FALSE & is.na(df$IsSync)), "IsSync"] = FALSE
+      }
       # If IsImit is FALSE, IsSync must be NA
-      n = length(df[(df$IsImit == FALSE & !is.na(df$IsSync)), "IsSync"])
+      n = length(df[(!is.na(df$IsImit) & df$IsImit == FALSE & !is.na(df$IsSync)), "IsSync"])
       if (n > 0)
       {
         writeLines(paste("Found", n, "lines with IsImit = FALSE and IsSync != NA. Correcting..."))
         writeLines("")
-        df[(df$IsImit == FALSE & !is.na(df$IsSync)), "IsSync"] = NA
+        df[(!is.na(df$IsImit) & df$IsImit == FALSE & !is.na(df$IsSync)), "IsSync"] = NA
+      }
+      # If IsImit is FALSE, Imitator must be NA
+      n = length(df[(!is.na(df$IsImit) & df$IsImit == FALSE & !is.na(df$Imitator)), "IsSync"])
+      if (n > 0)
+      {
+        writeLines(paste("Found", n, "lines with IsImit = FALSE and Imitator != NA. Correcting..."))
+        writeLines("")
+        df[(!is.na(df$IsImit) & df$IsImit == FALSE & !is.na(df$Imitator)), "Imitator"] = NA
+      }
+      # If IsImit is FALSE, Model must be NA
+      n = length(df[(!is.na(df$IsImit) & df$IsImit == FALSE & !is.na(df$Model)), "IsSync"])
+      if (n > 0)
+      {
+        writeLines(paste("Found", n, "lines with IsImit = FALSE and Model != NA. Correcting..."))
+        writeLines("")
+        df[(!is.na(df$IsImit) & df$IsImit == FALSE & !is.na(df$Model)), "Model"] = NA
       }
       # Fill Model column
       df$Model = 3 - df$Imitator
@@ -63,7 +102,15 @@ concatenate_datasets <- function(folders, filename_output, ds_files) {
       final_df = rbind(final_df, df)
     }
   }
-
+  #final_df[is.na(final_df$IsImit), 'IsImit'] = ""
+  #final_df[is.na(final_df$IsSync), 'IsSync'] = ""
+  #final_df[is.na(final_df$Imitator), 'Imitator'] = ""
+  #final_df[is.na(final_df$Model), 'Model'] = ""
+  #df2[is.na(df2$IsImit), 'IsImit'] = ""
+  #df2[is.na(df2$IsSync), 'IsSync'] = ""
+  #df2[is.na(df2$Imitator), 'Imitator'] = ""
+  #df2[is.na(df2$Model), 'Model'] = ""
+  
   write.table(final_df, file=filename_output, sep="\t", col.names=NA)
 }
 

@@ -51,8 +51,9 @@ if (length(folders) == 0)
   #folders = c("../data/b044")
 }
 
-#ds_files = c("02_preprocess/dataset_dd.tsv", "02_preprocess/dataset_jf.tsv")
-ds_files = c("02_preprocess/dataset_dd.tsv")
+ds_files = c("02_preprocess/dataset_dd.tsv", "02_preprocess/dataset_jf.tsv")
+#ds_files = c("02_preprocess/dataset_dd.tsv")
+#ds_files = c("02_preprocess/dataset_jf.tsv")
 
 filename = "output.tsv"
 concatenate_datasets(folders, filename, ds_files)
