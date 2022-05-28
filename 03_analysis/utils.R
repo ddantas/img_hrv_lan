@@ -21,10 +21,11 @@ concatenate_datasets <- function(folders, filename_output, ds_files) {
 
   print(columns)
 
+  final_df = data.frame(matrix(nrow=0, ncol=length(columns)))
+  colnames(final_df) = columns
   for (default_ds_subpath in ds_files)
   {
-    final_df = data.frame(matrix(nrow=0, ncol=length(columns)))
-    colnames(final_df) = columns
+    writeLines(paste("File: ", default_ds_subpath))
 
     for (f in folders){
       writeLines(paste("Folder: ", f))
