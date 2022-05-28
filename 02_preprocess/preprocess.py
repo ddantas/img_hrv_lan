@@ -107,6 +107,7 @@ def create_data_file(input_path,
        filename_ecg_rr_nearest1, filename_ecg_rr_nearest2,
        filename_annot, filename_dataset):
 
+  
   print("Annotation filename: " + filename_annot)
   print("Dataset filename: " + filename_dataset)
   filename = os.path.basename(filename_annot)
@@ -273,10 +274,7 @@ def write_to_dataset(input_path, path_prep, filename_dataset, filename_annot):
 ############################################################
 #########################################################"""
 
-def main(dir_list, filename_annot):
-
-  # create empty dataframe file for appending
-  df = pd.DataFrame(columns=k.DATASET_HEADERS)
+def main(dir_list):
 
   for d in dir_list:
     input_path = d
@@ -285,10 +283,18 @@ def main(dir_list, filename_annot):
     if not os.path.exists(path_prep):
       os.mkdir(path_prep)
 
-    filename_dataset = os.path.join(d, k.FOLDER_PREP, k.FILENAME_DATASET)
-    print(filename_dataset)
-    #df.to_csv(filename_dataset, sep = '\t', index=False, mode = "w", header = True)
-    write_to_dataset(input_path, path_prep, filename_dataset, filename_annot)
+    files = os.listdir(input_path)
+    for filename_ds, filename_annot in zip(k.FILENAME_DATASET, k.FILENAME_ANNOTATION):
+
+      if filename_annot in files:
+        filename_dataset = os.path.join(d, k.FOLDER_PREP, filename_ds)
+        print(filename_dataset)
+        write_to_dataset(input_path, path_prep, filename_dataset, filename_annot)
+
+      else:
+        if filename_annot not in files:
+          print(f"Could not find {filename_annot}... Skipping")
+
 
 if __name__ == "__main__":
 
@@ -304,7 +310,4 @@ if __name__ == "__main__":
   if not os.path.exists(path_dataset):
     os.mkdir(path_dataset)
 
-  # data/output/dataset.tsv
-  filename_dataset = os.path.join(path_dataset, k.FILENAME_DATASET)
-
-  main(dir_list, k.FILENAME_ANNOTATION)
+  main(dir_list)
