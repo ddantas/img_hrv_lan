@@ -103,6 +103,12 @@ concatenate_datasets <- function(folders, filename_output, ds_files) {
       final_df = rbind(final_df, df)
     }
   }
+  final_df$block <- as.character(final_df$block)
+  final_df$block[final_df$label == "Prelude"] = "block0"
+  final_df$block[final_df$block == "block2"] = "block3"
+  final_df$block[final_df$label == "Interlude"] = "block2"
+  final_df$block <- as.factor(final_df$block)
+
   #final_df[is.na(final_df$IsImit), 'IsImit'] = ""
   #final_df[is.na(final_df$IsSync), 'IsSync'] = ""
   #final_df[is.na(final_df$Imitator), 'Imitator'] = ""
