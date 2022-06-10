@@ -117,8 +117,10 @@ concatenate_datasets <- function(folders, filename_output, ds_files) {
   #df2[is.na(df2$IsSync), 'IsSync'] = ""
   #df2[is.na(df2$Imitator), 'Imitator'] = ""
   #df2[is.na(df2$Model), 'Model'] = ""
+
+  print(colnames(final_df))
   
-  write.table(final_df, file=filename_output, sep="\t", col.names=NA)
+  write.table(final_df, file=filename_output, sep="\t", row.names=FALSE)
 }
 
 get_folder_names <- function(df) {
