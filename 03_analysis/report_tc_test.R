@@ -1,4 +1,4 @@
-report_tc_test <- function(df_test, df_control, str_title, confidence=0.95)
+report_tc_test <- function(df_test, df_control, str_title, confidence=0.95, label1="Test", label2="Control")
 {
   source('normality_test.R')
   source('same_variance_test.R')
@@ -13,19 +13,19 @@ report_tc_test <- function(df_test, df_control, str_title, confidence=0.95)
   #print(list_test)
   #print(class(list_test))
   
-  aux_title = paste(str_title, " - Group Test", sep="")
+  aux_title = paste(str_title, ' - Group "', label1, '"', sep="")
   normality_test(list_test, aux_title, confidence)
   writeLines("")
-  aux_title = paste(str_title, " - Group Control", sep="")
+  aux_title = paste(str_title, ' - Group "', label2, '"', sep="")
   normality_test(list_control, aux_title, confidence)
   writeLines("")
 
-  aux_title = paste(str_title, " - Groups Test and Control", sep="")
+  aux_title = paste(str_title, ' - Groups "', label1, '" and "', label2, '"', sep="")
   same_variance_test(list_test, list_control, aux_title, confidence)
   writeLines("")
 
-  aux_title = paste(str_title, " - Groups Test and Control", sep="")
-  same_mean_test_unpaired(list_test, list_control, aux_title, confidence)
+  aux_title = paste(str_title, ' - Groups "', label1, '" and "', label2, '"', sep="")
+  same_mean_test_unpaired(list_test, list_control, aux_title, confidence, label1, label2)
   writeLines("")
   writeLines("")
 }

@@ -1,4 +1,4 @@
-plot_tc_distribution <- function(df_test, df_control, str_title, prompt=1, outputDir="")
+plot_tc_distribution <- function(df_test, df_control, str_title, prompt=1, outputDir="", xlabel="", label1="Test", label2="Control")
 {
   ## Reference:
   ## https://stackoverflow.com/questions/3541713/how-to-plot-two-histograms-together-in-r
@@ -9,6 +9,9 @@ plot_tc_distribution <- function(df_test, df_control, str_title, prompt=1, outpu
 
   colnames(df_test) = "x"
   colnames(df_control) = "x"
+  df_test$Group = label1
+  df_control$Group = label2
+  df_data <- rbind(df_test, df_control)
 
   if (outputDir != "")
   {
@@ -21,13 +24,8 @@ plot_tc_distribution <- function(df_test, df_control, str_title, prompt=1, outpu
     outputFullname = paste(outputDir, "/", outputSubdir, "/", outputFile, sep="")
     png(outputFullname, width=640);
   }
-  df_test$Group = "Test"
-  df_control$Group = "Control"
-  #df_test$Group = "Anisometropia"
-  #df_control$Group = "Controle"
-  df_data <- rbind(df_test, df_control)
   x = ggplot(df_data, aes(.data$x, fill=Group)) +
-    geom_density(alpha = 0.2)
+    geom_density(alpha = 0.2) + xlab(xlabel)
   grid::grid.draw(x)
   if (outputDir != "")
   {
@@ -43,13 +41,9 @@ plot_tc_distribution <- function(df_test, df_control, str_title, prompt=1, outpu
     outputFullname = paste(outputDir, "/", outputSubdir, "/", outputFile, sep="")
     png(outputFullname, width=640);
   }
-  df_test$Group = "Test"
-  df_control$Group = "Control"
-  #df_test$Group = "Anisometropia"
-  #df_control$Group = "Controle"
   df_data <- rbind(df_test, df_control)
   x = ggplot(df_data, aes(.data$x, fill=Group)) +
-    geom_histogram(alpha = 0.5, position = 'identity')
+    geom_histogram(alpha = 0.5, position = 'identity')  + xlab(xlabel)
   grid::grid.draw(x)
   if (outputDir != "")
   {
@@ -65,11 +59,6 @@ plot_tc_distribution <- function(df_test, df_control, str_title, prompt=1, outpu
     outputFullname = paste(outputDir, "/", outputSubdir, "/", outputFile, sep="")
     png(outputFullname, width=640);
   }
-  df_test$Group = "Test"
-  df_control$Group = "Control"
-  #df_test$Group = "Anisometropia"
-  #df_control$Group = "Controle"
-  df_data <- rbind(df_test, df_control)
   x = ggplot(df_data, aes(x=Group, y=.data$x, color=Group)) + 
     geom_boxplot()
   grid::grid.draw(x)

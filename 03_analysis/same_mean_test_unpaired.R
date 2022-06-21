@@ -1,10 +1,13 @@
-same_mean_test_unpaired <- function(x, y, str_title, confidence=0.95)
+same_mean_test_unpaired <- function(x, y, str_title, confidence=0.95, label1="Test", label2="Control")
 {
   significance = 1 - confidence
 
+  pad = max(nchar(label1), nchar(label2))
+  label1_pad = str_pad(label1, pad, side="right")
+  label2_pad = str_pad(label2, pad, side="right")
   writeLines(paste("Testing if column", str_title, "have the same mean..."))
-  writeLines(paste("Test   (Mean &plusmn; SD) = (", mean(x), " &plusmn; ", sd(x), ")", sep=""))
-  writeLines(paste("Control(Mean &plusmn; SD) = (", mean(y), " &plusmn; ", sd(y), ")", sep=""))
+  writeLines(paste(label1_pad, " (Mean &plusmn; SD) = (", mean(x), " &plusmn; ", sd(x), ")", sep=""))
+  writeLines(paste(label2_pad, " (Mean &plusmn; SD) = (", mean(y), " &plusmn; ", sd(y), ")", sep=""))
 
   result <- list(p.value=NaN)
   tryCatch(
