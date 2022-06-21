@@ -1,6 +1,13 @@
+#sudo apt install r-base r-base-core r-recommended
+
+#ad.test
+library(nortest)
+
+
 source("utils.R")
 source("analysis.R")
 source("group_roles.R")
+source('report.R')
 
 folders = commandArgs(trailingOnly=TRUE)
 print("Getting datasets from folders")
@@ -55,18 +62,25 @@ ds_files = c("02_preprocess/dataset_dd.tsv", "02_preprocess/dataset_jf.tsv")
 #ds_files = c("02_preprocess/dataset_dd.tsv")
 #ds_files = c("02_preprocess/dataset_jf.tsv")
 
-filename = "output.tsv"
-concatenate_datasets(folders, filename, ds_files)
+filename_dataset = "dataset.tsv"
+#concatenate_datasets(folders, filename_dataset, ds_files)
 
-imit = TRUE
-sync = NA
-
-df = load_data(filename)
-
+###############################################################3
 #folder_names = get_folder_names(df)
 #stats_df = create_SI_dataframe(df, folder_names)
 #result = get_stats(stats_df)
 #print(result)
+
+tab = load_data(filename_dataset)
+
+confidence = 0.95
+prompt     = 0
+inputFile     = filename_dataset
+outputDir      = "saida"
+outputFile     = "report.html"
+
+report(inputFile, outputFile, outputDir, tab, confidence, prompt)
+
 
 ###############################################################3
 
