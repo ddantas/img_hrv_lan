@@ -16,6 +16,7 @@ EXT_TSV = ".tsv"
 EXT_LIN = "_linear.tsv"
 EXT_NN  = "_nearest.tsv"
 EXT_INFERRED  = "_inferred_rr.tsv"
+EXT_FLOW  = "_flow.tsv"
 
 ## Used mostly by Polar.py, Data.py and Plot.py
 TYPE_RR  = "R"
@@ -83,3 +84,7 @@ FILENAME_ECG_RR_LIN_S2   = FILENAME_ECG_RR_S2.replace(EXT_TSV, EXT_LIN)
 FILENAME_ECG_RR_NN       = FILENAME_ECG_RR.replace(EXT_TSV, EXT_NN)
 FILENAME_ECG_RR_NN_S1    = FILENAME_ECG_RR_S1.replace(EXT_TSV, EXT_NN)
 FILENAME_ECG_RR_NN_S2    = FILENAME_ECG_RR_S2.replace(EXT_TSV, EXT_NN)
+
+## Used mostly by 03_optical_flow/optical_flow.py
+FOLDER_OPTI = "03_optical_flow"
+LEN_PREF_VIDEO = 5

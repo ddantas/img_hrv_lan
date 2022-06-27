@@ -27,6 +27,9 @@ runprep:
 	python3 02_preprocess/preprocess.py data/b03*
 	python3 02_preprocess/preprocess.py data/b04*
 
+runopti:
+	python3 03_optical_flow/optical_flow.py data/b002/01_sync data/b002
+
 # Profiling of WinOp.py
 profop:
 	yappi -b -f pstat -o data/yappi_profop WinOp.py

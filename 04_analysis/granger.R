@@ -1,6 +1,6 @@
 
 #partial directed coherence
-#shameshima baccala 1999, 2001
+#sameshima baccala 1999, 2001
 #biological cybernetics
 
 ################################################################################
