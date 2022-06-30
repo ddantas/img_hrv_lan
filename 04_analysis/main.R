@@ -6,6 +6,8 @@ library(nortest)
 #str_pad
 library(stringr)
 
+library(ggplot2)
+
 
 source("utils.R")
 source("analysis.R")

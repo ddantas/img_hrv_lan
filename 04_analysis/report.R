@@ -5,6 +5,10 @@ report <- function(inputFile, outputFile, outputDir, df, df_stack, confidence=0.
   source('plot_tc_distribution.R')
   #source('plot_tc_dispersion.R')
   source('report_tc_test.R')
+  source('plot_correlationts.R')
+  source('report_pdc.R')
+  source('plot_pdc.R')
+  source('script.R')
   #source('plot_power.R')
   
   outputFullname = paste(outputDir, "/", outputFile, sep="")
@@ -167,10 +171,92 @@ report <- function(inputFile, outputFile, outputDir, df, df_stack, confidence=0.
     }
   }
 
-
-  
   ##########
   print_separator()
+
+  conditions = rbind(
+    c("df$folder != ''"                                 , "all"),
+    c("df$folder %in% c('b001', 'b002', 'b003', 'b004')", "ex01"),
+    c("df$folder %in% c('b009', 'b010', 'b011', 'b012')", "ex03"),
+    c("df$folder %in% c('b013', 'b014', 'b015', 'b016')", "ex04"),
+    c("df$folder %in% c('b017', 'b018', 'b019', 'b020')", "ex05"),
+    c("df$folder %in% c('b021', 'b022', 'b023', 'b024')", "ex06"),
+    c("df$folder %in% c('b025', 'b026', 'b027', 'b028')", "ex07"),
+    c("df$folder %in% c('b029', 'b030', 'b031', 'b032')", "ex08"),
+    c("df$folder %in% c('b033', 'b034', 'b035', 'b036')", "ex09"),
+    c("df$folder %in% c('b037', 'b038', 'b039', 'b040')", "ex10"),
+    c("df$folder %in% c('b041', 'b042', 'b043', 'b044')", "ex11") )
+
+  writeLines(paste("<h2>Correlation between time series on different phases of the experiment</h2>", sep=""))
+
+  cols = c(seq(10, 17, 2))
+  labels = unique(df$label)
+
+  for (j in cols) {
+
+    str_title = names(df)[j]
+    str_title = gsub("hr_subj1_", "", str_title)
+
+    writeLines(paste("<h3>Correlation for ", str_title, " data</h3>", sep=""))
+    writeLines("...")
+
+    for (c in seq(1, dim(conditions)[1])) {
+
+      rows = eval(parse(text=conditions[c, 1]))
+      exp = conditions[c, 2]
+      df_data = df[rows, ]
+      col1 = names(df)[j]
+      col2 = names(df)[j+1]
+      data1 = df_data[, c(col1, "label")]
+      data2 = df_data[, c(col2, "label")]
+      str_title = paste(str_title, exp)
+      plot_correlationts(data1, data2, labels, exp, str_title, outputDir)
+
+    }
+  }
+
+  ##########
+  print_separator()
+
+  cols = c(seq(10, 17), seq(21, 28))
+  conditions = rbind(
+    c("df$folder != ''",                                  "all",  "Subject 1", "Subject 2"),
+    c("df$folder %in% c('b001', 'b002', 'b003', 'b004')", "ex01", "Subject 1", "Subject 2"),
+    c("df$folder %in% c('b009', 'b010', 'b011', 'b012')", "ex03", "Subject 1", "Subject 2"),
+    c("df$folder %in% c('b013', 'b014', 'b015', 'b016')", "ex04", "Subject 1", "Subject 2"),
+    c("df$folder %in% c('b017', 'b018', 'b019', 'b020')", "ex05", "Subject 1", "Subject 2"),
+    c("df$folder %in% c('b021', 'b022', 'b023', 'b024')", "ex06", "Subject 1", "Subject 2"),
+    c("df$folder %in% c('b025', 'b026', 'b027', 'b028')", "ex07", "Subject 1", "Subject 2"),
+    c("df$folder %in% c('b029', 'b030', 'b031', 'b032')", "ex08", "Subject 1", "Subject 2"),
+    c("df$folder %in% c('b033', 'b034', 'b035', 'b036')", "ex09", "Subject 1", "Subject 2"),
+    c("df$folder %in% c('b037', 'b038', 'b039', 'b040')", "ex10", "Subject 1", "Subject 2"),
+    c("df$folder %in% c('b041', 'b042', 'b043', 'b044')", "ex11", "Subject 1", "Subject 2") )
+  
+  # for (c in seq(1, dim(conditions)[1]))
+  for (c in seq(1))
+  {
+    rows = eval(parse(text=conditions[c, 1]))
+    exp_label = conditions[c, 2]
+    str1 = conditions[c, 3]
+    str2 = conditions[c, 4]
+    
+    for (i in seq(1, length(cols), by = 2))
+    {
+      col1 = names(df)[cols[i]]
+      col2 = names(df)[cols[i + 1]]
+      data1 = df[rows, col1, drop=FALSE]
+      data2 = df[rows, col2, drop=FALSE]
+      str_title = paste("exp_", exp_label, "__", col1, "_vs_", col2, sep="")
+      writeLines("...")
+      writeLines(paste("<h3>", str_title, "</h3>", sep=""))
+
+      res = plot_pdc(data1, data2, str_title, outputDir)
+
+      report_pdc(res, str_title)
+    }
+  }
+
+  ##########
 
   ###plot_tc_dispersion(test, control, cols_dispersion, prompt, outputDir)
   #plot_tc_dispersion(test, control, cols, prompt, outputDir)
