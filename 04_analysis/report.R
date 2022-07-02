@@ -129,9 +129,9 @@ report <- function(inputFile, outputFile, outputDir, df, df_stack, confidence=0.
       writeLines("...")
       writeLines(paste("<h3>", str_title, "</h3>", sep=""))
 
-      report_tc_test(data1, data2, str_title, confidence=0.95, str1, str2)
+      # report_tc_test(data1, data2, str_title, confidence=0.95, str1, str2)
       #writeLines(paste("plot_test_control: ", names(df)[i]))
-      plot_tc_distribution(data1, data2, str_title, prompt, outputDir, "Heart rate", str1, str2)
+      # plot_tc_distribution(data1, data2, str_title, prompt, outputDir, "Heart rate", str1, str2)
     }
   }
   ##########
@@ -166,8 +166,8 @@ report <- function(inputFile, outputFile, outputDir, df, df_stack, confidence=0.
       writeLines("...")
       writeLines(paste("<h3>", str_title, "</h3>", sep=""))
 
-      report_tc_test(data1, data2, str_title, confidence=0.95, str1, str2)
-      plot_tc_distribution(data1, data2, str_title, prompt, outputDir, "Heart rate", str1, str2)
+      # report_tc_test(data1, data2, str_title, confidence=0.95, str1, str2)
+      # plot_tc_distribution(data1, data2, str_title, prompt, outputDir, "Heart rate", str1, str2)
     }
   }
 
@@ -210,7 +210,7 @@ report <- function(inputFile, outputFile, outputDir, df, df_stack, confidence=0.
       data1 = df_data[, c(col1, "label")]
       data2 = df_data[, c(col2, "label")]
       str_title = paste(str_title, exp)
-      plot_correlationts(data1, data2, labels, exp, str_title, outputDir)
+      # plot_correlationts(data1, data2, labels, exp, str_title, outputDir)
 
     }
   }
