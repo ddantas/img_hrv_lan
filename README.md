@@ -1,5 +1,5 @@
-# hrv_lan
-Heart rate variability graphical user interface for dataset capture on a LAN.
+# img_hrv_lan
+Heart rate variability graphical user interface. Captures a dataset of two subjects interacting on two ccomputers in a LAN while seeing images shown on screen.
 
 
 ## Tips about git usage
