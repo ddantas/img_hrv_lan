@@ -1,0 +1,1843 @@
+'
+'
+'
+'	C:\Documents and Settings\sackler\Desktop\Suzanne\suzpred_fmri\SUZPRED_FMRI_SCANNER_speaker.ebs
+'	Generated on: 6/3/2011	14:54:59
+'
+'
+'	This file generated with E-Studio interface.
+'	E-Prime Copyright © 2002 Psychology Software Tools.
+'	ALL RIGHTS RESERVED
+'
+'	Legal use of this experiment script requires a full E-Prime or Runtime License.
+'
+'
+'	Author:
+'		  (sackler)
+'
+'
+'
+'
+
+Option CStrings On
+Dim ebContext as Context
+
+
+'--------------------------------------------------------------------------
+' Class Declarations
+'--------------------------------------------------------------------------
+
+
+
+'--------------------------------------------------------------------------
+'InitImageDisplayDefaults
+'--------------------------------------------------------------------------
+Sub InitImageDisplayDefaults(theImageDisplay As ImageDisplay)
+
+	If theImageDisplay Is Nothing Then Exit Sub
+
+	theImageDisplay.X = "center"
+	theImageDisplay.Y = "center"
+	theImageDisplay.Width = "100%"
+	theImageDisplay.Height = "100%"
+	theImageDisplay.BackColor = CColor("black")
+	theImageDisplay.BackStyle = "opaque"
+	theImageDisplay.BorderColor = CColor("black")
+	theImageDisplay.BorderWidth = CLng("0")
+	theImageDisplay.XAlign = "center"
+	theImageDisplay.YAlign = "center"
+	theImageDisplay.AlignHorizontal = "center"
+	theImageDisplay.AlignVertical = "center"
+	theImageDisplay.ClearAfter = CLogical("No")
+	theImageDisplay.UseSourceColorKey = CLogical("No")
+	theImageDisplay.SourceColorKey = CColor("black")
+	theImageDisplay.MirrorLeftRight = CLogical("No")
+	theImageDisplay.MirrorUpDown = CLogical("No")
+	theImageDisplay.Stretch = CLogical("No")
+
+End Sub
+
+
+
+
+
+
+
+
+'--------------------------------------------------------------------------
+'	InitSoundOutBufferDefaults
+'--------------------------------------------------------------------------
+Sub InitSoundOutBufferDefaults(theSoundBuffer As SoundBuffer)
+
+	If theSoundBuffer Is Nothing Then Exit Sub
+
+	theSoundBuffer.Loop = CLogical("No")
+	theSoundBuffer.StopAfter = CLogical("Yes")
+	theSoundBuffer.StartOffset = "0"
+	theSoundBuffer.StopOffset = "0"
+
+End Sub
+
+
+
+
+
+
+
+
+
+
+'--------------------------------------------------------------------------
+'InitTextDisplayDefaults
+'--------------------------------------------------------------------------
+Sub InitTextDisplayDefaults(theTextDisplay As TextDisplay)
+
+	If theTextDisplay Is Nothing Then Exit Sub
+
+	theTextDisplay.X = "center"
+	theTextDisplay.Y = "center"
+	theTextDisplay.Width = "100%"
+	theTextDisplay.Height = "100%"
+	theTextDisplay.ForeColor = CColor("black")
+	theTextDisplay.BackColor = CColor("white")
+	theTextDisplay.BackStyle = "opaque"
+	theTextDisplay.BorderColor = CColor("black")
+	theTextDisplay.BorderWidth = CLng("0")
+	theTextDisplay.XAlign = "center"
+	theTextDisplay.YAlign = "center"
+	theTextDisplay.AlignHorizontal = "center"
+	theTextDisplay.AlignVertical = "center"
+	theTextDisplay.WordWrap = True
+	theTextDisplay.ClearAfter = CLogical("No")
+	theTextDisplay.FontName = "Courier New"
+	theTextDisplay.FontSize = "18"
+	theTextDisplay.FontBold = CLogical("Yes")
+	theTextDisplay.FontItalic = CLogical("No")
+	theTextDisplay.FontUnderline = CLogical("No")
+	theTextDisplay.FontStrikeout = CLogical("No")
+
+End Sub
+
+
+
+
+
+
+
+
+
+
+
+
+
+'--------------------------------------------------------------------------
+' Instance Declarations
+'--------------------------------------------------------------------------
+Dim Display As DisplayDevice
+Dim Sound As SoundDevice
+Dim Keyboard As KeyboardDevice
+Dim Mouse As MouseDevice
+Dim SessionProc As Procedure
+
+Dim List1 As List
+
+Dim Triallist As List
+
+Dim TrialProc As Procedure
+
+Dim KeyList As List
+
+Dim CellList As List
+
+Dim BlockList As List
+
+Dim BlockProc As Procedure
+
+Dim Image1 As ImageDisplay
+
+Dim FIX1 As ImageDisplay
+
+Dim FIX2 As ImageDisplay
+
+Dim SENTENCE As ImageDisplay
+
+Dim preFIX1 As ImageDisplay
+
+Dim BLANK1 As ImageDisplay
+
+Dim preBLANK1 As ImageDisplay
+
+Dim TONE As SoundOut
+Dim TONESoundBuffer As SoundBuffer
+Dim BLANK2 As ImageDisplay
+
+Dim preBLANK2 As ImageDisplay
+
+Dim INTERVAL As ImageDisplay
+
+Dim FIX3 As ImageDisplay
+
+Dim BLANK3 As ImageDisplay
+
+Dim TextDisplay2 As TextDisplay
+Dim TextDisplay2EchoClients As EchoClientCollection
+
+Dim preFIX2 As ImageDisplay
+
+Dim preFIX3 As ImageDisplay
+
+Dim preBLANK3 As ImageDisplay
+
+Dim preFIX4 As ImageDisplay
+
+Dim preBLANK4 As ImageDisplay
+
+Dim FIX4 As ImageDisplay
+
+Dim BLANK4 As ImageDisplay
+
+Dim postBLANK As ImageDisplay
+
+Dim TextDisplay1 As TextDisplay
+Dim TextDisplay1EchoClients As EchoClientCollection
+
+
+
+'--------------------------------------------------------------------------
+' Package Declare Script
+'--------------------------------------------------------------------------
+
+
+
+'--------------------------------------------------------------------------
+' User Script
+'--------------------------------------------------------------------------
+
+
+
+'--------------------------------------------------------------------------
+' Package Global Script
+'--------------------------------------------------------------------------
+
+
+
+'--------------------------------------------------------------------------
+' Package Routines
+'--------------------------------------------------------------------------
+
+
+
+'--------------------------------------------------------------------------
+' Implementation
+'--------------------------------------------------------------------------
+Sub SessionProc_Run(c as Context)
+	BlockList.Run c
+
+	c.Log
+End Sub
+
+Sub TrialProc_Run(c as Context)
+	
+	preFIX1.Run
+	c.SetAttrib "preFIX1.OnsetDelay", preFIX1.OnsetDelay
+	c.SetAttrib "preFIX1.OnsetTime", preFIX1.OnsetTime
+	c.SetAttrib "preFIX1.DurationError", preFIX1.DurationError
+	c.SetAttrib "preFIX1.PreRelease", preFIX1.PreRelease
+	c.SetAttrib "preFIX1.Duration", preFIX1.Duration
+	c.SetAttrib "preFIX1.StartTime", preFIX1.StartTime
+	c.SetAttrib "preFIX1.OffsetTime", preFIX1.OffsetTime
+	c.SetAttrib "preFIX1.FinishTime", preFIX1.FinishTime
+	c.SetAttrib "preFIX1.ActionDelay", preFIX1.ActionDelay
+	c.SetAttrib "preFIX1.ActionTime", preFIX1.ActionTime
+	c.SetAttrib "preFIX1.TargetOffsetTime", preFIX1.TargetOffsetTime
+	c.SetAttrib "preFIX1.TargetOnsetTime", preFIX1.TargetOnsetTime
+	c.SetAttrib "preFIX1.OffsetDelay", preFIX1.OffsetDelay
+	
+	
+	preBLANK1.Run
+	c.SetAttrib "preBLANK1.OnsetDelay", preBLANK1.OnsetDelay
+	c.SetAttrib "preBLANK1.OnsetTime", preBLANK1.OnsetTime
+	c.SetAttrib "preBLANK1.DurationError", preBLANK1.DurationError
+	c.SetAttrib "preBLANK1.PreRelease", preBLANK1.PreRelease
+	c.SetAttrib "preBLANK1.Duration", preBLANK1.Duration
+	c.SetAttrib "preBLANK1.StartTime", preBLANK1.StartTime
+	c.SetAttrib "preBLANK1.OffsetTime", preBLANK1.OffsetTime
+	c.SetAttrib "preBLANK1.FinishTime", preBLANK1.FinishTime
+	c.SetAttrib "preBLANK1.ActionDelay", preBLANK1.ActionDelay
+	c.SetAttrib "preBLANK1.ActionTime", preBLANK1.ActionTime
+	c.SetAttrib "preBLANK1.TargetOffsetTime", preBLANK1.TargetOffsetTime
+	c.SetAttrib "preBLANK1.TargetOnsetTime", preBLANK1.TargetOnsetTime
+	c.SetAttrib "preBLANK1.OffsetDelay", preBLANK1.OffsetDelay
+	
+	
+	preFIX2.Run
+	c.SetAttrib "preFIX2.OnsetDelay", preFIX2.OnsetDelay
+	c.SetAttrib "preFIX2.OnsetTime", preFIX2.OnsetTime
+	c.SetAttrib "preFIX2.DurationError", preFIX2.DurationError
+	c.SetAttrib "preFIX2.PreRelease", preFIX2.PreRelease
+	c.SetAttrib "preFIX2.Duration", preFIX2.Duration
+	c.SetAttrib "preFIX2.StartTime", preFIX2.StartTime
+	c.SetAttrib "preFIX2.OffsetTime", preFIX2.OffsetTime
+	c.SetAttrib "preFIX2.FinishTime", preFIX2.FinishTime
+	c.SetAttrib "preFIX2.ActionDelay", preFIX2.ActionDelay
+	c.SetAttrib "preFIX2.ActionTime", preFIX2.ActionTime
+	c.SetAttrib "preFIX2.TargetOffsetTime", preFIX2.TargetOffsetTime
+	c.SetAttrib "preFIX2.TargetOnsetTime", preFIX2.TargetOnsetTime
+	c.SetAttrib "preFIX2.OffsetDelay", preFIX2.OffsetDelay
+	
+	
+	preBLANK2.Run
+	c.SetAttrib "preBLANK2.OnsetDelay", preBLANK2.OnsetDelay
+	c.SetAttrib "preBLANK2.OnsetTime", preBLANK2.OnsetTime
+	c.SetAttrib "preBLANK2.DurationError", preBLANK2.DurationError
+	c.SetAttrib "preBLANK2.PreRelease", preBLANK2.PreRelease
+	c.SetAttrib "preBLANK2.Duration", preBLANK2.Duration
+	c.SetAttrib "preBLANK2.StartTime", preBLANK2.StartTime
+	c.SetAttrib "preBLANK2.OffsetTime", preBLANK2.OffsetTime
+	c.SetAttrib "preBLANK2.FinishTime", preBLANK2.FinishTime
+	c.SetAttrib "preBLANK2.ActionDelay", preBLANK2.ActionDelay
+	c.SetAttrib "preBLANK2.ActionTime", preBLANK2.ActionTime
+	c.SetAttrib "preBLANK2.TargetOffsetTime", preBLANK2.TargetOffsetTime
+	c.SetAttrib "preBLANK2.TargetOnsetTime", preBLANK2.TargetOnsetTime
+	c.SetAttrib "preBLANK2.OffsetDelay", preBLANK2.OffsetDelay
+	
+	
+	preFIX3.Run
+	c.SetAttrib "preFIX3.OnsetDelay", preFIX3.OnsetDelay
+	c.SetAttrib "preFIX3.OnsetTime", preFIX3.OnsetTime
+	c.SetAttrib "preFIX3.DurationError", preFIX3.DurationError
+	c.SetAttrib "preFIX3.PreRelease", preFIX3.PreRelease
+	c.SetAttrib "preFIX3.Duration", preFIX3.Duration
+	c.SetAttrib "preFIX3.StartTime", preFIX3.StartTime
+	c.SetAttrib "preFIX3.OffsetTime", preFIX3.OffsetTime
+	c.SetAttrib "preFIX3.FinishTime", preFIX3.FinishTime
+	c.SetAttrib "preFIX3.ActionDelay", preFIX3.ActionDelay
+	c.SetAttrib "preFIX3.ActionTime", preFIX3.ActionTime
+	c.SetAttrib "preFIX3.TargetOffsetTime", preFIX3.TargetOffsetTime
+	c.SetAttrib "preFIX3.TargetOnsetTime", preFIX3.TargetOnsetTime
+	c.SetAttrib "preFIX3.OffsetDelay", preFIX3.OffsetDelay
+	
+	
+	preBLANK3.Run
+	c.SetAttrib "preBLANK3.OnsetDelay", preBLANK3.OnsetDelay
+	c.SetAttrib "preBLANK3.OnsetTime", preBLANK3.OnsetTime
+	c.SetAttrib "preBLANK3.DurationError", preBLANK3.DurationError
+	c.SetAttrib "preBLANK3.PreRelease", preBLANK3.PreRelease
+	c.SetAttrib "preBLANK3.Duration", preBLANK3.Duration
+	c.SetAttrib "preBLANK3.StartTime", preBLANK3.StartTime
+	c.SetAttrib "preBLANK3.OffsetTime", preBLANK3.OffsetTime
+	c.SetAttrib "preBLANK3.FinishTime", preBLANK3.FinishTime
+	c.SetAttrib "preBLANK3.ActionDelay", preBLANK3.ActionDelay
+	c.SetAttrib "preBLANK3.ActionTime", preBLANK3.ActionTime
+	c.SetAttrib "preBLANK3.TargetOffsetTime", preBLANK3.TargetOffsetTime
+	c.SetAttrib "preBLANK3.TargetOnsetTime", preBLANK3.TargetOnsetTime
+	c.SetAttrib "preBLANK3.OffsetDelay", preBLANK3.OffsetDelay
+	
+	
+	preFIX4.Run
+	c.SetAttrib "preFIX4.OnsetDelay", preFIX4.OnsetDelay
+	c.SetAttrib "preFIX4.OnsetTime", preFIX4.OnsetTime
+	c.SetAttrib "preFIX4.DurationError", preFIX4.DurationError
+	c.SetAttrib "preFIX4.PreRelease", preFIX4.PreRelease
+	c.SetAttrib "preFIX4.Duration", preFIX4.Duration
+	c.SetAttrib "preFIX4.StartTime", preFIX4.StartTime
+	c.SetAttrib "preFIX4.OffsetTime", preFIX4.OffsetTime
+	c.SetAttrib "preFIX4.FinishTime", preFIX4.FinishTime
+	c.SetAttrib "preFIX4.ActionDelay", preFIX4.ActionDelay
+	c.SetAttrib "preFIX4.ActionTime", preFIX4.ActionTime
+	c.SetAttrib "preFIX4.TargetOffsetTime", preFIX4.TargetOffsetTime
+	c.SetAttrib "preFIX4.TargetOnsetTime", preFIX4.TargetOnsetTime
+	c.SetAttrib "preFIX4.OffsetDelay", preFIX4.OffsetDelay
+	
+	
+	preBLANK4.Run
+	c.SetAttrib "preBLANK4.OnsetDelay", preBLANK4.OnsetDelay
+	c.SetAttrib "preBLANK4.OnsetTime", preBLANK4.OnsetTime
+	c.SetAttrib "preBLANK4.DurationError", preBLANK4.DurationError
+	c.SetAttrib "preBLANK4.PreRelease", preBLANK4.PreRelease
+	c.SetAttrib "preBLANK4.Duration", preBLANK4.Duration
+	c.SetAttrib "preBLANK4.StartTime", preBLANK4.StartTime
+	c.SetAttrib "preBLANK4.OffsetTime", preBLANK4.OffsetTime
+	c.SetAttrib "preBLANK4.FinishTime", preBLANK4.FinishTime
+	c.SetAttrib "preBLANK4.ActionDelay", preBLANK4.ActionDelay
+	c.SetAttrib "preBLANK4.ActionTime", preBLANK4.ActionTime
+	c.SetAttrib "preBLANK4.TargetOffsetTime", preBLANK4.TargetOffsetTime
+	c.SetAttrib "preBLANK4.TargetOnsetTime", preBLANK4.TargetOnsetTime
+	c.SetAttrib "preBLANK4.OffsetDelay", preBLANK4.OffsetDelay
+	
+	
+	Image1.Filename = c.GetAttrib("Image1")
+	Image1.Load
+	Image1.Run
+	c.SetAttrib "Image1.OnsetDelay", Image1.OnsetDelay
+	c.SetAttrib "Image1.OnsetTime", Image1.OnsetTime
+	c.SetAttrib "Image1.DurationError", Image1.DurationError
+	c.SetAttrib "Image1.PreRelease", Image1.PreRelease
+	c.SetAttrib "Image1.Duration", Image1.Duration
+	c.SetAttrib "Image1.StartTime", Image1.StartTime
+	c.SetAttrib "Image1.OffsetTime", Image1.OffsetTime
+	c.SetAttrib "Image1.FinishTime", Image1.FinishTime
+	c.SetAttrib "Image1.ActionDelay", Image1.ActionDelay
+	c.SetAttrib "Image1.ActionTime", Image1.ActionTime
+	c.SetAttrib "Image1.TargetOffsetTime", Image1.TargetOffsetTime
+	c.SetAttrib "Image1.TargetOnsetTime", Image1.TargetOnsetTime
+	c.SetAttrib "Image1.OffsetDelay", Image1.OffsetDelay
+	
+	
+	INTERVAL.Filename = c.GetAttrib("image2")
+	INTERVAL.Load
+	INTERVAL.Run
+	c.SetAttrib "INTERVAL.OnsetDelay", INTERVAL.OnsetDelay
+	c.SetAttrib "INTERVAL.OnsetTime", INTERVAL.OnsetTime
+	c.SetAttrib "INTERVAL.DurationError", INTERVAL.DurationError
+	c.SetAttrib "INTERVAL.PreRelease", INTERVAL.PreRelease
+	c.SetAttrib "INTERVAL.Duration", INTERVAL.Duration
+	c.SetAttrib "INTERVAL.StartTime", INTERVAL.StartTime
+	c.SetAttrib "INTERVAL.OffsetTime", INTERVAL.OffsetTime
+	c.SetAttrib "INTERVAL.FinishTime", INTERVAL.FinishTime
+	c.SetAttrib "INTERVAL.ActionDelay", INTERVAL.ActionDelay
+	c.SetAttrib "INTERVAL.ActionTime", INTERVAL.ActionTime
+	c.SetAttrib "INTERVAL.TargetOffsetTime", INTERVAL.TargetOffsetTime
+	c.SetAttrib "INTERVAL.TargetOnsetTime", INTERVAL.TargetOnsetTime
+	c.SetAttrib "INTERVAL.OffsetDelay", INTERVAL.OffsetDelay
+	
+	
+	FIX1.Run
+	c.SetAttrib "FIX1.OnsetDelay", FIX1.OnsetDelay
+	c.SetAttrib "FIX1.OnsetTime", FIX1.OnsetTime
+	c.SetAttrib "FIX1.DurationError", FIX1.DurationError
+	c.SetAttrib "FIX1.PreRelease", FIX1.PreRelease
+	c.SetAttrib "FIX1.Duration", FIX1.Duration
+	c.SetAttrib "FIX1.StartTime", FIX1.StartTime
+	c.SetAttrib "FIX1.OffsetTime", FIX1.OffsetTime
+	c.SetAttrib "FIX1.FinishTime", FIX1.FinishTime
+	c.SetAttrib "FIX1.ActionDelay", FIX1.ActionDelay
+	c.SetAttrib "FIX1.ActionTime", FIX1.ActionTime
+	c.SetAttrib "FIX1.TargetOffsetTime", FIX1.TargetOffsetTime
+	c.SetAttrib "FIX1.TargetOnsetTime", FIX1.TargetOnsetTime
+	c.SetAttrib "FIX1.OffsetDelay", FIX1.OffsetDelay
+	
+	
+	BLANK1.Run
+	c.SetAttrib "BLANK1.OnsetDelay", BLANK1.OnsetDelay
+	c.SetAttrib "BLANK1.OnsetTime", BLANK1.OnsetTime
+	c.SetAttrib "BLANK1.DurationError", BLANK1.DurationError
+	c.SetAttrib "BLANK1.PreRelease", BLANK1.PreRelease
+	c.SetAttrib "BLANK1.Duration", BLANK1.Duration
+	c.SetAttrib "BLANK1.StartTime", BLANK1.StartTime
+	c.SetAttrib "BLANK1.OffsetTime", BLANK1.OffsetTime
+	c.SetAttrib "BLANK1.FinishTime", BLANK1.FinishTime
+	c.SetAttrib "BLANK1.ActionDelay", BLANK1.ActionDelay
+	c.SetAttrib "BLANK1.ActionTime", BLANK1.ActionTime
+	c.SetAttrib "BLANK1.TargetOffsetTime", BLANK1.TargetOffsetTime
+	c.SetAttrib "BLANK1.TargetOnsetTime", BLANK1.TargetOnsetTime
+	c.SetAttrib "BLANK1.OffsetDelay", BLANK1.OffsetDelay
+	
+	
+	FIX2.Run
+	c.SetAttrib "FIX2.OnsetDelay", FIX2.OnsetDelay
+	c.SetAttrib "FIX2.OnsetTime", FIX2.OnsetTime
+	c.SetAttrib "FIX2.DurationError", FIX2.DurationError
+	c.SetAttrib "FIX2.PreRelease", FIX2.PreRelease
+	c.SetAttrib "FIX2.Duration", FIX2.Duration
+	c.SetAttrib "FIX2.StartTime", FIX2.StartTime
+	c.SetAttrib "FIX2.OffsetTime", FIX2.OffsetTime
+	c.SetAttrib "FIX2.FinishTime", FIX2.FinishTime
+	c.SetAttrib "FIX2.ActionDelay", FIX2.ActionDelay
+	c.SetAttrib "FIX2.ActionTime", FIX2.ActionTime
+	c.SetAttrib "FIX2.TargetOffsetTime", FIX2.TargetOffsetTime
+	c.SetAttrib "FIX2.TargetOnsetTime", FIX2.TargetOnsetTime
+	c.SetAttrib "FIX2.OffsetDelay", FIX2.OffsetDelay
+	
+	
+	BLANK2.Run
+	c.SetAttrib "BLANK2.OnsetDelay", BLANK2.OnsetDelay
+	c.SetAttrib "BLANK2.OnsetTime", BLANK2.OnsetTime
+	c.SetAttrib "BLANK2.DurationError", BLANK2.DurationError
+	c.SetAttrib "BLANK2.PreRelease", BLANK2.PreRelease
+	c.SetAttrib "BLANK2.Duration", BLANK2.Duration
+	c.SetAttrib "BLANK2.StartTime", BLANK2.StartTime
+	c.SetAttrib "BLANK2.OffsetTime", BLANK2.OffsetTime
+	c.SetAttrib "BLANK2.FinishTime", BLANK2.FinishTime
+	c.SetAttrib "BLANK2.ActionDelay", BLANK2.ActionDelay
+	c.SetAttrib "BLANK2.ActionTime", BLANK2.ActionTime
+	c.SetAttrib "BLANK2.TargetOffsetTime", BLANK2.TargetOffsetTime
+	c.SetAttrib "BLANK2.TargetOnsetTime", BLANK2.TargetOnsetTime
+	c.SetAttrib "BLANK2.OffsetDelay", BLANK2.OffsetDelay
+	
+	
+	FIX3.Run
+	c.SetAttrib "FIX3.OnsetDelay", FIX3.OnsetDelay
+	c.SetAttrib "FIX3.OnsetTime", FIX3.OnsetTime
+	c.SetAttrib "FIX3.DurationError", FIX3.DurationError
+	c.SetAttrib "FIX3.PreRelease", FIX3.PreRelease
+	c.SetAttrib "FIX3.Duration", FIX3.Duration
+	c.SetAttrib "FIX3.StartTime", FIX3.StartTime
+	c.SetAttrib "FIX3.OffsetTime", FIX3.OffsetTime
+	c.SetAttrib "FIX3.FinishTime", FIX3.FinishTime
+	c.SetAttrib "FIX3.ActionDelay", FIX3.ActionDelay
+	c.SetAttrib "FIX3.ActionTime", FIX3.ActionTime
+	c.SetAttrib "FIX3.TargetOffsetTime", FIX3.TargetOffsetTime
+	c.SetAttrib "FIX3.TargetOnsetTime", FIX3.TargetOnsetTime
+	c.SetAttrib "FIX3.OffsetDelay", FIX3.OffsetDelay
+	
+	
+	BLANK3.Run
+	c.SetAttrib "BLANK3.OnsetDelay", BLANK3.OnsetDelay
+	c.SetAttrib "BLANK3.OnsetTime", BLANK3.OnsetTime
+	c.SetAttrib "BLANK3.DurationError", BLANK3.DurationError
+	c.SetAttrib "BLANK3.PreRelease", BLANK3.PreRelease
+	c.SetAttrib "BLANK3.Duration", BLANK3.Duration
+	c.SetAttrib "BLANK3.StartTime", BLANK3.StartTime
+	c.SetAttrib "BLANK3.OffsetTime", BLANK3.OffsetTime
+	c.SetAttrib "BLANK3.FinishTime", BLANK3.FinishTime
+	c.SetAttrib "BLANK3.ActionDelay", BLANK3.ActionDelay
+	c.SetAttrib "BLANK3.ActionTime", BLANK3.ActionTime
+	c.SetAttrib "BLANK3.TargetOffsetTime", BLANK3.TargetOffsetTime
+	c.SetAttrib "BLANK3.TargetOnsetTime", BLANK3.TargetOnsetTime
+	c.SetAttrib "BLANK3.OffsetDelay", BLANK3.OffsetDelay
+	
+	
+	FIX4.Run
+	c.SetAttrib "FIX4.OnsetDelay", FIX4.OnsetDelay
+	c.SetAttrib "FIX4.OnsetTime", FIX4.OnsetTime
+	c.SetAttrib "FIX4.DurationError", FIX4.DurationError
+	c.SetAttrib "FIX4.PreRelease", FIX4.PreRelease
+	c.SetAttrib "FIX4.Duration", FIX4.Duration
+	c.SetAttrib "FIX4.StartTime", FIX4.StartTime
+	c.SetAttrib "FIX4.OffsetTime", FIX4.OffsetTime
+	c.SetAttrib "FIX4.FinishTime", FIX4.FinishTime
+	c.SetAttrib "FIX4.ActionDelay", FIX4.ActionDelay
+	c.SetAttrib "FIX4.ActionTime", FIX4.ActionTime
+	c.SetAttrib "FIX4.TargetOffsetTime", FIX4.TargetOffsetTime
+	c.SetAttrib "FIX4.TargetOnsetTime", FIX4.TargetOnsetTime
+	c.SetAttrib "FIX4.OffsetDelay", FIX4.OffsetDelay
+	
+	
+	BLANK4.Run
+	c.SetAttrib "BLANK4.OnsetDelay", BLANK4.OnsetDelay
+	c.SetAttrib "BLANK4.OnsetTime", BLANK4.OnsetTime
+	c.SetAttrib "BLANK4.DurationError", BLANK4.DurationError
+	c.SetAttrib "BLANK4.PreRelease", BLANK4.PreRelease
+	c.SetAttrib "BLANK4.Duration", BLANK4.Duration
+	c.SetAttrib "BLANK4.StartTime", BLANK4.StartTime
+	c.SetAttrib "BLANK4.OffsetTime", BLANK4.OffsetTime
+	c.SetAttrib "BLANK4.FinishTime", BLANK4.FinishTime
+	c.SetAttrib "BLANK4.ActionDelay", BLANK4.ActionDelay
+	c.SetAttrib "BLANK4.ActionTime", BLANK4.ActionTime
+	c.SetAttrib "BLANK4.TargetOffsetTime", BLANK4.TargetOffsetTime
+	c.SetAttrib "BLANK4.TargetOnsetTime", BLANK4.TargetOnsetTime
+	c.SetAttrib "BLANK4.OffsetDelay", BLANK4.OffsetDelay
+	
+	
+	SENTENCE.Run
+	c.SetAttrib "SENTENCE.OnsetDelay", SENTENCE.OnsetDelay
+	c.SetAttrib "SENTENCE.OnsetTime", SENTENCE.OnsetTime
+	c.SetAttrib "SENTENCE.DurationError", SENTENCE.DurationError
+	c.SetAttrib "SENTENCE.PreRelease", SENTENCE.PreRelease
+	c.SetAttrib "SENTENCE.Duration", SENTENCE.Duration
+	c.SetAttrib "SENTENCE.StartTime", SENTENCE.StartTime
+	c.SetAttrib "SENTENCE.OffsetTime", SENTENCE.OffsetTime
+	c.SetAttrib "SENTENCE.FinishTime", SENTENCE.FinishTime
+	c.SetAttrib "SENTENCE.ActionDelay", SENTENCE.ActionDelay
+	c.SetAttrib "SENTENCE.ActionTime", SENTENCE.ActionTime
+	c.SetAttrib "SENTENCE.TargetOffsetTime", SENTENCE.TargetOffsetTime
+	c.SetAttrib "SENTENCE.TargetOnsetTime", SENTENCE.TargetOnsetTime
+	c.SetAttrib "SENTENCE.OffsetDelay", SENTENCE.OffsetDelay
+	
+	
+	postBLANK.Run
+	c.SetAttrib "postBLANK.OnsetDelay", postBLANK.OnsetDelay
+	c.SetAttrib "postBLANK.OnsetTime", postBLANK.OnsetTime
+	c.SetAttrib "postBLANK.DurationError", postBLANK.DurationError
+	c.SetAttrib "postBLANK.PreRelease", postBLANK.PreRelease
+	c.SetAttrib "postBLANK.Duration", postBLANK.Duration
+	c.SetAttrib "postBLANK.StartTime", postBLANK.StartTime
+	c.SetAttrib "postBLANK.OffsetTime", postBLANK.OffsetTime
+	c.SetAttrib "postBLANK.FinishTime", postBLANK.FinishTime
+	c.SetAttrib "postBLANK.ActionDelay", postBLANK.ActionDelay
+	c.SetAttrib "postBLANK.ActionTime", postBLANK.ActionTime
+	c.SetAttrib "postBLANK.TargetOffsetTime", postBLANK.TargetOffsetTime
+	c.SetAttrib "postBLANK.TargetOnsetTime", postBLANK.TargetOnsetTime
+	c.SetAttrib "postBLANK.OffsetDelay", postBLANK.OffsetDelay
+	
+	c.SetAttrib "preFIX1.OnsetDelay", preFIX1.OnsetDelay
+	c.SetAttrib "preFIX1.OnsetTime", preFIX1.OnsetTime
+	c.SetAttrib "preFIX1.DurationError", preFIX1.DurationError
+	c.SetAttrib "preFIX1.PreRelease", preFIX1.PreRelease
+	c.SetAttrib "preFIX1.Duration", preFIX1.Duration
+	c.SetAttrib "preFIX1.StartTime", preFIX1.StartTime
+	c.SetAttrib "preFIX1.OffsetTime", preFIX1.OffsetTime
+	c.SetAttrib "preFIX1.FinishTime", preFIX1.FinishTime
+	c.SetAttrib "preFIX1.ActionDelay", preFIX1.ActionDelay
+	c.SetAttrib "preFIX1.ActionTime", preFIX1.ActionTime
+	c.SetAttrib "preFIX1.TargetOffsetTime", preFIX1.TargetOffsetTime
+	c.SetAttrib "preFIX1.TargetOnsetTime", preFIX1.TargetOnsetTime
+	c.SetAttrib "preFIX1.OffsetDelay", preFIX1.OffsetDelay
+	
+	c.SetAttrib "preBLANK1.OnsetDelay", preBLANK1.OnsetDelay
+	c.SetAttrib "preBLANK1.OnsetTime", preBLANK1.OnsetTime
+	c.SetAttrib "preBLANK1.DurationError", preBLANK1.DurationError
+	c.SetAttrib "preBLANK1.PreRelease", preBLANK1.PreRelease
+	c.SetAttrib "preBLANK1.Duration", preBLANK1.Duration
+	c.SetAttrib "preBLANK1.StartTime", preBLANK1.StartTime
+	c.SetAttrib "preBLANK1.OffsetTime", preBLANK1.OffsetTime
+	c.SetAttrib "preBLANK1.FinishTime", preBLANK1.FinishTime
+	c.SetAttrib "preBLANK1.ActionDelay", preBLANK1.ActionDelay
+	c.SetAttrib "preBLANK1.ActionTime", preBLANK1.ActionTime
+	c.SetAttrib "preBLANK1.TargetOffsetTime", preBLANK1.TargetOffsetTime
+	c.SetAttrib "preBLANK1.TargetOnsetTime", preBLANK1.TargetOnsetTime
+	c.SetAttrib "preBLANK1.OffsetDelay", preBLANK1.OffsetDelay
+	
+	c.SetAttrib "preFIX2.OnsetDelay", preFIX2.OnsetDelay
+	c.SetAttrib "preFIX2.OnsetTime", preFIX2.OnsetTime
+	c.SetAttrib "preFIX2.DurationError", preFIX2.DurationError
+	c.SetAttrib "preFIX2.PreRelease", preFIX2.PreRelease
+	c.SetAttrib "preFIX2.Duration", preFIX2.Duration
+	c.SetAttrib "preFIX2.StartTime", preFIX2.StartTime
+	c.SetAttrib "preFIX2.OffsetTime", preFIX2.OffsetTime
+	c.SetAttrib "preFIX2.FinishTime", preFIX2.FinishTime
+	c.SetAttrib "preFIX2.ActionDelay", preFIX2.ActionDelay
+	c.SetAttrib "preFIX2.ActionTime", preFIX2.ActionTime
+	c.SetAttrib "preFIX2.TargetOffsetTime", preFIX2.TargetOffsetTime
+	c.SetAttrib "preFIX2.TargetOnsetTime", preFIX2.TargetOnsetTime
+	c.SetAttrib "preFIX2.OffsetDelay", preFIX2.OffsetDelay
+	
+	c.SetAttrib "preBLANK2.OnsetDelay", preBLANK2.OnsetDelay
+	c.SetAttrib "preBLANK2.OnsetTime", preBLANK2.OnsetTime
+	c.SetAttrib "preBLANK2.DurationError", preBLANK2.DurationError
+	c.SetAttrib "preBLANK2.PreRelease", preBLANK2.PreRelease
+	c.SetAttrib "preBLANK2.Duration", preBLANK2.Duration
+	c.SetAttrib "preBLANK2.StartTime", preBLANK2.StartTime
+	c.SetAttrib "preBLANK2.OffsetTime", preBLANK2.OffsetTime
+	c.SetAttrib "preBLANK2.FinishTime", preBLANK2.FinishTime
+	c.SetAttrib "preBLANK2.ActionDelay", preBLANK2.ActionDelay
+	c.SetAttrib "preBLANK2.ActionTime", preBLANK2.ActionTime
+	c.SetAttrib "preBLANK2.TargetOffsetTime", preBLANK2.TargetOffsetTime
+	c.SetAttrib "preBLANK2.TargetOnsetTime", preBLANK2.TargetOnsetTime
+	c.SetAttrib "preBLANK2.OffsetDelay", preBLANK2.OffsetDelay
+	
+	c.SetAttrib "preFIX3.OnsetDelay", preFIX3.OnsetDelay
+	c.SetAttrib "preFIX3.OnsetTime", preFIX3.OnsetTime
+	c.SetAttrib "preFIX3.DurationError", preFIX3.DurationError
+	c.SetAttrib "preFIX3.PreRelease", preFIX3.PreRelease
+	c.SetAttrib "preFIX3.Duration", preFIX3.Duration
+	c.SetAttrib "preFIX3.StartTime", preFIX3.StartTime
+	c.SetAttrib "preFIX3.OffsetTime", preFIX3.OffsetTime
+	c.SetAttrib "preFIX3.FinishTime", preFIX3.FinishTime
+	c.SetAttrib "preFIX3.ActionDelay", preFIX3.ActionDelay
+	c.SetAttrib "preFIX3.ActionTime", preFIX3.ActionTime
+	c.SetAttrib "preFIX3.TargetOffsetTime", preFIX3.TargetOffsetTime
+	c.SetAttrib "preFIX3.TargetOnsetTime", preFIX3.TargetOnsetTime
+	c.SetAttrib "preFIX3.OffsetDelay", preFIX3.OffsetDelay
+	
+	c.SetAttrib "preBLANK3.OnsetDelay", preBLANK3.OnsetDelay
+	c.SetAttrib "preBLANK3.OnsetTime", preBLANK3.OnsetTime
+	c.SetAttrib "preBLANK3.DurationError", preBLANK3.DurationError
+	c.SetAttrib "preBLANK3.PreRelease", preBLANK3.PreRelease
+	c.SetAttrib "preBLANK3.Duration", preBLANK3.Duration
+	c.SetAttrib "preBLANK3.StartTime", preBLANK3.StartTime
+	c.SetAttrib "preBLANK3.OffsetTime", preBLANK3.OffsetTime
+	c.SetAttrib "preBLANK3.FinishTime", preBLANK3.FinishTime
+	c.SetAttrib "preBLANK3.ActionDelay", preBLANK3.ActionDelay
+	c.SetAttrib "preBLANK3.ActionTime", preBLANK3.ActionTime
+	c.SetAttrib "preBLANK3.TargetOffsetTime", preBLANK3.TargetOffsetTime
+	c.SetAttrib "preBLANK3.TargetOnsetTime", preBLANK3.TargetOnsetTime
+	c.SetAttrib "preBLANK3.OffsetDelay", preBLANK3.OffsetDelay
+	
+	c.SetAttrib "preFIX4.OnsetDelay", preFIX4.OnsetDelay
+	c.SetAttrib "preFIX4.OnsetTime", preFIX4.OnsetTime
+	c.SetAttrib "preFIX4.DurationError", preFIX4.DurationError
+	c.SetAttrib "preFIX4.PreRelease", preFIX4.PreRelease
+	c.SetAttrib "preFIX4.Duration", preFIX4.Duration
+	c.SetAttrib "preFIX4.StartTime", preFIX4.StartTime
+	c.SetAttrib "preFIX4.OffsetTime", preFIX4.OffsetTime
+	c.SetAttrib "preFIX4.FinishTime", preFIX4.FinishTime
+	c.SetAttrib "preFIX4.ActionDelay", preFIX4.ActionDelay
+	c.SetAttrib "preFIX4.ActionTime", preFIX4.ActionTime
+	c.SetAttrib "preFIX4.TargetOffsetTime", preFIX4.TargetOffsetTime
+	c.SetAttrib "preFIX4.TargetOnsetTime", preFIX4.TargetOnsetTime
+	c.SetAttrib "preFIX4.OffsetDelay", preFIX4.OffsetDelay
+	
+	c.SetAttrib "preBLANK4.OnsetDelay", preBLANK4.OnsetDelay
+	c.SetAttrib "preBLANK4.OnsetTime", preBLANK4.OnsetTime
+	c.SetAttrib "preBLANK4.DurationError", preBLANK4.DurationError
+	c.SetAttrib "preBLANK4.PreRelease", preBLANK4.PreRelease
+	c.SetAttrib "preBLANK4.Duration", preBLANK4.Duration
+	c.SetAttrib "preBLANK4.StartTime", preBLANK4.StartTime
+	c.SetAttrib "preBLANK4.OffsetTime", preBLANK4.OffsetTime
+	c.SetAttrib "preBLANK4.FinishTime", preBLANK4.FinishTime
+	c.SetAttrib "preBLANK4.ActionDelay", preBLANK4.ActionDelay
+	c.SetAttrib "preBLANK4.ActionTime", preBLANK4.ActionTime
+	c.SetAttrib "preBLANK4.TargetOffsetTime", preBLANK4.TargetOffsetTime
+	c.SetAttrib "preBLANK4.TargetOnsetTime", preBLANK4.TargetOnsetTime
+	c.SetAttrib "preBLANK4.OffsetDelay", preBLANK4.OffsetDelay
+	
+	c.SetAttrib "Image1.OnsetDelay", Image1.OnsetDelay
+	c.SetAttrib "Image1.OnsetTime", Image1.OnsetTime
+	c.SetAttrib "Image1.DurationError", Image1.DurationError
+	c.SetAttrib "Image1.PreRelease", Image1.PreRelease
+	c.SetAttrib "Image1.Duration", Image1.Duration
+	c.SetAttrib "Image1.StartTime", Image1.StartTime
+	c.SetAttrib "Image1.OffsetTime", Image1.OffsetTime
+	c.SetAttrib "Image1.FinishTime", Image1.FinishTime
+	c.SetAttrib "Image1.ActionDelay", Image1.ActionDelay
+	c.SetAttrib "Image1.ActionTime", Image1.ActionTime
+	c.SetAttrib "Image1.TargetOffsetTime", Image1.TargetOffsetTime
+	c.SetAttrib "Image1.TargetOnsetTime", Image1.TargetOnsetTime
+	c.SetAttrib "Image1.OffsetDelay", Image1.OffsetDelay
+	
+	c.SetAttrib "INTERVAL.OnsetDelay", INTERVAL.OnsetDelay
+	c.SetAttrib "INTERVAL.OnsetTime", INTERVAL.OnsetTime
+	c.SetAttrib "INTERVAL.DurationError", INTERVAL.DurationError
+	c.SetAttrib "INTERVAL.PreRelease", INTERVAL.PreRelease
+	c.SetAttrib "INTERVAL.Duration", INTERVAL.Duration
+	c.SetAttrib "INTERVAL.StartTime", INTERVAL.StartTime
+	c.SetAttrib "INTERVAL.OffsetTime", INTERVAL.OffsetTime
+	c.SetAttrib "INTERVAL.FinishTime", INTERVAL.FinishTime
+	c.SetAttrib "INTERVAL.ActionDelay", INTERVAL.ActionDelay
+	c.SetAttrib "INTERVAL.ActionTime", INTERVAL.ActionTime
+	c.SetAttrib "INTERVAL.TargetOffsetTime", INTERVAL.TargetOffsetTime
+	c.SetAttrib "INTERVAL.TargetOnsetTime", INTERVAL.TargetOnsetTime
+	c.SetAttrib "INTERVAL.OffsetDelay", INTERVAL.OffsetDelay
+	
+	c.SetAttrib "FIX1.OnsetDelay", FIX1.OnsetDelay
+	c.SetAttrib "FIX1.OnsetTime", FIX1.OnsetTime
+	c.SetAttrib "FIX1.DurationError", FIX1.DurationError
+	c.SetAttrib "FIX1.PreRelease", FIX1.PreRelease
+	c.SetAttrib "FIX1.Duration", FIX1.Duration
+	c.SetAttrib "FIX1.StartTime", FIX1.StartTime
+	c.SetAttrib "FIX1.OffsetTime", FIX1.OffsetTime
+	c.SetAttrib "FIX1.FinishTime", FIX1.FinishTime
+	c.SetAttrib "FIX1.ActionDelay", FIX1.ActionDelay
+	c.SetAttrib "FIX1.ActionTime", FIX1.ActionTime
+	c.SetAttrib "FIX1.TargetOffsetTime", FIX1.TargetOffsetTime
+	c.SetAttrib "FIX1.TargetOnsetTime", FIX1.TargetOnsetTime
+	c.SetAttrib "FIX1.OffsetDelay", FIX1.OffsetDelay
+	
+	c.SetAttrib "BLANK1.OnsetDelay", BLANK1.OnsetDelay
+	c.SetAttrib "BLANK1.OnsetTime", BLANK1.OnsetTime
+	c.SetAttrib "BLANK1.DurationError", BLANK1.DurationError
+	c.SetAttrib "BLANK1.PreRelease", BLANK1.PreRelease
+	c.SetAttrib "BLANK1.Duration", BLANK1.Duration
+	c.SetAttrib "BLANK1.StartTime", BLANK1.StartTime
+	c.SetAttrib "BLANK1.OffsetTime", BLANK1.OffsetTime
+	c.SetAttrib "BLANK1.FinishTime", BLANK1.FinishTime
+	c.SetAttrib "BLANK1.ActionDelay", BLANK1.ActionDelay
+	c.SetAttrib "BLANK1.ActionTime", BLANK1.ActionTime
+	c.SetAttrib "BLANK1.TargetOffsetTime", BLANK1.TargetOffsetTime
+	c.SetAttrib "BLANK1.TargetOnsetTime", BLANK1.TargetOnsetTime
+	c.SetAttrib "BLANK1.OffsetDelay", BLANK1.OffsetDelay
+	
+	c.SetAttrib "FIX2.OnsetDelay", FIX2.OnsetDelay
+	c.SetAttrib "FIX2.OnsetTime", FIX2.OnsetTime
+	c.SetAttrib "FIX2.DurationError", FIX2.DurationError
+	c.SetAttrib "FIX2.PreRelease", FIX2.PreRelease
+	c.SetAttrib "FIX2.Duration", FIX2.Duration
+	c.SetAttrib "FIX2.StartTime", FIX2.StartTime
+	c.SetAttrib "FIX2.OffsetTime", FIX2.OffsetTime
+	c.SetAttrib "FIX2.FinishTime", FIX2.FinishTime
+	c.SetAttrib "FIX2.ActionDelay", FIX2.ActionDelay
+	c.SetAttrib "FIX2.ActionTime", FIX2.ActionTime
+	c.SetAttrib "FIX2.TargetOffsetTime", FIX2.TargetOffsetTime
+	c.SetAttrib "FIX2.TargetOnsetTime", FIX2.TargetOnsetTime
+	c.SetAttrib "FIX2.OffsetDelay", FIX2.OffsetDelay
+	
+	c.SetAttrib "BLANK2.OnsetDelay", BLANK2.OnsetDelay
+	c.SetAttrib "BLANK2.OnsetTime", BLANK2.OnsetTime
+	c.SetAttrib "BLANK2.DurationError", BLANK2.DurationError
+	c.SetAttrib "BLANK2.PreRelease", BLANK2.PreRelease
+	c.SetAttrib "BLANK2.Duration", BLANK2.Duration
+	c.SetAttrib "BLANK2.StartTime", BLANK2.StartTime
+	c.SetAttrib "BLANK2.OffsetTime", BLANK2.OffsetTime
+	c.SetAttrib "BLANK2.FinishTime", BLANK2.FinishTime
+	c.SetAttrib "BLANK2.ActionDelay", BLANK2.ActionDelay
+	c.SetAttrib "BLANK2.ActionTime", BLANK2.ActionTime
+	c.SetAttrib "BLANK2.TargetOffsetTime", BLANK2.TargetOffsetTime
+	c.SetAttrib "BLANK2.TargetOnsetTime", BLANK2.TargetOnsetTime
+	c.SetAttrib "BLANK2.OffsetDelay", BLANK2.OffsetDelay
+	
+	c.SetAttrib "FIX3.OnsetDelay", FIX3.OnsetDelay
+	c.SetAttrib "FIX3.OnsetTime", FIX3.OnsetTime
+	c.SetAttrib "FIX3.DurationError", FIX3.DurationError
+	c.SetAttrib "FIX3.PreRelease", FIX3.PreRelease
+	c.SetAttrib "FIX3.Duration", FIX3.Duration
+	c.SetAttrib "FIX3.StartTime", FIX3.StartTime
+	c.SetAttrib "FIX3.OffsetTime", FIX3.OffsetTime
+	c.SetAttrib "FIX3.FinishTime", FIX3.FinishTime
+	c.SetAttrib "FIX3.ActionDelay", FIX3.ActionDelay
+	c.SetAttrib "FIX3.ActionTime", FIX3.ActionTime
+	c.SetAttrib "FIX3.TargetOffsetTime", FIX3.TargetOffsetTime
+	c.SetAttrib "FIX3.TargetOnsetTime", FIX3.TargetOnsetTime
+	c.SetAttrib "FIX3.OffsetDelay", FIX3.OffsetDelay
+	
+	c.SetAttrib "BLANK3.OnsetDelay", BLANK3.OnsetDelay
+	c.SetAttrib "BLANK3.OnsetTime", BLANK3.OnsetTime
+	c.SetAttrib "BLANK3.DurationError", BLANK3.DurationError
+	c.SetAttrib "BLANK3.PreRelease", BLANK3.PreRelease
+	c.SetAttrib "BLANK3.Duration", BLANK3.Duration
+	c.SetAttrib "BLANK3.StartTime", BLANK3.StartTime
+	c.SetAttrib "BLANK3.OffsetTime", BLANK3.OffsetTime
+	c.SetAttrib "BLANK3.FinishTime", BLANK3.FinishTime
+	c.SetAttrib "BLANK3.ActionDelay", BLANK3.ActionDelay
+	c.SetAttrib "BLANK3.ActionTime", BLANK3.ActionTime
+	c.SetAttrib "BLANK3.TargetOffsetTime", BLANK3.TargetOffsetTime
+	c.SetAttrib "BLANK3.TargetOnsetTime", BLANK3.TargetOnsetTime
+	c.SetAttrib "BLANK3.OffsetDelay", BLANK3.OffsetDelay
+	
+	c.SetAttrib "FIX4.OnsetDelay", FIX4.OnsetDelay
+	c.SetAttrib "FIX4.OnsetTime", FIX4.OnsetTime
+	c.SetAttrib "FIX4.DurationError", FIX4.DurationError
+	c.SetAttrib "FIX4.PreRelease", FIX4.PreRelease
+	c.SetAttrib "FIX4.Duration", FIX4.Duration
+	c.SetAttrib "FIX4.StartTime", FIX4.StartTime
+	c.SetAttrib "FIX4.OffsetTime", FIX4.OffsetTime
+	c.SetAttrib "FIX4.FinishTime", FIX4.FinishTime
+	c.SetAttrib "FIX4.ActionDelay", FIX4.ActionDelay
+	c.SetAttrib "FIX4.ActionTime", FIX4.ActionTime
+	c.SetAttrib "FIX4.TargetOffsetTime", FIX4.TargetOffsetTime
+	c.SetAttrib "FIX4.TargetOnsetTime", FIX4.TargetOnsetTime
+	c.SetAttrib "FIX4.OffsetDelay", FIX4.OffsetDelay
+	
+	c.SetAttrib "BLANK4.OnsetDelay", BLANK4.OnsetDelay
+	c.SetAttrib "BLANK4.OnsetTime", BLANK4.OnsetTime
+	c.SetAttrib "BLANK4.DurationError", BLANK4.DurationError
+	c.SetAttrib "BLANK4.PreRelease", BLANK4.PreRelease
+	c.SetAttrib "BLANK4.Duration", BLANK4.Duration
+	c.SetAttrib "BLANK4.StartTime", BLANK4.StartTime
+	c.SetAttrib "BLANK4.OffsetTime", BLANK4.OffsetTime
+	c.SetAttrib "BLANK4.FinishTime", BLANK4.FinishTime
+	c.SetAttrib "BLANK4.ActionDelay", BLANK4.ActionDelay
+	c.SetAttrib "BLANK4.ActionTime", BLANK4.ActionTime
+	c.SetAttrib "BLANK4.TargetOffsetTime", BLANK4.TargetOffsetTime
+	c.SetAttrib "BLANK4.TargetOnsetTime", BLANK4.TargetOnsetTime
+	c.SetAttrib "BLANK4.OffsetDelay", BLANK4.OffsetDelay
+	
+	c.SetAttrib "SENTENCE.OnsetDelay", SENTENCE.OnsetDelay
+	c.SetAttrib "SENTENCE.OnsetTime", SENTENCE.OnsetTime
+	c.SetAttrib "SENTENCE.DurationError", SENTENCE.DurationError
+	c.SetAttrib "SENTENCE.PreRelease", SENTENCE.PreRelease
+	c.SetAttrib "SENTENCE.Duration", SENTENCE.Duration
+	c.SetAttrib "SENTENCE.StartTime", SENTENCE.StartTime
+	c.SetAttrib "SENTENCE.OffsetTime", SENTENCE.OffsetTime
+	c.SetAttrib "SENTENCE.FinishTime", SENTENCE.FinishTime
+	c.SetAttrib "SENTENCE.ActionDelay", SENTENCE.ActionDelay
+	c.SetAttrib "SENTENCE.ActionTime", SENTENCE.ActionTime
+	c.SetAttrib "SENTENCE.TargetOffsetTime", SENTENCE.TargetOffsetTime
+	c.SetAttrib "SENTENCE.TargetOnsetTime", SENTENCE.TargetOnsetTime
+	c.SetAttrib "SENTENCE.OffsetDelay", SENTENCE.OffsetDelay
+	
+	c.SetAttrib "postBLANK.OnsetDelay", postBLANK.OnsetDelay
+	c.SetAttrib "postBLANK.OnsetTime", postBLANK.OnsetTime
+	c.SetAttrib "postBLANK.DurationError", postBLANK.DurationError
+	c.SetAttrib "postBLANK.PreRelease", postBLANK.PreRelease
+	c.SetAttrib "postBLANK.Duration", postBLANK.Duration
+	c.SetAttrib "postBLANK.StartTime", postBLANK.StartTime
+	c.SetAttrib "postBLANK.OffsetTime", postBLANK.OffsetTime
+	c.SetAttrib "postBLANK.FinishTime", postBLANK.FinishTime
+	c.SetAttrib "postBLANK.ActionDelay", postBLANK.ActionDelay
+	c.SetAttrib "postBLANK.ActionTime", postBLANK.ActionTime
+	c.SetAttrib "postBLANK.TargetOffsetTime", postBLANK.TargetOffsetTime
+	c.SetAttrib "postBLANK.TargetOnsetTime", postBLANK.TargetOnsetTime
+	c.SetAttrib "postBLANK.OffsetDelay", postBLANK.OffsetDelay
+	
+
+	c.Log
+End Sub
+
+Sub BlockProc_Run(c as Context)
+	
+	
+	TextDisplay2.InputMasks.Reset
+	
+	TextDisplay2EchoClients.RemoveAll
+	TextDisplay2.InputMasks.Add Keyboard.CreateInputMask("{!}", "", CLng(TextDisplay2.Duration), CLng("1"), ebEndResponseActionTerminate, CLogical("Yes"), "", "", "ResponseMode:All ProcessBackspace:Yes")
+
+	
+	TextDisplay2.Run
+	Triallist.Run c
+
+	c.Log
+End Sub
+
+
+
+'--------------------------------------------------------------------------
+' InitDevices
+'
+'--------------------------------------------------------------------------
+Sub InitDevices(c As Context)
+
+
+
+	SetOSThreadPriority 3
+
+
+	Set Display = New DisplayDevice
+	Display.Name = "Display"
+
+	Dim DisplayDisplayDeviceInfo As DisplayDeviceInfo
+	DisplayDisplayDeviceInfo.XRes = 640
+	DisplayDisplayDeviceInfo.YRes = 480
+	DisplayDisplayDeviceInfo.ColorDepth = 16
+	DisplayDisplayDeviceInfo.RefreshRate = 0
+	DisplayDisplayDeviceInfo.NumPages = 0
+
+	Display.Open DisplayDisplayDeviceInfo
+	c.SetAttrib "Display.RefreshRate", Format$(Display.CalculatedRefreshRate, "0.000")
+
+	Set Sound = New SoundDevice
+	Sound.Name = "Sound"
+
+	Dim SoundSoundOutDeviceInfo As SoundDeviceInfo
+	SoundSoundOutDeviceInfo.Channels = 1
+	SoundSoundOutDeviceInfo.SamplesPerSecond = 44100
+	SoundSoundOutDeviceInfo.BitsPerSample = 16
+	Sound.Open SoundSoundOutDeviceInfo
+
+	Set Keyboard = New KeyboardDevice
+	Keyboard.Name = "Keyboard"
+
+	Dim KeyboardKeyboardDeviceInfo as KeyboardDeviceInfo
+	KeyboardKeyboardDeviceInfo.CollectionMode = ebPressesOnly
+	KeyboardKeyboardDeviceInfo.CapsLock = ebCapsLockOff
+	KeyboardKeyboardDeviceInfo.NumLock = ebNumLockOn
+	Keyboard.Open KeyboardKeyboardDeviceInfo
+	
+	Set Mouse = New MouseDevice
+	Mouse.Name = "Mouse"
+
+	Dim MouseMouseDeviceInfo as MouseDeviceInfo
+	MouseMouseDeviceInfo.OpenMode = ebMouseOpenModeDirect
+	MouseMouseDeviceInfo.CollectionMode = ebPressesOnly
+	MouseMouseDeviceInfo.ShowCursor = False
+	Mouse.Open MouseMouseDeviceInfo
+
+
+	SetOSThreadPriority 0
+
+End Sub
+
+
+
+'--------------------------------------------------------------------------
+' InitObjects
+'
+'--------------------------------------------------------------------------
+Sub InitObjects(c As Context)
+
+	Set SessionProc = New Procedure
+	SessionProc.Name = "SessionProc"
+	SessionProc.Tag = ""
+	SessionProc.Subroutine = "SessionProc_Run"
+
+	Set List1 = New List
+	List1.Name = "List1"
+	List1.Tag = ""
+
+	'Initialization for List1
+	
+	Set List1.Order = New SequentialOrder
+	Set List1.Deletion = NoDeletion
+	List1.ResetEveryRun = False
+
+	' Create the column headings
+	List1.AddAttrib "Image1"
+	List1.AddAttrib "CellNumber1"
+	List1.AddAttrib "CellLabel1"
+	List1.Filename = ""
+	List1.LoadMethod = ebLoadMethodEmbedded
+
+	List1.Load
+
+	Set List1.TerminateCondition = Cycles(1)
+	Set List1.ResetCondition = Samples(4)
+	List1.Reset
+	
+	Set Triallist = New List
+	Triallist.Name = "Triallist"
+	Triallist.Tag = ""
+
+	'Initialization for Triallist
+	
+	Set Triallist.Order = New SequentialOrder
+	Set Triallist.Deletion = NoDeletion
+	Triallist.ResetEveryRun = False
+
+	' Create the column headings
+	Triallist.AddAttrib "CellNumber"
+	Triallist.AddAttrib "Image1"
+	Triallist.AddAttrib "Image2"
+	Triallist.Filename = ""
+	Triallist.LoadMethod = ebLoadMethodEmbedded
+
+	Triallist.Load
+
+	Set Triallist.TerminateCondition = Cycles(1)
+	Set Triallist.ResetCondition = Samples(45)
+	Triallist.Reset
+	
+	Set TrialProc = New Procedure
+	TrialProc.Name = "TrialProc"
+	TrialProc.Tag = ""
+	TrialProc.Subroutine = "TrialProc_Run"
+
+	Set KeyList = New List
+	KeyList.Name = "KeyList"
+	KeyList.Tag = ""
+
+	'Initialization for KeyList
+	
+	Set KeyList.Order = New SequentialOrder
+	Set KeyList.Deletion = NoDeletion
+	KeyList.ResetEveryRun = False
+
+	' Create the column headings
+	KeyList.AddAttrib "KeyName"
+	KeyList.AddAttrib "KeyId"
+	KeyList.AddAttrib "KeyDatatype"
+	KeyList.Filename = ""
+	KeyList.LoadMethod = ebLoadMethodEmbedded
+
+	KeyList.Load
+
+	Set KeyList.TerminateCondition = Cycles(1)
+	Set KeyList.ResetCondition = Samples(1)
+	KeyList.Reset
+	
+	Set CellList = New List
+	CellList.Name = "CellList"
+	CellList.Tag = ""
+
+	'Initialization for CellList
+	
+	Set CellList.Order = New SequentialOrder
+	Set CellList.Deletion = NoDeletion
+	CellList.ResetEveryRun = False
+
+	' Create the column headings
+	CellList.AddAttrib "CellNumber"
+	CellList.Filename = ""
+	CellList.LoadMethod = ebLoadMethodEmbedded
+
+	CellList.Load
+
+	Set CellList.TerminateCondition = Cycles(1)
+	Set CellList.ResetCondition = Samples(4)
+	CellList.Reset
+	
+	Set BlockList = New List
+	BlockList.Name = "BlockList"
+	BlockList.Tag = ""
+
+	'Initialization for BlockList
+	
+	Set BlockList.Order = New SequentialOrder
+	Set BlockList.Deletion = NoDeletion
+	BlockList.ResetEveryRun = False
+
+	' Create the column headings
+	BlockList.Filename = ""
+	BlockList.LoadMethod = ebLoadMethodEmbedded
+
+	BlockList.Load
+
+	Set BlockList.TerminateCondition = Cycles(1)
+	Set BlockList.ResetCondition = Samples(1)
+	BlockList.Reset
+	
+	Set BlockProc = New Procedure
+	BlockProc.Name = "BlockProc"
+	BlockProc.Tag = ""
+	BlockProc.Subroutine = "BlockProc_Run"
+
+	Set Image1 = New ImageDisplay
+	Image1.Name = "Image1"
+	Image1.Tag = ""
+
+	InitImageDisplayDefaults Image1
+
+	Image1.BackColor = CColor("white")
+	Image1.Duration = CLng("7500")
+	Image1.TimingMode = ebTimingModeCumulative
+	Image1.PreRelease = Val("100")
+
+	Image1.OnsetSync = 1
+	Image1.OffsetSync = 0
+
+	Set FIX1 = New ImageDisplay
+	FIX1.Name = "FIX1"
+	FIX1.Tag = ""
+	FIX1.Filename = "FIX.bmp"
+	FIX1.Load
+
+	InitImageDisplayDefaults FIX1
+
+	FIX1.BackColor = CColor("white")
+	FIX1.Duration = CLng("375")
+	FIX1.TimingMode = ebTimingModeCumulative
+	FIX1.PreRelease = Val("100")
+
+	FIX1.OnsetSync = 1
+	FIX1.OffsetSync = 0
+
+	Set FIX2 = New ImageDisplay
+	FIX2.Name = "FIX2"
+	FIX2.Tag = ""
+	FIX2.Filename = "FIX.bmp"
+	FIX2.Load
+
+	InitImageDisplayDefaults FIX2
+
+	FIX2.BackColor = CColor("white")
+	FIX2.Duration = CLng("375")
+	FIX2.TimingMode = ebTimingModeCumulative
+	FIX2.PreRelease = Val("100")
+
+	FIX2.OnsetSync = 1
+	FIX2.OffsetSync = 0
+
+	Set SENTENCE = New ImageDisplay
+	SENTENCE.Name = "SENTENCE"
+	SENTENCE.Tag = ""
+	SENTENCE.Filename = "SENTENCE.BMP"
+	SENTENCE.Load
+
+	InitImageDisplayDefaults SENTENCE
+
+	SENTENCE.BackColor = CColor("white")
+	SENTENCE.Duration = CLng("7500")
+	SENTENCE.TimingMode = ebTimingModeCumulative
+	SENTENCE.PreRelease = Val("100")
+
+	SENTENCE.OnsetSync = 1
+	SENTENCE.OffsetSync = 0
+
+	Set preFIX1 = New ImageDisplay
+	preFIX1.Name = "preFIX1"
+	preFIX1.Tag = ""
+	preFIX1.Filename = "FIX.bmp"
+	preFIX1.Load
+
+	InitImageDisplayDefaults preFIX1
+
+	preFIX1.BackColor = CColor("white")
+	preFIX1.Duration = CLng("375")
+	preFIX1.TimingMode = ebTimingModeCumulative
+	preFIX1.PreRelease = Val("100")
+
+	preFIX1.OnsetSync = 1
+	preFIX1.OffsetSync = 0
+
+	Set BLANK1 = New ImageDisplay
+	BLANK1.Name = "BLANK1"
+	BLANK1.Tag = ""
+	BLANK1.Filename = "GREY.bmp"
+	BLANK1.Load
+
+	InitImageDisplayDefaults BLANK1
+
+	BLANK1.BackColor = CColor("white")
+	BLANK1.Duration = CLng("375")
+	BLANK1.TimingMode = ebTimingModeCumulative
+	BLANK1.PreRelease = Val("100")
+
+	BLANK1.OnsetSync = 1
+	BLANK1.OffsetSync = 0
+
+	Set preBLANK1 = New ImageDisplay
+	preBLANK1.Name = "preBLANK1"
+	preBLANK1.Tag = ""
+	preBLANK1.Filename = "GREY.bmp"
+	preBLANK1.Load
+
+	InitImageDisplayDefaults preBLANK1
+
+	preBLANK1.BackColor = CColor("white")
+	preBLANK1.Duration = CLng("375")
+	preBLANK1.TimingMode = ebTimingModeCumulative
+	preBLANK1.PreRelease = Val("100")
+
+	preBLANK1.OnsetSync = 1
+	preBLANK1.OffsetSync = 0
+
+	Set TONE = New SoundOut
+	TONE.Name = "TONE"
+	TONE.Tag = ""
+	Dim TONESoundBufferInfo As SoundBufferInfo
+	TONESoundBufferInfo.MaxLength = 5000
+	TONESoundBufferInfo.VolumeControl = CLogical("no")
+	TONESoundBufferInfo.PanControl = CLogical("no")
+	Set TONESoundBuffer= Sound.CreateBuffer(TONESoundBufferInfo)
+	TONE.Buffers.Add TONESoundBuffer
+	TONESoundBuffer.Filename = "500Hztone.wav"
+	TONESoundBuffer.Load
+
+	InitSoundOutBufferDefaults TONESoundBuffer
+
+	TONESoundBuffer.EndSoundAction = 0
+	Set TONESoundBuffer = Nothing
+	TONE.Duration = CLng("200")
+	TONE.TimingMode = ebTimingModeEvent
+	TONE.PreRelease = Val("0")
+
+	TONE.OnsetSync = 1
+	TONE.OffsetSync = 0
+
+	Set BLANK2 = New ImageDisplay
+	BLANK2.Name = "BLANK2"
+	BLANK2.Tag = ""
+	BLANK2.Filename = "GREY.bmp"
+	BLANK2.Load
+
+	InitImageDisplayDefaults BLANK2
+
+	BLANK2.BackColor = CColor("white")
+	BLANK2.Duration = CLng("375")
+	BLANK2.TimingMode = ebTimingModeCumulative
+	BLANK2.PreRelease = Val("100")
+
+	BLANK2.OnsetSync = 1
+	BLANK2.OffsetSync = 0
+
+	Set preBLANK2 = New ImageDisplay
+	preBLANK2.Name = "preBLANK2"
+	preBLANK2.Tag = ""
+	preBLANK2.Filename = "GREY.bmp"
+	preBLANK2.Load
+
+	InitImageDisplayDefaults preBLANK2
+
+	preBLANK2.BackColor = CColor("white")
+	preBLANK2.Duration = CLng("375")
+	preBLANK2.TimingMode = ebTimingModeCumulative
+	preBLANK2.PreRelease = Val("100")
+
+	preBLANK2.OnsetSync = 1
+	preBLANK2.OffsetSync = 0
+
+	Set INTERVAL = New ImageDisplay
+	INTERVAL.Name = "INTERVAL"
+	INTERVAL.Tag = ""
+
+	InitImageDisplayDefaults INTERVAL
+
+	INTERVAL.BackColor = CColor("white")
+	INTERVAL.Duration = CLng("7500")
+	INTERVAL.TimingMode = ebTimingModeCumulative
+	INTERVAL.PreRelease = Val("100")
+
+	INTERVAL.OnsetSync = 1
+	INTERVAL.OffsetSync = 0
+
+	Set FIX3 = New ImageDisplay
+	FIX3.Name = "FIX3"
+	FIX3.Tag = ""
+	FIX3.Filename = "FIX.bmp"
+	FIX3.Load
+
+	InitImageDisplayDefaults FIX3
+
+	FIX3.BackColor = CColor("white")
+	FIX3.Duration = CLng("375")
+	FIX3.TimingMode = ebTimingModeCumulative
+	FIX3.PreRelease = Val("100")
+
+	FIX3.OnsetSync = 1
+	FIX3.OffsetSync = 0
+
+	Set BLANK3 = New ImageDisplay
+	BLANK3.Name = "BLANK3"
+	BLANK3.Tag = ""
+	BLANK3.Filename = "GREY.bmp"
+	BLANK3.Load
+
+	InitImageDisplayDefaults BLANK3
+
+	BLANK3.BackColor = CColor("white")
+	BLANK3.Duration = CLng("375")
+	BLANK3.TimingMode = ebTimingModeCumulative
+	BLANK3.PreRelease = Val("100")
+
+	BLANK3.OnsetSync = 1
+	BLANK3.OffsetSync = 0
+
+	Set TextDisplay2 = New TextDisplay
+	TextDisplay2.Name = "TextDisplay2"
+	TextDisplay2.Tag = ""
+
+	Set TextDisplay2EchoClients = New EchoClientCollection
+
+	InitTextDisplayDefaults TextDisplay2
+
+	TextDisplay2.Text = "\n\nDescribe each picture (following 4 fixation crosses)\n\nstart talking after the cue\n(4 fixation crosses)\n+\n+\n+\n+\n\"TALK\"(circle)\n"
+	TextDisplay2.FontSize = "16"
+	TextDisplay2.Duration = CLng("-1")
+	TextDisplay2.TimingMode = ebTimingModeEvent
+	TextDisplay2.PreRelease = Val("0")
+
+	TextDisplay2.OnsetSync = 1
+	TextDisplay2.OffsetSync = 0
+
+	Set preFIX2 = New ImageDisplay
+	preFIX2.Name = "preFIX2"
+	preFIX2.Tag = ""
+	preFIX2.Filename = "FIX.bmp"
+	preFIX2.Load
+
+	InitImageDisplayDefaults preFIX2
+
+	preFIX2.BackColor = CColor("white")
+	preFIX2.Duration = CLng("375")
+	preFIX2.TimingMode = ebTimingModeCumulative
+	preFIX2.PreRelease = Val("100")
+
+	preFIX2.OnsetSync = 1
+	preFIX2.OffsetSync = 0
+
+	Set preFIX3 = New ImageDisplay
+	preFIX3.Name = "preFIX3"
+	preFIX3.Tag = ""
+	preFIX3.Filename = "FIX.bmp"
+	preFIX3.Load
+
+	InitImageDisplayDefaults preFIX3
+
+	preFIX3.BackColor = CColor("white")
+	preFIX3.Duration = CLng("375")
+	preFIX3.TimingMode = ebTimingModeCumulative
+	preFIX3.PreRelease = Val("100")
+
+	preFIX3.OnsetSync = 1
+	preFIX3.OffsetSync = 0
+
+	Set preBLANK3 = New ImageDisplay
+	preBLANK3.Name = "preBLANK3"
+	preBLANK3.Tag = ""
+	preBLANK3.Filename = "GREY.bmp"
+	preBLANK3.Load
+
+	InitImageDisplayDefaults preBLANK3
+
+	preBLANK3.BackColor = CColor("white")
+	preBLANK3.Duration = CLng("375")
+	preBLANK3.TimingMode = ebTimingModeCumulative
+	preBLANK3.PreRelease = Val("100")
+
+	preBLANK3.OnsetSync = 1
+	preBLANK3.OffsetSync = 0
+
+	Set preFIX4 = New ImageDisplay
+	preFIX4.Name = "preFIX4"
+	preFIX4.Tag = ""
+	preFIX4.Filename = "FIX.bmp"
+	preFIX4.Load
+
+	InitImageDisplayDefaults preFIX4
+
+	preFIX4.BackColor = CColor("white")
+	preFIX4.Duration = CLng("375")
+	preFIX4.TimingMode = ebTimingModeCumulative
+	preFIX4.PreRelease = Val("100")
+
+	preFIX4.OnsetSync = 1
+	preFIX4.OffsetSync = 0
+
+	Set preBLANK4 = New ImageDisplay
+	preBLANK4.Name = "preBLANK4"
+	preBLANK4.Tag = ""
+	preBLANK4.Filename = "FIX.bmp"
+	preBLANK4.Load
+
+	InitImageDisplayDefaults preBLANK4
+
+	preBLANK4.BackColor = CColor("white")
+	preBLANK4.Duration = CLng("375")
+	preBLANK4.TimingMode = ebTimingModeCumulative
+	preBLANK4.PreRelease = Val("100")
+
+	preBLANK4.OnsetSync = 1
+	preBLANK4.OffsetSync = 0
+
+	Set FIX4 = New ImageDisplay
+	FIX4.Name = "FIX4"
+	FIX4.Tag = ""
+	FIX4.Filename = "FIX.bmp"
+	FIX4.Load
+
+	InitImageDisplayDefaults FIX4
+
+	FIX4.BackColor = CColor("white")
+	FIX4.Duration = CLng("375")
+	FIX4.TimingMode = ebTimingModeCumulative
+	FIX4.PreRelease = Val("100")
+
+	FIX4.OnsetSync = 1
+	FIX4.OffsetSync = 0
+
+	Set BLANK4 = New ImageDisplay
+	BLANK4.Name = "BLANK4"
+	BLANK4.Tag = ""
+	BLANK4.Filename = "GREY.bmp"
+	BLANK4.Load
+
+	InitImageDisplayDefaults BLANK4
+
+	BLANK4.BackColor = CColor("white")
+	BLANK4.Duration = CLng("375")
+	BLANK4.TimingMode = ebTimingModeCumulative
+	BLANK4.PreRelease = Val("100")
+
+	BLANK4.OnsetSync = 1
+	BLANK4.OffsetSync = 0
+
+	Set postBLANK = New ImageDisplay
+	postBLANK.Name = "postBLANK"
+	postBLANK.Tag = ""
+	postBLANK.Filename = "GREY.bmp"
+	postBLANK.Load
+
+	InitImageDisplayDefaults postBLANK
+
+	postBLANK.BackColor = CColor("white")
+	postBLANK.Duration = CLng("7500")
+	postBLANK.TimingMode = ebTimingModeCumulative
+	postBLANK.PreRelease = Val("100")
+
+	postBLANK.OnsetSync = 1
+	postBLANK.OffsetSync = 0
+
+	Set TextDisplay1 = New TextDisplay
+	TextDisplay1.Name = "TextDisplay1"
+	TextDisplay1.Tag = ""
+
+	Set TextDisplay1EchoClients = New EchoClientCollection
+
+	InitTextDisplayDefaults TextDisplay1
+
+	TextDisplay1.Text = "\n\n\n\n1  2  3  4  5\n\nUNCLEAR      CLEAR"
+	TextDisplay1.BackColor = CColor("gray")
+	TextDisplay1.ForeColor = CColor("white")
+	TextDisplay1.Duration = CLng("3000")
+	TextDisplay1.TimingMode = ebTimingModeCumulative
+	TextDisplay1.PreRelease = Val("100")
+
+	TextDisplay1.OnsetSync = 1
+	TextDisplay1.OffsetSync = 0
+
+
+End Sub
+
+
+'--------------------------------------------------------------------------
+' InitPackages
+'
+'--------------------------------------------------------------------------
+Sub InitPackages(c As Context)
+
+End Sub
+
+
+
+'--------------------------------------------------------------------------
+'--------------------------------------------------------------------------
+' UnInitDevices
+'--------------------------------------------------------------------------
+Sub UnInitDevices()
+	Display.Close
+	Set Display = Nothing
+	Sound.Close
+
+	Keyboard.Close
+	Set Keyboard = Nothing
+
+	Mouse.Close
+	Set Mouse = Nothing
+
+End Sub
+
+
+'--------------------------------------------------------------------------
+'--------------------------------------------------------------------------
+' UnInitPackages
+'--------------------------------------------------------------------------
+Sub UnInitPackages()
+End Sub
+
+
+'--------------------------------------------------------------------------
+' UnInitObjects
+'
+'--------------------------------------------------------------------------
+Sub UnInitObjects()
+
+	Set SessionProc = Nothing
+
+	Set List1 = Nothing
+
+	Set Triallist = Nothing
+
+	Set TrialProc = Nothing
+
+	Set KeyList = Nothing
+
+	Set CellList = Nothing
+
+	Set BlockList = Nothing
+
+	Set BlockProc = Nothing
+
+	Set Image1 = Nothing
+
+	Set FIX1 = Nothing
+
+	Set FIX2 = Nothing
+
+	Set SENTENCE = Nothing
+
+	Set preFIX1 = Nothing
+
+	Set BLANK1 = Nothing
+
+	Set preBLANK1 = Nothing
+
+	Set TONE = Nothing
+	Set TONESoundBuffer = Nothing
+
+	Set BLANK2 = Nothing
+
+	Set preBLANK2 = Nothing
+
+	Set INTERVAL = Nothing
+
+	Set FIX3 = Nothing
+
+	Set BLANK3 = Nothing
+
+	Set TextDisplay2 = Nothing
+
+	Set TextDisplay2EchoClients = Nothing
+
+	Set preFIX2 = Nothing
+
+	Set preFIX3 = Nothing
+
+	Set preBLANK3 = Nothing
+
+	Set preFIX4 = Nothing
+
+	Set preBLANK4 = Nothing
+
+	Set FIX4 = Nothing
+
+	Set BLANK4 = Nothing
+
+	Set postBLANK = Nothing
+
+	Set TextDisplay1 = Nothing
+
+	Set TextDisplay1EchoClients = Nothing
+
+
+End Sub
+
+
+'--------------------------------------------------------------------------
+' Main
+'
+'--------------------------------------------------------------------------
+Sub Main()
+
+	CreateDefaultPort
+
+	' Create and initialize the default context, data file,
+	' and provide global access to the context.
+	Dim c As Context
+	Set c = New Context
+	Set c.DataFile = New DataFile
+	c.PushNewFrame
+	Set ebContext = c
+
+	' Set the log level names
+	c.SetLogLevelName 1, "Session"
+	c.SetLogLevelName 2, "Block"
+	c.SetLogLevelName 3, "Trial"
+	c.SetLogLevelName 4, "SubTrial"
+	c.SetLogLevelName 5, "LogLevel5"
+	c.SetLogLevelName 6, "LogLevel6"
+	c.SetLogLevelName 7, "LogLevel7"
+	c.SetLogLevelName 8, "LogLevel8"
+	c.SetLogLevelName 9, "LogLevel9"
+	c.SetLogLevelName 10, "LogLevel10"
+
+	' Set standard logging items
+	ebContext.SetAttrib "Experiment", "SUZPRED_FMRI_SCANNER_speaker"
+	ebContext.SetAttrib "SessionDate", Date$
+	ebContext.SetAttrib "SessionTime", Time$
+	ebContext.SetAttrib "RandomSeed", PRNG.GetSeed()
+
+	If Basic.OS = ebWin32 Then
+		WinActivate "E-Run Experiment Window"
+	End If
+
+	' Get the StartupInfo
+	' Set default for GroupNumber
+	c.SetAttrib "Group", "1"
+
+
+	' Set the defaults for all of the StartupInfo
+	c.SetAttrib "Subject", "1"
+	c.SetAttrib "Session", "1"
+	c.SetAttrib "Age", "0"
+	c.SetAttrib "Sex", "male"
+	c.SetAttrib "Handedness", "left"
+	c.SetAttrib "ResearcherID", "1"
+
+	Dim vAnswer As Variant
+StartupInfo_Begin:
+
+StartupInfoPrompt_Subject:
+	vAnswer = AskBox("Please enter the Subject Number (1-32767, 0=No Data Logging):", c.GetAttrib("Subject"))
+	If Not IsEmpty(vAnswer) then
+		If Not IsNumeric(vAnswer) then
+			MsgBox "Please enter an integer value"
+			GoTo StartupInfoPrompt_Subject
+		ElseIf CLng(vAnswer) < 0 Then
+			MsgBox "The value for Subject must not be less than 0"
+			GoTo StartupInfoPrompt_Subject
+		ElseIf CLng(vAnswer) > 32767 Then
+			MsgBox "The value for Subject must be not be greater than 32767"
+			GoTo StartupInfoPrompt_Subject
+		End If
+	Else
+		GoTo ExperimentAbort
+	End if
+
+	c.SetAttrib "Subject", CStr(vAnswer)
+
+StartupInfoPrompt_Session:
+	vAnswer = AskBox("Please enter the Session Number (1-32767):", c.GetAttrib("Session"))
+	If Not IsEmpty(vAnswer) then
+		If Not IsNumeric(vAnswer) then
+			MsgBox "Please enter an integer value"
+			GoTo StartupInfoPrompt_Session
+		ElseIf CLng(vAnswer) < 1 Then
+			MsgBox "The value for Session must not be less than 1"
+			GoTo StartupInfoPrompt_Session
+		ElseIf CLng(vAnswer) > 32767 Then
+			MsgBox "The value for Session must be not be greater than 32767"
+			GoTo StartupInfoPrompt_Session
+		End If
+	Else
+		GoTo ExperimentAbort
+	End if
+
+	c.SetAttrib "Session", CStr(vAnswer)
+
+StartupInfoPrompt_Age:
+	vAnswer = AskBox("Please enter Subject's Age (0-150):", c.GetAttrib("Age"))
+	If Not IsEmpty(vAnswer) then
+		If Not IsNumeric(vAnswer) then
+			MsgBox "Please enter an integer value"
+			GoTo StartupInfoPrompt_Age
+		ElseIf CLng(vAnswer) < 0 Then
+			MsgBox "The value for Age must not be less than 0"
+			GoTo StartupInfoPrompt_Age
+		ElseIf CLng(vAnswer) > 150 Then
+			MsgBox "The value for Age must be not be greater than 150"
+			GoTo StartupInfoPrompt_Age
+		End If
+	Else
+		GoTo ExperimentAbort
+	End if
+
+	c.SetAttrib "Age", CStr(vAnswer)
+
+StartupInfoPrompt_Sex:
+Dim arrayChoicesSex(2)
+	arrayChoicesSex(0) = "male"
+	arrayChoicesSex(1) = "female"
+	vAnswer = SelectBox(, "Please enter Subject's Sex:", arrayChoicesSex)
+	If vAnswer >= 0 then
+		c.SetAttrib "Sex", arrayChoicesSex(vAnswer)
+	Else
+		GoTo ExperimentAbort
+	End If
+
+StartupInfoPrompt_Handedness:
+Dim arrayChoicesHandedness(2)
+	arrayChoicesHandedness(0) = "left"
+	arrayChoicesHandedness(1) = "right"
+	vAnswer = SelectBox(, "Enter Subject's Handedness:", arrayChoicesHandedness)
+	If vAnswer >= 0 then
+		c.SetAttrib "Handedness", arrayChoicesHandedness(vAnswer)
+	Else
+		GoTo ExperimentAbort
+	End If
+
+StartupInfoPrompt_ResearcherID:
+	vAnswer = AskBox("Please enter Researcher's ID:", c.GetAttrib("ResearcherID"))
+	If Not IsEmpty(vAnswer) then
+		If Not IsNumeric(vAnswer) then
+			MsgBox "Please enter an integer value"
+			GoTo StartupInfoPrompt_ResearcherID
+		ElseIf CLng(vAnswer) < 0 Then
+			MsgBox "The value for ResearcherID must not be less than 0"
+			GoTo StartupInfoPrompt_ResearcherID
+		ElseIf CLng(vAnswer) > 32767 Then
+			MsgBox "The value for ResearcherID must be not be greater than 32767"
+			GoTo StartupInfoPrompt_ResearcherID
+		End If
+	Else
+		GoTo ExperimentAbort
+	End if
+
+	c.SetAttrib "ResearcherID", CStr(vAnswer)
+
+	' Display the summary
+	Dim strSummary As String
+	strSummary = "Subject:    " & c.GetAttrib("Subject") & "\n"
+	strSummary = strSummary & "Session:    " & c.GetAttrib("Session") & "\n"
+	strSummary = strSummary & "Age:    " & c.GetAttrib("Age") & "\n"
+	strSummary = strSummary & "Sex:    " & c.GetAttrib("Sex") & "\n"
+	strSummary = strSummary & "Handedness:    " & c.GetAttrib("Handedness") & "\n"
+	strSummary = strSummary & "ResearcherID:    " & c.GetAttrib("ResearcherID") & "\n"
+	strSummary = strSummary & "\nContinue with the above startup info?"
+
+	Dim nSummaryAnswer As Integer
+	nSummaryAnswer = MsgBox(strSummary, ebYesNoCancel + ebQuestion, "Summary of Startup Info")
+	If nSummaryAnswer = ebNo Then
+		GoTo StartupInfo_Begin
+	ElseIf nSummaryAnswer = ebCancel Then
+		GoTo ExperimentAbort
+	End If
+
+
+	' Set the default Data Filename
+	c.DataFile.Filename = CStr(c.GetAttrib("Experiment")) & "-" & CStr(c.GetAttrib("Subject")) & "-" & CStr(c.GetAttrib("Session")) & ".txt"
+
+	' If we are logging data, then prompt to overwrite the data file if it exists
+	If CLng(c.GetAttrib("Subject")) <> 0 Then
+		If FileExists(c.DataFile.Filename) Then
+			If ebYes <> MsgBox("WARNING: The data file and/or recovery file already exists:\nFILE: " & c.DataFile.Filename & "\n\nDo you want to overwrite?", ebYesNo + ebQuestion) Then
+				GoTo ExperimentAbort
+			End If
+		End If
+	End If
+
+	' Initialize all system devices, packages, and objects
+	InitDevices c
+	InitPackages c
+	InitObjects c
+
+	' If we are logging data, then open the datafile
+	If CLng(c.GetAttrib("Subject")) <> 0 Then
+		c.DataFile.Open
+		c.LogHeader
+	End If
+
+	' Start the running of the Experiment
+	SessionProc.Run c
+
+	' Clean up the context and close the datafile
+	If CLng(c.GetAttrib("Subject")) <> 0 Then
+		c.DataFile.Close
+		' Attempt to convert the recovery file into a data file
+		Dim nConvert As Long
+		nConvert = c.DataFile.Convert(ebProgressSimple)
+		If nConvert = 0 Then
+			' Settings in E-Studio are set to not remove E-Recovery file
+		Else
+			' The datafile failed to convert!
+			MsgBox "ERROR: The datafile did not convert!\nFILE: " & c.DataFile.Filename & "\n\nIt is recommended that you recover your data with the E-Recovery utility"
+			MsgBox c.DataFile.GetLastErrorMessage()
+		End If
+	End If
+ExperimentFinish:
+
+	UnInitObjects
+
+	UnInitPackages
+	UnInitDevices
+
+ExperimentAbort:
+
+	' Clean up the context
+	c.PopFrame
+	Set c = Nothing
+	Set ebContext = Nothing
+
+	DestroyDefaultPort
+
+End Sub
+
+
+[DataSection_List1(1)]
+Weight	Nested	Procedure	Image1	CellNumber1	CellLabel1
+1			correct.bmp	1	look
+1			incorrect.bmp	2	no_look
+1			correct.bmp	3	away
+1			incorrect.bmp	4	not_away\0
+
+[DataSection_Triallist(1)]
+Weight	Nested	Procedure	CellNumber	Image1	Image2
+1		TrialProc	1	Slide28.bmp	CUE_PRED.BMP
+1		TrialProc	2	Slide45.bmp	CUE_PRED.BMP
+1		TrialProc	3	Slide7.bmp	CUE_PRED.BMP
+1		TrialProc	4	Slide24.bmp	CUE_PRED.BMP
+1		TrialProc	5	Slide18.bmp	CUE_PRED.BMP
+1		TrialProc	6	Slide37.bmp	CUE_PRED.BMP
+1		TrialProc	7	Slide30.bmp	CUE_PRED.BMP
+1		TrialProc	8	Slide8.bmp	CUE_PRED.BMP
+1		TrialProc	9	Slide6.bmp	CUE_PRED.BMP
+1		TrialProc	10	Slide34.bmp	CUE_PRED.BMP
+1		TrialProc	11	Slide2.bmp	CUE_PRED.BMP
+1		TrialProc	12	Slide14.bmp	CUE_PRED.BMP
+1		TrialProc	13	Slide5.bmp	CUE_PRED.BMP
+1		TrialProc	14	Slide16.bmp	CUE_PRED.BMP
+1		TrialProc	15	Slide9.bmp	CUE_PRED.BMP
+1		TrialProc	16	Slide21.bmp	CUE_PRED.BMP
+1		TrialProc	17	Slide43.bmp	CUE_PRED.BMP
+1		TrialProc	18	Slide42.bmp	CUE_PRED.BMP
+1		TrialProc	19	Slide32.bmp	CUE_PRED.BMP
+1		TrialProc	20	Slide19.bmp	CUE_PRED.BMP
+1		TrialProc	21	Slide39.bmp	CUE_PRED.BMP
+1		TrialProc	22	Slide27.bmp	CUE_PRED.BMP
+1		TrialProc	23	Slide25.bmp	CUE_PRED.BMP
+1		TrialProc	24	Slide35.bmp	CUE_PRED.BMP
+1		TrialProc	25	Slide22.bmp	CUE_PRED.BMP
+1		TrialProc	26	Slide17.bmp	CUE_PRED.BMP
+1		TrialProc	27	Slide26.bmp	CUE_PRED.BMP
+1		TrialProc	28	Slide3.bmp	CUE_PRED.BMP
+1		TrialProc	29	Slide41.bmp	CUE_PRED.BMP
+1		TrialProc	30	Slide10.bmp	CUE_PRED.BMP
+1		TrialProc	31	Slide38.bmp	CUE_PRED.BMP
+1		TrialProc	32	Slide40.bmp	CUE_PRED.BMP
+1		TrialProc	33	Slide12.bmp	CUE_PRED.BMP
+1		TrialProc	34	Slide33.bmp	CUE_PRED.BMP
+1		TrialProc	35	Slide4.bmp	CUE_PRED.BMP
+1		TrialProc	36	Slide1.bmp	CUE_PRED.BMP
+1		TrialProc	37	Slide23.bmp	CUE_PRED.BMP
+1		TrialProc	38	Slide15.bmp	CUE_PRED.BMP
+1		TrialProc	39	Slide20.bmp	CUE_PRED.BMP
+1		TrialProc	40	Slide13.bmp	CUE_PRED.BMP
+1		TrialProc	41	Slide11.bmp	CUE_PRED.BMP
+1		TrialProc	42	Slide31.bmp	CUE_PRED.BMP
+1		TrialProc	43	Slide44.bmp	CUE_PRED.BMP
+1		TrialProc	44	Slide29.bmp	CUE_PRED.BMP
+1		TrialProc	45	Slide36.bmp	CUE_PRED.BMP\0
+
+[DataSection_KeyList(1)]
+Weight	Nested	Procedure	KeyName	KeyId	KeyDatatype
+1			Cue	cue+	TEXT\0
+
+[DataSection_CellList(1)]
+Weight	Nested	Procedure	CellNumber
+1			1
+1			2
+1			3
+1			4\0
+
+[DataSection_BlockList(1)]
+Weight	Nested	Procedure
+1		BlockProc\0
