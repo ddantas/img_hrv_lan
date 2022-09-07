@@ -69,7 +69,9 @@ class HrvScreen(tk.Frame):
     ## \brief Initiate the plotting figure where the ECG and RR data will be displayed.
     #  @param self The object pointer.
     def init_plot(self):
-        self.plot.fig = Figure(figsize=(5,3))
+        HRVSCREEN_WIDTH = 3
+        HRVSCREEN_HEIGHT = 2
+        self.plot.fig = Figure(figsize=(3,2))
         self.plot.ax_rr = self.plot.fig.add_subplot(211)
         self.plot.ax_ecg = self.plot.fig.add_subplot(212)
 
@@ -135,6 +137,8 @@ class HrvScreen(tk.Frame):
 class CamScreen(tk.Frame):
 
     def __init__(self, window, client, path, subj=0):
+        CAMSCREEN_WIDTH  = 300
+        CAMSCREEN_HEIGHT = 240
         super().__init__(window)
         self.is_receiving_video = False
         self.recording = False
@@ -143,10 +147,10 @@ class CamScreen(tk.Frame):
         self.subj = subj
         self.path = path
         self.filename = os.path.join(self.path, k.FILENAME_VIDEO % subj)
-        self.width = 600
         self.cap = cv2.VideoWriter(self.filename, cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (640,480))
-        self.height = 480
-        self.frame = tk.Frame(self.window, bg='black', height=480, width=600)
+        self.width  = CAMSCREEN_WIDTH
+        self.height = CAMSCREEN_HEIGHT
+        self.frame = tk.Frame(self.window, bg='black', height=self.height, width=self.width)
         self.frame.grid_propagate(False)
         self.frame.grid(padx=50, pady=50)
         self.screen = tk.Label(self.frame, width=self.width, height=self.height, bg='black')
@@ -296,8 +300,8 @@ class WinMainTk(tk.Frame):
 
         self.frame_main.grid(row=0, column=0, stick='nsew')
 
-        self.frame1_parent = tk.Frame(self.frame_main, height=600, width=600)
-        self.frame2_parent = tk.Frame(self.frame_main, height=600, width=600)
+        self.frame1_parent = tk.Frame(self.frame_main, height=300, width=300)
+        self.frame2_parent = tk.Frame(self.frame_main, height=300, width=300)
 
         self.frame1_parent.grid(row=0, column=0, stick='nsew')
         self.frame2_parent.grid(row=0, column=1, stick='nsew')
@@ -322,8 +326,8 @@ class WinMainTk(tk.Frame):
 
         self.root.columnconfigure(1, weight=0, minsize=200)
 
-        BUTTON_WIDTH = 45
-        IPADY = 3
+        BUTTON_WIDTH = 20
+        IPADY = 0
 
         self.selected_host_cam1 = tk.StringVar()
         self.selected_host_cam2 = tk.StringVar()
@@ -358,9 +362,23 @@ class WinMainTk(tk.Frame):
         self.btn_select_polar2 = tk.Button(self.frame_right, text="Select Polar device", padx=3, width=BUTTON_WIDTH, 
                                             command=lambda : self.select_host_polar(2))
 
-        self.select_routine_label = tk.Label(self.frame_right,text="\nRoutine\nNo file selected", padx=3)
-        self.btn_routine = tk.Button(self.frame_right, text="Select routine file", padx=3, width=BUTTON_WIDTH, 
-                                        command=self.select_routine_file)
+        self.select_slide_label = tk.Label(self.frame_right,text="\nSlides\nNo file selected", padx=3)
+        self.btn_slide = tk.Button(self.frame_right, text="Select slide file", padx=3, width=BUTTON_WIDTH, 
+                                        command=self.select_slide_file)
+
+        self.select_pause_label = tk.Label(self.frame_right,text="\nPause\nNo file selected", padx=3)
+        self.btn_pause = tk.Button(self.frame_right, text="Select pause file", padx=3, width=BUTTON_WIDTH, 
+                                        command=self.select_pause_file)
+
+        self.nblocks_label = tk.Label(self.frame_right, text="\nNumber of capture blocks", padx=3)
+
+        self.nblocks = tk.Entry(self.frame_right, width=BUTTON_WIDTH)
+        self.nblocks.insert(0, '5')
+
+        self.nreps_label = tk.Label(self.frame_right, text="\nCapture repetitions per block", padx=3)
+
+        self.nreps = tk.Entry(self.frame_right, width=BUTTON_WIDTH)
+        self.nreps.insert(0, '9')
 
         self.schedule_time_label = tk.Label(self.frame_right, text="\nSelect routine start in seconds", padx=3)
 
@@ -387,28 +405,37 @@ class WinMainTk(tk.Frame):
 
         self.btn_scan.grid(row=0, column=0, ipady=IPADY, pady=(10,0))
 
-        self.scan_at.grid(row=1, column=0, ipady=IPADY)
-        self.scan_entry.grid(row=2, column=0, ipady=IPADY)
-        self.btn_scan_at.grid(row=3, column=0, ipady=IPADY)
+        self.scan_at.grid(row=0, column=1, ipady=IPADY)
+        self.scan_entry.grid(row=1, column=1, ipady=IPADY)
+        self.btn_scan_at.grid(row=2, column=1, ipady=IPADY)
 
-        self.select_cam1_label.grid(row=4, column=0, ipady=IPADY)
-        self.combo_box_cam1.grid(row=5, column=0, ipady=IPADY)
-        self.btn_select_cam1.grid(row=6, column=0, ipady=IPADY)
+        self.select_cam1_label.grid(row=3, column=0, ipady=IPADY)
+        self.combo_box_cam1.grid(row=4, column=0, ipady=IPADY)
+        self.btn_select_cam1.grid(row=5, column=0, ipady=IPADY)
 
-        self.select_cam2_label.grid(row=7, column=0, ipady=IPADY)
-        self.combo_box_cam2.grid(row=8, column=0, ipady=IPADY)
-        self.btn_select_cam2.grid(row=9, column=0, ipady=IPADY)
+        self.select_cam2_label.grid(row=3, column=1, ipady=IPADY)
+        self.combo_box_cam2.grid(row=4, column=1, ipady=IPADY)
+        self.btn_select_cam2.grid(row=5, column=1, ipady=IPADY)
 
-        self.select_polar1_label.grid(row=10, column=0, ipady=IPADY)
-        self.combo_box_polar1.grid(row=11, column=0, ipady=IPADY)
-        self.btn_select_polar1.grid(row=12, column=0, ipady=IPADY)
+        self.select_polar1_label.grid(row=6, column=0, ipady=IPADY)
+        self.combo_box_polar1.grid(row=7, column=0, ipady=IPADY)
+        self.btn_select_polar1.grid(row=8, column=0, ipady=IPADY)
 
-        self.select_polar2_label.grid(row=13, column=0, ipady=IPADY)
-        self.combo_box_polar2.grid(row=14, column=0, ipady=IPADY)
-        self.btn_select_polar2.grid(row=15, column=0, ipady=IPADY)
+        self.select_polar2_label.grid(row=6, column=1, ipady=IPADY)
+        self.combo_box_polar2.grid(row=7, column=1, ipady=IPADY)
+        self.btn_select_polar2.grid(row=8, column=1, ipady=IPADY)
 
-        self.select_routine_label.grid(row=16, column=0, ipady=IPADY)
-        self.btn_routine.grid(row=17, column=0, ipady=IPADY)
+        self.nblocks_label.grid(row=9, column=0, ipady=IPADY)
+        self.nblocks.grid(row=10, column=0, ipady=IPADY)
+
+        self.nreps_label.grid(row=9, column=1, ipady=IPADY)
+        self.nreps.grid(row=10, column=1, ipady=IPADY)
+
+        self.select_slide_label.grid(row=16, column=0, ipady=IPADY)
+        self.btn_slide.grid(row=17, column=0, ipady=IPADY)
+
+        self.select_pause_label.grid(row=16, column=1, ipady=IPADY)
+        self.btn_pause.grid(row=17, column=1, ipady=IPADY)
 
         self.schedule_time_label.grid(row=18, column=0, ipady=IPADY)
         self.schedule_time.grid(row=19, column=0, ipady=IPADY)
@@ -640,16 +667,27 @@ class WinMainTk(tk.Frame):
         client_thread = threading.Thread(target=lambda : hrv_plot.display_hrv_plot())
         client_thread.start()
 
-    ## \brief Selects the routine file that will be used in the capture. 
+    ## \brief Selects the slide file that will be used in the capture. 
     #  @param self The object pointer.
-    def select_routine_file(self):
-        self.routine_filename = tk.filedialog.askopenfilename()
+    def select_slide_file(self):
+        self.slide_filename = tk.filedialog.askopenfilename()
 
-        if not self.routine_filename:
+        if not self.slide_filename:
             return
 
-        self.log(f"selected {self.routine_filename}")
-        self.select_routine_label.config(text=f"\nRoutine\n{self.routine_filename.split('/')[-1]}")
+        self.log(f"selected {self.slide_filename}")
+        self.select_slide_label.config(text=f"\nSlide\n{self.slide_filename.split('/')[-1]}")
+
+    ## \brief Selects the pause file that will be used in the capture. 
+    #  @param self The object pointer.
+    def select_pause_file(self):
+        self.pause_filename = tk.filedialog.askopenfilename()
+
+        if not self.pause_filename:
+            return
+
+        self.log(f"selected {self.pause_filename}")
+        self.select_pause_label.config(text=f"\nPause\n{self.pause_filename.split('/')[-1]}")
 
     ## \brief Gets the time at which the routine will start and call a thread to send the routine to all hosts. 
     #  @param self The object pointer.
