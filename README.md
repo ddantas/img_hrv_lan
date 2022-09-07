@@ -1,6 +1,47 @@
 # img_hrv_lan
 Heart rate variability graphical user interface. Captures a dataset of two subjects interacting on two ccomputers in a LAN while seeing images shown on screen.
 
+## Environment setup
+
+The project requires Python 3.8. We recommend the creation of a virtual environment to facilitate the usage of the code.
+
+Use the code below in the terminal to install Python 3.8 in the system, as explained [here](https://www.linuxcapable.com/how-to-install-python-3-8-on-ubuntu-22-04-lts/).
+
+> <code>$ sudo apt update && sudo apt upgrade</code>
+> 
+> <code>$ sudo apt install software-properties-common -y</code>
+> 
+> <code>$ sudo add-apt-repository ppa:deadsnakes/ppa -y</code>
+> 
+> <code>$ sudo apt update</code>
+> 
+> <code>$ sudo apt install python3.8 python3.8-dev python3.8-venv -y</code>
+
+Create the virtual environment with
+
+> <code>$ python3.8 -m venv_polar</code>
+
+Activate the virtual environment with
+
+> <code>$ source venv_polar/bin/activate</code>
+
+Alternatively, copy the line above to a file called <code>activate_venv_polar</code> and run
+
+> <code>$ . ./activate_venv_polar</code>
+
+Update pip and install idle with
+
+> <code>(venv_polar)$ python -m pip install --upgrade pip</code>
+> 
+> <code>(venv_polar)$ pip install idle</code>
+
+Call <code>idle</code> inside the virtual environment with
+
+> <code>(venv_polar)$ python -m idlelib.idle</code>
+
+Deactivate the virtual environment with
+
+> <code>(venv_polar)$ deactivate</code>
 
 ## Tips about git usage
 
