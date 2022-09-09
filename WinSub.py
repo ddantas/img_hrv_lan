@@ -45,6 +45,8 @@ class WinSub(tk.Frame):
         self.server = dev.Server()
         self.client = dev.Client(HOST=self.host)
 
+        self.img_dict = {}
+
         self.init_server()
 
         self.create_frame_main()
@@ -134,19 +136,62 @@ class WinSub(tk.Frame):
             self.client.set_host(instruction)
 
         elif cmd == 'stop':
+            pass
 
-            if self.is_receiving_video:
-                self.is_receiving_video = False
-                self.client.stop_stream_client()
+            #if self.is_receiving_video:
+            #    self.is_receiving_video = False
+            #    self.client.stop_stream_client()
 
-            if self.is_playing_video:
-                self.is_playing_video = False
-                self.videoCap.release()
+            #if self.is_playing_video:
+            #    self.is_playing_video = False
+            #    self.videoCap.release()
 
-            self.screen.config(image='', bg='black')
-            self.screen_frame.config(bg='black')
-            self.cleanup()
+            #self.screen.config(image='', bg='black')
+            #self.screen_frame.config(bg='black')
+            #self.cleanup()
 
+        elif cmd == 'image':
+            print(cmd)
+            print(instruction)
+
+            filename = instruction
+            #if (filename not in self.img_dict.keys()):
+            img = cv2.imread(filename)
+            #self.img_dict[filename] = img
+            if (img is None):
+                print("Error opening file: " + filename)
+            else:
+                self.show_image_cv(img)
+            #self.show_image_cv(self.img_dict[filename])
+
+
+        elif cmd == 'path':
+            print(cmd)
+            print(instruction)
+
+    ## \brief Convert image from opencv format to ImageTk
+    #  @param self The object pointer.
+    #  @param frame Image as read by opencv
+    def convert_image_cv2tk(self, frame):
+            # frame = cv2.resize(frame, (self.width, self.height))
+            cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+            img = Image.fromarray(cv2image)
+            imgtk = ImageTk.PhotoImage(image=img)
+            return imgtk
+
+    ## \brief Show an image on the App's screen.
+    #  @param self The object pointer.
+    #  @param frame Image as read by opencv
+    def show_image_tk(self, imgtk):
+            self.screen.configure(image=imgtk)
+            self.screen.imgtk = imgtk
+
+    ## \brief Show an image on the App's screen.
+    #  @param self The object pointer.
+    #  @param frame Image as read by opencv
+    def show_image_cv(self, frame):
+            imgtk = self.convert_image_cv2tk(frame)
+            self.show_image_tk(imgtk)
 
     ## \brief Show a locally available video on the App's screen.
     #  @param self The object pointer.
@@ -160,12 +205,7 @@ class WinSub(tk.Frame):
             if not ret:
                 break
 
-            # frame = cv2.resize(frame, (self.width, self.height))
-            cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-            img = Image.fromarray(cv2image)
-            imgtk = ImageTk.PhotoImage(image=img)
-            self.screen.configure(image=imgtk)
-            self.screen.imgtk = imgtk
+            self.show_image_cv(frame)
 
             # calculate screen refresh rate
             delay = max(0, time.time() - start)
@@ -200,11 +240,12 @@ class WinSub(tk.Frame):
 
             if self.__clear == False and self.is_playing_video == False:
 
-                cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-                img = Image.fromarray(cv2image)
-                imgtk = ImageTk.PhotoImage(image=img)
-                self.screen.configure(image=imgtk)
-                self.screen.imgtk = imgtk
+                self.show_image_cv(frame)
+                #cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+                #img = Image.fromarray(cv2image)
+                #imgtk = ImageTk.PhotoImage(image=img)
+                #self.screen.configure(image=imgtk)
+                #self.screen.imgtk = imgtk
                 screen_cleared = False
 
             else:

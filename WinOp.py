@@ -326,7 +326,7 @@ class WinMainTk(tk.Frame):
 
         self.root.columnconfigure(1, weight=0, minsize=200)
 
-        BUTTON_WIDTH = 20
+        BUTTON_WIDTH = 30
         IPADY = 0
 
         self.selected_host_cam1 = tk.StringVar()
@@ -799,7 +799,8 @@ class WinMainTk(tk.Frame):
     def send_routine(self, time_to_start):
 
         try:
-            with open(self.routine_filename) as f:
+            #with open(self.routine_filename) as f:
+            with open(self.pause_filename) as f:
                 routine_lines = f.readlines()
         except:            
             tk.messagebox.showerror(title="Error Scheduling Routine", message="No file was specified")
@@ -846,7 +847,7 @@ class WinMainTk(tk.Frame):
         with open(os.path.join(self.path, k.FILENAME_ROUTINE), 'w') as f:
             f.write(routine)
 
-        self.routine_to_elan(self.routine_filename, self.path)
+        #self.routine_to_elan(self.routine_filename, self.path)
             
         self.hrv_plot1.start_recording()
         self.hrv_plot2.start_recording()

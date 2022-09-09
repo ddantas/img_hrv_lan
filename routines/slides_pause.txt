@@ -1,5 +1,5 @@
 #Interval specification
-0.0;    show; all; #8F8F8F
+0.0;    clear; all; #8F8F8F
 0.0;    message; all; “Please, wait a moment.”
 0.0;    label; blockp; pause
 120.0;  stop
