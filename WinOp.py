@@ -137,8 +137,6 @@ class HrvScreen(tk.Frame):
 class CamScreen(tk.Frame):
 
     def __init__(self, window, client, path, subj=0):
-        CAMSCREEN_WIDTH  = 300
-        CAMSCREEN_HEIGHT = 240
         super().__init__(window)
         self.is_receiving_video = False
         self.recording = False
@@ -148,8 +146,8 @@ class CamScreen(tk.Frame):
         self.path = path
         self.filename = os.path.join(self.path, k.FILENAME_VIDEO % subj)
         self.cap = cv2.VideoWriter(self.filename, cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (640,480))
-        self.width  = CAMSCREEN_WIDTH
-        self.height = CAMSCREEN_HEIGHT
+        self.width  = k.OP_W
+        self.height = k.OP_H
         self.frame = tk.Frame(self.window, bg='black', height=self.height, width=self.width)
         self.frame.grid_propagate(False)
         self.frame.grid(padx=50, pady=50)

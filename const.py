@@ -12,6 +12,13 @@
 
 import os
 
+## Canvas sizes
+SUBJ_W = 720
+SUBJ_H = 540
+OP_W   = 300
+OP_H   = 240
+
+## Filenames
 EXT_TSV = ".tsv"
 EXT_LIN = "_linear.tsv"
 EXT_NN  = "_nearest.tsv"

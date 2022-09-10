@@ -19,6 +19,7 @@ from PIL import Image
 from PIL import ImageTk
 
 import LanDevice as dev
+import const as k
 
 WIN_TITLE = "Server Window"
 
@@ -58,7 +59,7 @@ class WinSub(tk.Frame):
         self.frame_main = tk.Frame(self.root)
         self.frame_main.grid(row=0, column=0, sticky='')
 
-        self.screen_frame = tk.Frame(self.frame_main, width=600, height=480, bg='black')
+        self.screen_frame = tk.Frame(self.frame_main, width=k.SUBJ_W, height=k.SUBJ_H, bg='black')
         self.screen_frame.pack_propagate(False)
         self.screen = tk.Label(self.screen_frame, bg='black')
         self.screen.pack()
@@ -155,9 +156,11 @@ class WinSub(tk.Frame):
             print(instruction)
 
             filename = instruction
-            #if (filename not in self.img_dict.keys()):
-            img = cv2.imread(filename)
-            #self.img_dict[filename] = img
+            if (filename in self.img_dict.keys()):
+                img = self.img_dict[filename]
+            else:
+                img = cv2.imread(filename)
+                self.img_dict[filename] = img
             if (img is None):
                 print("Error opening file: " + filename)
             else:
