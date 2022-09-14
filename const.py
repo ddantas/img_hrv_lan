@@ -6,7 +6,7 @@
 ### Define constants used by multiple source files.      ###
 ###                                                      ###
 ### Author: Daniel Dantas                                ###
-### Last edited: Mar 2022                                ###
+### Last edited: Sep 2022                                ###
 ############################################################
 #########################################################"""
 
@@ -26,8 +26,9 @@ EXT_INFERRED  = "_inferred_rr.tsv"
 EXT_FLOW  = "_flow.tsv"
 
 ## Used mostly by Polar.py, Data.py and Plot.py
-TYPE_RR  = "R"
-TYPE_ECG = "E"
+TYPE_RR    = "R"
+TYPE_ECG   = "E"
+TYPE_AUDIO = "A"
 
 ## Used mostly by WinOp.py
 FOLDER_DATA = "data"
