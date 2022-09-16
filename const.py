@@ -34,8 +34,10 @@ TYPE_AUDIO = "A"
 FOLDER_DATA = "data"
 FOLDER_DEBUG = os.path.join(FOLDER_DATA, "DEBUG")
 
-FILENAME_ROUTINE  = "routine.txt"
-FILENAME_LOG      = "log.txt"
+FILENAME_RANDOM       = "random.txt"
+FILENAME_ROUTINE      = "routine.txt"
+FILENAME_START_TIME   = "start_time.txt"
+FILENAME_LOG          = "log.txt"
 
 FILENAME_ECG      = "subj%d_ecg.tsv"
 FILENAME_ECG_S1   = "subj1_ecg.tsv"

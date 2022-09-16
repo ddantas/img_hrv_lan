@@ -35,6 +35,7 @@ import LanDevice as dev
 import Plot
 import Data
 import const as k
+import concat as cat
 
 WIN_TITLE = "Operator Window"
 IMG_DATA_SIZE = struct.calcsize('>L')
@@ -530,7 +531,7 @@ class WinMainTk(tk.Frame):
 
         try:
             polars = self.scanner.list_polars_at(ip)
-        except:            
+        except:
             tk.messagebox.showerror(title="Error Scanning for polar devices", message="Please check your server and devices")
             return
 
@@ -719,7 +720,7 @@ class WinMainTk(tk.Frame):
         try:
             with open(routine_filename) as f:
                 routine_lines = f.readlines()
-        except:            
+        except:
             tk.messagebox.showerror(title="Error in routine_to_elan", message="Unable to open routine file %s" % routine_filename)
             return
 
@@ -796,11 +797,34 @@ class WinMainTk(tk.Frame):
     def send_routine(self, time_to_start):
 
         try:
-            #with open(self.routine_filename) as f:
             with open(self.pause_filename) as f:
                 routine_lines = f.readlines()
+        except:
+            tk.messagebox.showerror(title="Error Scheduling Routine", message="No Pause file was specified")
+            return
+
+        try:
+            with open(self.slide_filename) as f:
+                routine_lines = f.readlines()
+        except:
+            tk.messagebox.showerror(title="Error Scheduling Routine", message="No Slide file was specified")
+            return
+
+        # Setting self.path
+        self.setup_recording()
+
+        filename_random     = os.path.join(self.path, k.FILENAME_RANDOM)
+        filename_routine    = os.path.join(self.path, k.FILENAME_ROUTINE)
+        filename_start_time = os.path.join(self.path, k.FILENAME_START_TIME)
+        nblocks = int(self.nblocks.get())
+        nreps   = int(self.nreps.get())
+        cat.generate_routine(filename_random, filename_routine, "images/slides", self.slide_filename, self.pause_filename, nblocks, nreps)
+
+        try:
+            with open(filename_routine) as f:
+                routine_lines = f.readlines()
         except:            
-            tk.messagebox.showerror(title="Error Scheduling Routine", message="No file was specified")
+            tk.messagebox.showerror(title="Error Scheduling Routine", message="No Pause file was specified")
             return
 
         routine = ''
@@ -820,12 +844,10 @@ class WinMainTk(tk.Frame):
 
         now = datetime.datetime.now()
         time_to_start = int(now.timestamp()) + int(time_to_start)
-
-        self.setup_recording()
-
         self.log(f"routine is schedule to start at {datetime.datetime.fromtimestamp(time_to_start)}")
-
         routine = str(time_to_start) + '\n' + routine
+        with open(os.path.join(self.path, k.FILENAME_START_TIME), 'w') as f:
+            f.write(str(time_to_start))
 
         if self.screen1.is_receiving_video:
             print(self.client2.get_streaming_dst())
@@ -840,9 +862,6 @@ class WinMainTk(tk.Frame):
 
         if self.screen2.is_receiving_video:
             self.client2.send_command(routine)
-
-        with open(os.path.join(self.path, k.FILENAME_ROUTINE), 'w') as f:
-            f.write(routine)
 
         #self.routine_to_elan(self.routine_filename, self.path)
             
