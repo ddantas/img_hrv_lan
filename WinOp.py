@@ -66,7 +66,7 @@ class HrvScreen(tk.Frame):
         self.plot = Plot.Plot()
         self.init_plot()
         self.hrv_plot = FigureCanvasTkAgg(self.plot.fig, master=self.window)
-        self.hrv_plot.get_tk_widget().grid(padx=50, pady=(0,50))
+        self.hrv_plot.get_tk_widget().grid(padx=k.PAD_X, pady=(0,k.PAD_Y))
 
     ## \brief Initiate the plotting figure where the ECG and RR data will be displayed.
     #  @param self The object pointer.
@@ -77,10 +77,10 @@ class HrvScreen(tk.Frame):
         self.plot.ax_rr = self.plot.fig.add_subplot(211)
         self.plot.ax_ecg = self.plot.fig.add_subplot(212)
         #apagar
-        data_y = [55,40,76,34,50,20]
-        self.plot.ax_rr.plot(data_y, color=Plot.COLOR_RR)
-        self.plot.ax_ecg.plot(data_y, color=Plot.COLOR_ECG)
-        plt.pause(0.05)
+        #data_y = [55,40,76,34,50,20]
+        #self.plot.ax_rr.plot(data_y, color=Plot.COLOR_RR)
+        #self.plot.ax_ecg.plot(data_y, color=Plot.COLOR_ECG)
+        #plt.pause(0.05)
 
     ## \brief Use its client to receive the ECG and RR data, save it to the disk, and plot it on the screen.
     #  @param self The object pointer.
@@ -157,7 +157,7 @@ class CamScreen(tk.Frame):
         self.height = k.OP_H
         self.frame = tk.Frame(self.window, bg='black', height=self.height, width=self.width)
         self.frame.grid_propagate(False)
-        self.frame.grid(padx=50, pady=50)
+        self.frame.grid(padx=k.PAD_X, pady=k.PAD_Y)
         self.screen = tk.Label(self.frame, width=self.width, height=self.height, bg='black')
         self.screen.grid()
 
@@ -243,7 +243,7 @@ class AudioScreen(tk.Frame):
         self.init_plot()
         self.audio_device = adev.AudioDevice()
         self.audio_canvas = FigureCanvasTkAgg(self.plot.fig, master=self.window)
-        self.audio_canvas.get_tk_widget().grid(padx=50, pady=(0,50))
+        self.audio_canvas.get_tk_widget().grid(padx=k.PAD_X, pady=(0,k.PAD_Y))
 
     ## \brief Initiate the plotting figure where the audio data will be displayed.
     #  @param self The object pointer.
@@ -254,9 +254,9 @@ class AudioScreen(tk.Frame):
         self.plot.fig = Figure(figsize=(AUDIOSCREEN_WIDTH, AUDIOSCREEN_HEIGHT))
         self.plot.ax_audio = self.plot.fig.add_subplot(111)
         #apagar
-        data_y = [55,40,76,34,50,20]
-        self.plot.ax_audio.plot(data_y, color=Plot.COLOR_AUDIO)
-        plt.pause(0.05)
+        #data_y = [55,40,76,34,50,20]
+        #self.plot.ax_audio.plot(data_y, color=Plot.COLOR_AUDIO)
+        #plt.pause(0.05)
 
 
     ## \brief Use its client to receive the audio data, save it to the disk, and plot it on the screen.
@@ -271,16 +271,22 @@ class AudioScreen(tk.Frame):
                 self.plot.plot_incremental(data, k.TYPE_AUDIO)
                 #plt.pause(0.05)
                 self.audio_canvas.draw()
+                if self.recording:
+                    self.audio_device.save_raw_data(self.filename)
+                    self.audio_device.clear()
             except Exception as e:
                 print("Exception at %s: %s: %s" % (os.path.basename(__file__), "display_audio_plot", e))
                 #self.is_receiving_data = False
                 #break
+        #if (os.exists(self.filename)):
+        #   self.audio_device.stop(self.filename)
 
 
     ## \brief Set a flag to tell the display thread to start recording.
     #  @param self The object pointer.
     def start_recording(self):
         self.recording = True
+        self.audio_device.clear()
 
     def stop_recording(self):
         self.recording = False
@@ -446,8 +452,8 @@ class WinMainTk(tk.Frame):
 
         self.btn_select_audio = tk.Button(self.frame_right, text="Select audio device", padx=3, width=BUTTON_WIDTH,
                                             command=lambda : self.select_localhost_audio())
-        self.btn_scan_audio = tk.Button(self.frame_right, text="Scan audio device", padx=3, width=BUTTON_WIDTH,
-                                            command=lambda : self.scan_localhost_audio())
+        #self.btn_scan_audio = tk.Button(self.frame_right, text="Scan audio device", padx=3, width=BUTTON_WIDTH,
+        #                                    command=lambda : self.scan_localhost_audio())
 
         self.select_slide_label = tk.Label(self.frame_right,text="\nSlides\nNo file selected", padx=3)
         self.btn_slide = tk.Button(self.frame_right, text="Select slide file", padx=3, width=BUTTON_WIDTH, 
@@ -520,7 +526,7 @@ class WinMainTk(tk.Frame):
         self.combo_box_audio.grid(row=10, column=0, ipady=IPADY)
         self.btn_select_audio.grid(row=11, column=0, ipady=IPADY)
 
-        self.btn_scan_audio.grid(row=11, column=1, ipady=IPADY)
+        #self.btn_scan_audio.grid(row=11, column=1, ipady=IPADY)
 
         self.nblocks_label.grid(row=12, column=0, ipady=IPADY)
         self.nblocks.grid(row=13, column=0, ipady=IPADY)
@@ -767,17 +773,11 @@ class WinMainTk(tk.Frame):
     ## \brief Scan the audio devices in the localhost.
     #  @param self The object pointer.
     def scan_localhost_audio(self):
-        self.slide_filename = tk.filedialog.askopenfilename()
-        tk.messagebox.showinfo(title="Entered function", message="scan_localhost_audio")
-        print("checkpoint")
-        print("Entered scan_localhost_audio")
+        pass
 
     ## \brief Select the audio device in the localhost that will be used in the capture.
     #  @param self The object pointer.
     def select_localhost_audio(self):
-        tk.messagebox.showinfo(title="Entered function", message="select_localhost_audio")
-        print("checkpoint")
-        print("Entered select_localhost_audio")
         audio_plot = self.audio_plot
         client_thread = threading.Thread(target=audio_plot.display_audio_plot)
         client_thread.start()
@@ -992,12 +992,14 @@ class WinMainTk(tk.Frame):
 
         self.screen1.start_recording()
         self.screen2.start_recording()
+        self.audio_plot.start_recording()
 
         time_to_end = routine_lines[i].split(';')[0]
         time.sleep(float(time_to_end))
 
         self.screen1.stop_recording()
         self.screen2.stop_recording()
+        self.audio_plot.stop_recording()
 
         time.sleep(1)
 
@@ -1032,6 +1034,8 @@ class WinMainTk(tk.Frame):
 
         self.hrv_plot1.setup_recording(self.path)
         self.hrv_plot2.setup_recording(self.path)
+
+        self.audio_plot.setup_recording(self.path)
 
     def check_stop(self):
 

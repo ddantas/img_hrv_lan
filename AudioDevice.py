@@ -32,7 +32,7 @@ class AudioDevice():
   def __init__(self):
     self.rate = 44100
     self.frames_per_buffer = 5000
-    self.channels = 2
+    self.channels = 1
     self.format = pyaudio.paInt16
     self.audio = pyaudio.PyAudio()
     self.stream = self.audio.open(format=self.format,
@@ -113,7 +113,7 @@ class AudioDevice():
   ## \brief Stop receiving audio signal and and save it to file.
   #
   #  @param filename
-  def stop(self, filename):
+  def stop(self):
     if FLAG_INTERRUPT:
       self.stream.stop_stream()
       self.stream.close()

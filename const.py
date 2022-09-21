@@ -15,8 +15,10 @@ import os
 ## Canvas sizes
 SUBJ_W = 720
 SUBJ_H = 540
-OP_W   = 300
-OP_H   = 240
+OP_W   = 640
+OP_H   = 480
+PAD_X  = 10
+PAD_Y  = 10
 
 ## Filenames
 EXT_TSV = ".tsv"
