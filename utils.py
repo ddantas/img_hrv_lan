@@ -3,6 +3,13 @@ import numpy as np
 from biosppy.signals import ecg
 import const as k
 
+## \brief Remove file if file exists.
+#
+#  @param filename File to be removed.
+def remove(filename):
+  if os.path.exists(filename):
+    os.remove(filename)
+
 ## \brief Replace extension with suffix.
 #
 #  @param filename Filename to be adjusted.

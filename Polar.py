@@ -31,6 +31,7 @@ from bleak import BleakScanner
 import Data
 import Plot
 import const as k
+import utils
 
 
 MODEL_NBR_UUID = '00002a24-0000-1000-8000-00805f9b34fb'
@@ -384,11 +385,11 @@ def main():
   d = devices[0]
 
   filename_rr = "/tmp/rr.tsv"
-  Data.Data.remove(filename_rr)
+  utils.remove(filename_rr)
   #asyncio.run(polar.receive_rr(d.address, filename_rr))
 
   filename_ecg = "/tmp/ecg.tsv"
-  Data.Data.remove(filename_ecg)
+  utils.remove(filename_ecg)
   #asyncio.run(polar.receive_ecg(d.address, filename_ecg))
 
   asyncio.run(polar.receive_both(d.address, filename_rr, filename_ecg))

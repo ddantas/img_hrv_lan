@@ -100,7 +100,7 @@ class Plot():
           self.data_audio.extend(data_new)
         line_audio, = self.ax_audio.plot(self.data_audio, color=COLOR_AUDIO)
         print(".", end="")
-        #plt.pause(0.05)
+        plt.pause(0.05)
     #plt.subplots_adjust(top = 0.9)
     if (datatype == k.TYPE_RR or datatype == k.TYPE_ECG):
       self.fig.tight_layout(pad=1.0)

@@ -21,9 +21,10 @@ import threading
 
 import Plot
 import const as k
+import utils
 
 FLAG_INTERRUPT = False
-FLAG_SAVE_AUDIO = True
+FLAG_SAVE_AUDIO = False
 FLAG_PLOT_AUDIO = True
 
 class AudioDevice():
@@ -40,6 +41,36 @@ class AudioDevice():
                                       input=True,
                                       frames_per_buffer = self.frames_per_buffer)
     self.audio_frames = []
+    self.is_record_started = False
+    self.n_frames = 0
+
+  ## \brief Save data to file.
+  #
+  # Save the audio data to file. If file does not exist, it is created.
+  # If file exists, data is appended to the end.
+  #
+  # When obtaining data from streaming, first
+  # call remove() to reset the file, then, inside a loop, call save_raw_data()
+  # and clear() afterwards.
+  #
+  # @param filename File where data will be stored.
+  def save_raw_data(self, filename, overwrite=0):
+    if os.path.exists(filename):
+      if (len(self.audio_frames) == 0):
+        return
+
+    if (not self.is_record_started):
+      utils.remove(filename)
+      self.is_record_started = True
+
+    if not os.path.exists(filename):
+      print (f'------ Save audio data in \"{filename}\" ------\n\n')
+      self.waveFile = wave.open(filename, 'wb')
+      self.waveFile.setnchannels(self.channels)
+      self.waveFile.setsampwidth(self.audio.get_sample_size(self.format))
+      self.waveFile.setframerate(self.rate)
+    self.waveFile.writeframes(b''.join(self.audio_frames))
+
 
   ## \brief Handles the interrupt signal.
   #
@@ -54,16 +85,30 @@ class AudioDevice():
   #
   #  @param filename
   def receive(self, filename):
+    global FLAG_INTERRUPT
+    global FLAG_SAVE_AUDIO
     signal.signal(signal.SIGINT, self.signal_handler)
     self.stream.start_stream()
     while not FLAG_INTERRUPT:
-      data = self.stream.read(self.frames_per_buffer) 
+      data = self.stream.read(self.frames_per_buffer)
       self.audio_frames.append(data)
-      print(len(self.audio_frames))
+      self.n_frames += 1
+      print("frame = %d" % self.n_frames)
+      print("len   = %d" % len(self.audio_frames))
+      if (self.n_frames == 100):
+        FLAG_SAVE_AUDIO = True
+        self.clear()
+      if (self.n_frames >= 200):
+        FLAG_INTERRUPT = True
       if (FLAG_PLOT_AUDIO):
         self.plot.plot_incremental(data, k.TYPE_AUDIO)
-    if (FLAG_SAVE_AUDIO):
-      self.stop(filename)
+      if (FLAG_SAVE_AUDIO):
+        self.save_raw_data(filename)
+        self.clear()
+
+  ## \brief Clear audio_frames
+  def clear(self):
+    self.audio_frames = []
 
   ## \brief Stop receiving audio signal and and save it to file.
   #
@@ -74,12 +119,23 @@ class AudioDevice():
       self.stream.close()
       self.audio.terminate()
 
+      self.waveFile.close()
+
+  ## \brief Stop receiving audio signal and and save it to file.
+  #
+  #  @param filename
+  def stop_old(self, filename):
+    if FLAG_INTERRUPT:
+      self.stream.stop_stream()
+      self.stream.close()
+      self.audio.terminate()
+
       waveFile = wave.open(filename, 'wb')
       waveFile.setnchannels(self.channels)
       waveFile.setsampwidth(self.audio.get_sample_size(self.format))
       waveFile.setframerate(self.rate)
       waveFile.writeframes(b''.join(self.audio_frames))
-      waveFile.close()      
+      waveFile.close()
 
   ## \brief Launch the audio recording function using a thread
   def start(self, filename):
@@ -109,7 +165,7 @@ class AudioDevice():
       time.sleep(0.1)
 
 
-def main():  
+def main():
     audiodev = AudioDevice()
     audiodev.init_plot()
 
@@ -122,7 +178,8 @@ def main():
     time.sleep(1)
     #audiodev.stop_audio_recording('test')
     print('Stop recording.')
-    
+    audiodev.stop()
+
 
 """#########################################################
 ############################################################

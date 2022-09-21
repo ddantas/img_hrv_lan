@@ -18,6 +18,7 @@ import pandas as pd
 import os
 
 import const as k
+import utils
 
 TIME_UNINITIALIZED = -1
 
@@ -48,14 +49,6 @@ class Data:
     self.timestamp = []
     self.values_ecg = []
 
-  ## \brief Remove file if file exists.
-  #
-  #  @param filename File to be removed.
-  @staticmethod
-  def remove(filename):
-    if os.path.exists(filename):
-      os.remove(filename)
-
   ## \brief Save data to file.
   #
   # Save the Polar H10 data to file. If file does not exist, it is created.
@@ -83,7 +76,7 @@ class Data:
         return
 
     if (overwrite != 0):
-      self.remove(filename)
+      utils.remove(filename)
 
     df = self.as_dataframe()
 
