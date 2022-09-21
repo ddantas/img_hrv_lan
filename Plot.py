@@ -55,14 +55,16 @@ class Plot():
     self.ax_audio.set_ylim([0, 255])
 
   def init(self):
+    print("PLot.init")
     plt.ion()
     if (self.with_audio):
-      self.fig, (self.ax_rr, self.ax_ecg, self.ax_audio) = plt.subplots(3, 1)
+      self.fig, self.ax_audio = plt.subplots()
+      self.fig.set_size_inches(3, 1)
       self.clear_audio()
     else:
       self.fig, (self.ax_rr, self.ax_ecg) = plt.subplots(2, 1)
-    self.clear_rr()
-    self.clear_ecg()
+      self.clear_rr()
+      self.clear_ecg()
     
   def plot_incremental(self, data, datatype):
     if (datatype == k.TYPE_RR):
@@ -97,8 +99,8 @@ class Plot():
         else:
           self.data_audio.extend(data_new)
         line_audio, = self.ax_audio.plot(self.data_audio, color=COLOR_AUDIO)
-        self.fig.tight_layout(pad=1.0)
-        plt.pause(0.05)
+        print(".", end="")
+        #plt.pause(0.05)
     #plt.subplots_adjust(top = 0.9)
     if (datatype == k.TYPE_RR or datatype == k.TYPE_ECG):
       self.fig.tight_layout(pad=1.0)
@@ -109,7 +111,6 @@ class Plot():
 
 def main(with_audio):
   plt.ion()
-  fig = plt.figure()
 
   data_rr = [None] * 100
   data_y = [55,40,76,34,50,20]
@@ -117,20 +118,21 @@ def main(with_audio):
   data_rr[i_rr:i_rr+len(data_y)] = data_y
 
   if (with_audio):
-    plot_rr = fig.add_subplot(311)
-    plot_ecg = fig.add_subplot(312)
-    plot_audio = fig.add_subplot(313)
+    plot_audio = plt.axes()
   else:
+    fig = plt.figure()
     plot_rr = fig.add_subplot(211)
     plot_ecg = fig.add_subplot(212)
 
-  line_rr, = plot_rr.plot(data_rr, color=COLOR_RR)
-  plt.pause(0.02)
-  line_ecg, = plot_ecg.plot(data_y, color=COLOR_ECG)
-  plt.pause(0.02)
   if (with_audio):
     line_audio, = plot_audio.plot(data_y, color=COLOR_AUDIO)
     plt.pause(0.02)
+  else:
+    line_rr, = plot_rr.plot(data_rr, color=COLOR_RR)
+    plt.pause(0.02)
+    line_ecg, = plot_ecg.plot(data_y, color=COLOR_ECG)
+    plt.pause(0.02)
+
 
 
 if __name__ == '__main__':

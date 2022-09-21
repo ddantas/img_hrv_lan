@@ -41,12 +41,6 @@ class AudioDevice():
                                       frames_per_buffer = self.frames_per_buffer)
     self.audio_frames = []
 
-    if (FLAG_PLOT_AUDIO):
-      with_audio = True
-      self.plot = Plot.Plot(with_audio)
-      self.plot.init()
-      time.sleep(0.1)
-
   ## \brief Handles the interrupt signal.
   #
   #  @param sig
@@ -56,7 +50,9 @@ class AudioDevice():
     global FLAG_INTERRUPT
     FLAG_INTERRUPT = True
 
-  # Audio starts being recorded
+  ## \brief Start receiving audio signal
+  #
+  #  @param filename
   def receive(self, filename):
     signal.signal(signal.SIGINT, self.signal_handler)
     self.stream.start_stream()
@@ -69,7 +65,9 @@ class AudioDevice():
     if (FLAG_SAVE_AUDIO):
       self.stop(filename)
 
-  # Finishes the audio recording therefore the thread too    
+  ## \brief Stop receiving audio signal and and save it to file.
+  #
+  #  @param filename
   def stop(self, filename):
     if FLAG_INTERRUPT:
       self.stream.stop_stream()
@@ -83,13 +81,37 @@ class AudioDevice():
       waveFile.writeframes(b''.join(self.audio_frames))
       waveFile.close()      
 
-  # Launches the audio recording function using a thread
+  ## \brief Launch the audio recording function using a thread
   def start(self, filename):
     audio_thread = threading.Thread(target=self.receive(filename))
     audio_thread.start()
 
-def main():
+  ## \brief Scan audio input devices and return them in a list.
+  def scan_devices(self):
+    p = self.audio
+    info = p.get_host_api_info_by_index(0)
+    numdevices = info.get('deviceCount')
+    result = []
+    for i in range(0, numdevices):
+      print("device[%d]" % i)
+      if (p.get_device_info_by_host_api_device_index(0, i).get('maxInputChannels')) > 0:
+        print("Input Device id ", i, " - ", p.get_device_info_by_host_api_device_index(0, i).get('name'))
+        string = "%02d - %s" % (i, p.get_device_info_by_host_api_device_index(0, i).get('name'))
+        result.append(string)
+    return(result)
+
+  def init_plot(self):
+    print("AudioDevice.init_plot")
+    if (FLAG_PLOT_AUDIO):
+      with_audio = True
+      self.plot = Plot.Plot(with_audio)
+      self.plot.init()
+      time.sleep(0.1)
+
+
+def main():  
     audiodev = AudioDevice()
+    audiodev.init_plot()
 
     # Start
     print('Start monitoring.')

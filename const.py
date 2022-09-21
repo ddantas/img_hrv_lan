@@ -47,6 +47,8 @@ FILENAME_RR       = "subj%d_rr.tsv"
 FILENAME_RR_S1    = "subj1_rr.tsv"
 FILENAME_RR_S2    = "subj2_rr.tsv"
 
+FILENAME_AUDIO    = "audio.wav"
+
 # "subj%d_ecg_inferred_rr.tsv"
 FILENAME_ECG_RR       = FILENAME_ECG.replace(EXT_TSV, EXT_INFERRED)
 FILENAME_ECG_RR_S1    = FILENAME_ECG_S1.replace(EXT_TSV, EXT_INFERRED)
