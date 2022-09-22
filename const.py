@@ -74,10 +74,12 @@ FILENAME_DATASET = ["dataset_jf.tsv", "dataset_dd.tsv"]
 # FILENAME_DATASET = "dataset_dd.tsv"
 FILENAME_ANNOTATION = ["annotation_jf.eaf", "annotation_dd.eaf"]
 # FILENAME_ANNOTATION = "annotation_dd.eaf"
-DATASET_HEADERS = ['folder', 'annotator', 'block', 'label', 'time', 'IsImit', 'IsSync', 'Imitator',\
-					'Model', 'hr_subj1_linear', 'hr_subj2_linear', 'hr_subj1_nearest', 'hr_subj2_nearest', \
-					'hr_subj1_ecg_linear', 'hr_subj2_ecg_linear', 'hr_subj1_ecg_nearest', 'hr_subj2_ecg_nearest', \
-					'msg1', 'msg2']
+DATASET_HEADERS = ['folder', 'annotator', 'block', 'label', 'time', 'IsImit', 'IsSync', 'Imitator', 'Model',
+                   'hr_subj1_linear',     'hr_subj2_linear',     'hr_subj1_nearest',     'hr_subj2_nearest', \
+                   'hr_subj1_ecg_linear', 'hr_subj2_ecg_linear', 'hr_subj1_ecg_nearest', 'hr_subj2_ecg_nearest', \
+                   'rr_subj1_linear',     'rr_subj2_linear',     'rr_subj1_nearest',     'rr_subj2_nearest', \
+                   'rr_subj1_ecg_linear', 'rr_subj2_ecg_linear', 'rr_subj1_ecg_nearest', 'rr_subj2_ecg_nearest', \
+                   'msg1', 'msg2']
 
 # "subj%d_rr_linear.tsv"
 FILENAME_RR_LIN          = FILENAME_RR.replace(EXT_TSV, EXT_LIN)

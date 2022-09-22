@@ -120,22 +120,30 @@ def create_data_file(input_path,
   data_hr1_linear = Data.Data.load_raw_data(filename_rr_linear1)
   data_hr2_linear = Data.Data.load_raw_data(filename_rr_linear2)
   hr1_linear = data_hr1_linear.heart_rate
+  rr1_linear = data_hr1_linear.rr_interval
   hr2_linear = data_hr2_linear.heart_rate
+  rr2_linear = data_hr2_linear.rr_interval
 
   data_hr1_nearest = Data.Data.load_raw_data(filename_rr_nearest1)
   data_hr2_nearest = Data.Data.load_raw_data(filename_rr_nearest2)
   hr1_nearest = data_hr1_nearest.heart_rate
+  rr1_nearest = data_hr1_nearest.rr_interval
   hr2_nearest = data_hr2_nearest.heart_rate
+  rr2_nearest = data_hr2_nearest.rr_interval
 
   data_hr1_ecg_linear = Data.Data.load_raw_data(filename_ecg_rr_linear1)
   data_hr2_ecg_linear = Data.Data.load_raw_data(filename_ecg_rr_linear2)
   hr1_ecg_linear = data_hr1_ecg_linear.heart_rate
+  rr1_ecg_linear = data_hr1_ecg_linear.rr_interval
   hr2_ecg_linear = data_hr2_ecg_linear.heart_rate
+  rr2_ecg_linear = data_hr2_ecg_linear.rr_interval
 
   data_hr1_ecg_nearest = Data.Data.load_raw_data(filename_ecg_rr_nearest1)
   data_hr2_ecg_nearest = Data.Data.load_raw_data(filename_ecg_rr_nearest2)
   hr1_ecg_nearest = data_hr1_ecg_nearest.heart_rate
+  rr1_ecg_nearest = data_hr1_ecg_nearest.rr_interval
   hr2_ecg_nearest = data_hr2_ecg_nearest.heart_rate
+  rr2_ecg_nearest = data_hr2_ecg_nearest.rr_interval
 
   tiers_dict, time_end = construct_dict_from_eaf(filename_annot)
 
@@ -170,17 +178,26 @@ def create_data_file(input_path,
   content['time'] = time
   content['annotator'] = annotator
   content['folder'] = [folder for i in range(len(content['time']))]
+
   content['hr_subj1_linear'] = hr1_linear
   content['hr_subj2_linear'] = hr2_linear
-
   content['hr_subj1_nearest'] = hr1_nearest
   content['hr_subj2_nearest'] = hr2_nearest
 
   content['hr_subj1_ecg_linear'] = hr1_ecg_linear
   content['hr_subj2_ecg_linear'] = hr2_ecg_linear
-
   content['hr_subj1_ecg_nearest'] = hr1_ecg_nearest
   content['hr_subj2_ecg_nearest'] = hr2_ecg_nearest
+
+  content['rr_subj1_linear'] = rr1_linear
+  content['rr_subj2_linear'] = rr2_linear
+  content['rr_subj1_nearest'] = rr1_nearest
+  content['rr_subj2_nearest'] = rr2_nearest
+
+  content['rr_subj1_ecg_linear'] = rr1_ecg_linear
+  content['rr_subj2_ecg_linear'] = rr2_ecg_linear
+  content['rr_subj1_ecg_nearest'] = rr1_ecg_nearest
+  content['rr_subj2_ecg_nearest'] = rr2_ecg_nearest
 
   dfs = []
   for key in tiers_dict.keys():
