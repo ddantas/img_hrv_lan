@@ -113,7 +113,7 @@ def linear_preprocess(filename, output_linear, t0, duration):
           continue
         hr = interp_hr(n)
         rr = interp_rr(n)
-        new_data.time.append(i)
+        new_data.time.append(n)
         new_data.heart_rate.append(hr)
         new_data.rr_interval.append(rr)
 
