@@ -15,7 +15,7 @@ Use the code below in the terminal to install Python 3.8 in the system, as expla
 > 
 > <code>$ sudo apt update</code>
 > 
-> <code>$ sudo apt install python3.8 python3.8-dev python3.8-venv idle-python3.8 -y</code>
+> <code>$ sudo apt install python3.8 python3.8-dev python3.8-venv python3.8-distutils idle-python3.8 -y</code>
 
 Create the virtual environment with
 
