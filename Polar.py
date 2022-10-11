@@ -63,6 +63,10 @@ class Polar():
     self.data_ecg = Data.Data(k.TYPE_ECG)
     self.plot = Plot.Plot()
 
+    self.loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(self.loop)
+
+
   ## \brief Handles the interrupt signal.
   #
   #  @param sig
@@ -135,9 +139,10 @@ class Polar():
     print("Metadata: ")
     pprint.pprint(d.metadata)
     
-    #loop = asyncio.get_event_loop()
-    #loop.run_until_complete(print_uuids(d))
-    asyncio.run(self.print_uuids(d))
+    #loop = asyncio.new_event_loop()
+    #asyncio.set_event_loop(loop)
+    self.loop.run_until_complete(self.print_uuids(d))
+    #asyncio.run(self.print_uuids(d))
 
   ## \brief Parse the packet with ECG data received from the Polar device.
   #
@@ -360,8 +365,8 @@ class Polar():
   #
   def list_devices_polar(self, timeout=10.0):
     #loop = asyncio.get_event_loop()
-    #result = loop.run_until_complete(list_devices("Polar"))
-    result = asyncio.run(self.list_devices("Polar", timeout))
+    result = self.loop.run_until_complete(self.list_devices("Polar", timeout))
+    #result = asyncio.run(self.list_devices("Polar", timeout))
     return result
 
 def main():
@@ -392,8 +397,9 @@ def main():
   utils.remove(filename_ecg)
   #asyncio.run(polar.receive_ecg(d.address, filename_ecg))
 
-  asyncio.run(polar.receive_both(d.address, filename_rr, filename_ecg))
-  
+  #asyncio.run(polar.receive_both(d.address, filename_rr, filename_ecg))
+  polar.loop.run_until_complete(polar.receive_both(d.address, filename_rr, filename_ecg))
+
   return devices
 
 if __name__ == '__main__':
