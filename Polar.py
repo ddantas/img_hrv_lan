@@ -65,13 +65,13 @@ class Polar():
 
     self.loop = asyncio.new_event_loop()
     asyncio.set_event_loop(self.loop)
-
+    self.loop.add_signal_handler(signal.SIGINT, self.signal_handler)
 
   ## \brief Handles the interrupt signal.
   #
   #  @param sig
   #  @param frame
-  def signal_handler(self, sig, frame):
+  def signal_handler(self):
     print('\b\bKeyboard interrupt received...')
     global FLAG_INTERRUPT
     FLAG_INTERRUPT = True
@@ -246,7 +246,7 @@ class Polar():
   #  @param filename File where RR data will be stored.
   async def receive_rr(self, mac, filename=''):
     # Listen to the SIGINT signal
-    signal.signal(signal.SIGINT, self.signal_handler)
+    #signal.signal(signal.SIGINT, self.signal_handler)
     try:
       async with BleakClient(mac) as client:
         if (not client.is_connected):
@@ -272,7 +272,7 @@ class Polar():
   #  @param filename File where ECG data will be stored.
   async def receive_ecg(self, mac, filename=''):
     # Listen to the SIGINT signal
-    signal.signal(signal.SIGINT, self.signal_handler)
+    #signal.signal(signal.SIGINT, self.signal_handler)
     try:
       async with BleakClient(mac) as client:
         if (not client.is_connected):
@@ -303,7 +303,8 @@ class Polar():
   #  @param filename_ecg File where ECG data will be stored.
   async def receive_both(self, mac, filename_rr='', filename_ecg=''):
     # Listen to the SIGINT signal
-    signal.signal(signal.SIGINT, self.signal_handler)
+    #signal.signal(signal.SIGINT, self.signal_handler)
+    #self.loop.add_signal_handler(signal.SIGINT, self.signal_handler)
     try:
       async with BleakClient(mac) as client:
         if (not client.is_connected):

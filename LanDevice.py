@@ -830,7 +830,8 @@ class Server(LanDevice):
         while self.__streaming_polar and not active:
 
             if self.polar_mac != '':
-                asyncio.run(self.receive_both(self.polar_mac, conn))
+                #asyncio.run(self.receive_both(self.polar_mac, conn))
+                self.polar.loop.run_until_complete(self.receive_both(self.polar_mac, conn))
                 active = True
 
             else:
