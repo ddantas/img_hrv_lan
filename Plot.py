@@ -36,7 +36,7 @@ class Plot():
       self.ax_audio = None
       self.data_audio = []
       self.idrop = 0
-      self.maxdrop = 10
+      self.maxdrop = 25
 
   def clear_rr(self):
     self.ax_rr.clear()
