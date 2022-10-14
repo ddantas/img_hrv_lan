@@ -15,6 +15,7 @@ import xml.etree.ElementTree as et
 from queue import Queue
 import sys
 import pandas as pd
+import re
 
 import rr_interpolation
 import rr_inference
@@ -29,75 +30,76 @@ import Data
 import const as k
 import utils
 
-def print_tree_level(level, root):
-  space = ""
-  for i in range(level):
-    space = space + "  .  "
+## \brief Converts routine to elan annotation file
+#
+#  Converts routine text to annotation in TSV format to be imported by ELAN software.
+#  The annotation is defined by routine label command.
+#
+#  @param self The object pointer.
+#  @param routine_filename Name of routine file
+#  @param output_path Folder where elan_import.txt wil be saved.
+def routine_to_tsv(routine_filename, output_path, duration):
     
-  for child in root:
-    text = child.text
-    if isinstance(text, str):
-      text = text.strip(" \n")
-    else:
-      text = ""
-    if text != "":
-      text = "<<" + text + ">>"
-      
-    print(space, child.tag, child.attrib, text)
-    print_tree_level(level + 1, child)
-    
-def print_tree(tree):
-  root = tree.getroot()
-  level = 0
-  print_tree_level(level, root)
+    try:
+        with open(routine_filename) as f:
+            routine_lines = f.readlines()
+    except:
+        tk.messagebox.showerror(title="Error in routine_to_tsv", message="Unable to open routine file %s" % routine_filename)
+        return
 
-def construct_dict_from_eaf(eaf_file):
+    arr_label_time = []
+    arr_label_str = []
+    arr_slide_time = []
+    arr_slide_str = []
+    max_time = 0.0
+    for l in routine_lines:
+        if l[0] == "#":
+            continue
 
-  tree = et.parse(eaf_file)
+        cols = l.split(";")
+        for i in range(len(cols)):
+            cols[i] = cols[i].strip("\n ")
 
-  root = tree.getroot()
+        t = float(cols[0])
+        if len(arr_label_time) and t > arr_label_time[-1]:
+            max_time = t
 
-  q = []
-  q.append(root)
-  tiers_dict = {}
-  time_slots_dict = {}
-  while len(q) > 0:
+        if ("images/slides/Slide" in cols[3]):
+            slide = re.search("\d+", cols[3])
+            slide = slide[0]
+            arr_label_time.append(t)
+            arr_label_str.append("slide")
+            #arr_slide_time.append(t)
+            arr_slide_str.append(slide)
 
-    root = q.pop()
-    first_time = 0
+        if ("pause" in cols[3]):
+            label = "pause"
+            arr_label_time.append(t)
+            arr_label_str.append(label)
+            #arr_slide_time.append(t)
+            arr_slide_str.append(label)
 
-    if root.tag == 'TIER':
-      cur_tier = root.attrib['TIER_ID'].strip()
-      tiers_dict[cur_tier] = {}
+    arr_label_time.append(max_time)
+    #arr_slide_time.append(max_time)
 
-    for child in root:
+    output_filename = os.path.join(output_path, k.FILENAME_SLIDE)
+    try:
+        of = open(output_filename, "w")
+    except:
+        tk.messagebox.showerror(title="Error in routine_to_tsv", message="Unable to open output file %s" % (output_filename))
+        return
 
-      if child.tag == 'TIME_SLOT':
-        time_slots_dict[child.attrib['TIME_SLOT_ID']] = child.attrib['TIME_VALUE']
+    of.write("time\tblock\tslide\n")
 
-      elif child.tag == 'ALIGNABLE_ANNOTATION':
-
-        for c in child:
-          value = c.text
-
-        tiers_dict[cur_tier][child.attrib['ANNOTATION_ID']] = {'TIME_SLOT_BEGIN': child.attrib['TIME_SLOT_REF1'], \
-                                                                    'TIME_SLOT_END': child.attrib['TIME_SLOT_REF2'], \
-                                                                    'ANNOTATION_VALUE': value}
-
-      q.append(child)
-
-  for tier, tier_dict in tiers_dict.items():
-    for annot_id in tier_dict.keys():
-      annot_dict = tiers_dict[tier][annot_id]
-      begin_ts_id = annot_dict['TIME_SLOT_BEGIN']
-      end_ts_id = annot_dict['TIME_SLOT_END']
-      annot_dict['TIME_SLOT_BEGIN'] = time_slots_dict[begin_ts_id]
-      annot_dict['TIME_SLOT_END'] = time_slots_dict[end_ts_id]
-
-  time_end = max(time_slots_dict.values())
-  time_end = int(time_end)//1000+1
-
-  return tiers_dict, time_end
+    print(arr_label_time)
+    print(arr_label_str)
+    print(arr_slide_str)
+    j = 0
+    for i in range(int(duration) + 1):
+      if (i == arr_label_time[j+1] and i < max_time):
+        j = j + 1
+      of.write("%d\t%s\t%s\n" % (i, arr_label_str[j], arr_slide_str[j]))
+    of.close()
 
 
 def create_data_file(input_path,
@@ -105,17 +107,14 @@ def create_data_file(input_path,
        filename_rr_nearest1, filename_rr_nearest2,
        filename_ecg_rr_linear1, filename_ecg_rr_linear2,
        filename_ecg_rr_nearest1, filename_ecg_rr_nearest2,
-       filename_annot, filename_dataset):
-
+       filename_slides, filename_dataset, duration):
   
-  print("Annotation filename: " + filename_annot)
   print("Dataset filename: " + filename_dataset)
-  filename = os.path.basename(filename_annot)
-  print("Filename: " + filename)
-  basename = os.path.splitext(filename)[0]
-  print("Basename: " + basename)
-  annotator_name = basename.split("_")[-1]
-  print("Annotator: " + annotator_name)
+  print("Slides filename: " + filename_slides)
+
+  data_slides = pd.read_csv(filename_slides, sep="\t")
+  block = data_slides.block
+  slide = data_slides.slide
 
   data_hr1_linear = Data.Data.load_raw_data(filename_rr_linear1)
   data_hr2_linear = Data.Data.load_raw_data(filename_rr_linear2)
@@ -145,38 +144,17 @@ def create_data_file(input_path,
   hr2_ecg_nearest = data_hr2_ecg_nearest.heart_rate
   rr2_ecg_nearest = data_hr2_ecg_nearest.rr_interval
 
-  tiers_dict, time_end = construct_dict_from_eaf(filename_annot)
-
   time = []
   annotator = []
   content = {}
-  for i in range(time_end):
+  for i in range(int(duration) + 1):
     time.append(i)
-    annotator.append(annotator_name)
-
-    for tier in tiers_dict.keys():
-
-      v = ''
-      for annot_id, annot_dict in tiers_dict[tier].items():
-
-        begin_ts = annot_dict['TIME_SLOT_BEGIN']
-        end_ts = annot_dict['TIME_SLOT_END']
-        value = annot_dict['ANNOTATION_VALUE']
-
-        if i >= int(begin_ts)//1000 and i <= int(end_ts)//1000:
-          v = value
-          break
-        else:
-          v = ''
-      try :
-        content[tier].append(v)
-      except:
-        content[tier] = [v]
 
   folder = os.path.basename(os.path.normpath(input_path))
 
   content['time'] = time
-  content['annotator'] = annotator
+  content['block'] = block
+  content['slide'] = slide
   content['folder'] = [folder for i in range(len(content['time']))]
 
   content['hr_subj1_linear'] = hr1_linear
@@ -200,8 +178,6 @@ def create_data_file(input_path,
   content['rr_subj2_ecg_nearest'] = rr2_ecg_nearest
 
   dfs = []
-  for key in tiers_dict.keys():
-    content[key] = ["" if val is None else val.strip() for val in content[key]]
 
   for h in k.DATASET_HEADERS:
     print(h)
@@ -214,11 +190,14 @@ def create_data_file(input_path,
   
   df.to_csv(filename_dataset, sep = '\t', index=False, mode = "w", header = True)
 
-def write_to_dataset(input_path, path_prep, filename_dataset, filename_annot):
+def write_to_dataset(input_path, path_prep, filename_dataset):
 
   filename_routine = os.path.join(input_path, k.FILENAME_ROUTINE)
-  t0 = utils.get_time_start(filename_routine)
+  filename_start_time = os.path.join(input_path, k.FILENAME_START_TIME)
+  t0 = utils.get_time_start(filename_start_time)
   duration = utils.get_duration_ideal(filename_routine)
+
+  routine_to_tsv(filename_routine, path_prep, duration)
 
   ## interpolate
   # subj%d_rr.tsv
@@ -265,8 +244,6 @@ def write_to_dataset(input_path, path_prep, filename_dataset, filename_annot):
   # 02_preprocess/subj%d_ecg_inferred_rr_nearest.tsv
   filename_ecg_rr_nearest1 = os.path.join(path_prep, k.FILENAME_ECG_RR_NN_S1)
   filename_ecg_rr_nearest2 = os.path.join(path_prep, k.FILENAME_ECG_RR_NN_S2)
-  # annotation.eaf
-  filename_annot = os.path.join(input_path, filename_annot)
 
   ## Linear and NN interpolation
   rr_interpolation.interpolate(filename_rr1, filename_rr_nearest1, filename_rr_linear1, t0, duration)
@@ -275,6 +252,9 @@ def write_to_dataset(input_path, path_prep, filename_dataset, filename_annot):
   rr_interpolation.interpolate(filename_ecg_rr1, filename_ecg_rr_nearest1, filename_ecg_rr_linear1, t0, duration)
   rr_interpolation.interpolate(filename_ecg_rr2, filename_ecg_rr_nearest2, filename_ecg_rr_linear2, t0, duration)
 
+  # subj%d_rr_inferred_from_ecg.tsv
+  filename_slides = os.path.join(path_prep, k.FILENAME_SLIDE)
+
   ## Generate dataset.tsv
   print("Generating complete dataset...")
   create_data_file(input_path,
@@ -282,7 +262,7 @@ def write_to_dataset(input_path, path_prep, filename_dataset, filename_annot):
        filename_rr_nearest1, filename_rr_nearest2,
        filename_ecg_rr_linear1, filename_ecg_rr_linear2,
        filename_ecg_rr_nearest1, filename_ecg_rr_nearest2,
-       filename_annot, filename_dataset)
+       filename_slides, filename_dataset, duration)
   print("Done.")
 
 """#########################################################
@@ -301,17 +281,10 @@ def main(dir_list):
       os.mkdir(path_prep)
 
     files = os.listdir(input_path)
-    for filename_ds, filename_annot in zip(k.FILENAME_DATASET, k.FILENAME_ANNOTATION):
-
-      if filename_annot in files:
-        filename_dataset = os.path.join(d, k.FOLDER_PREP, filename_ds)
-        print(filename_dataset)
-        write_to_dataset(input_path, path_prep, filename_dataset, filename_annot)
-
-      else:
-        if filename_annot not in files:
-          print(f"Could not find {filename_annot}... Skipping")
-
+    filename_ds = "dataset.tsv"
+    filename_dataset = os.path.join(d, k.FOLDER_PREP, filename_ds)
+    print(filename_dataset)
+    write_to_dataset(input_path, path_prep, filename_dataset)
 
 if __name__ == "__main__":
 

@@ -26,12 +26,12 @@ def adjust_filename(filename, file_suffix):
 #
 #  @param filename_routine File where a copy of the routine was
 #    saved. Contains the timestamp for when the capture started.
-def get_time_start(filename_routine):
+def get_time_start(filename_timestamp):
 
-  if not(os.path.exists(filename_routine)):
-    print("Error opening file: " + filename_routine)
+  if not(os.path.exists(filename_timestamp)):
+    print("Error opening file: " + filename_timestamp)
 
-  with open(filename_routine) as f:
+  with open(filename_timestamp) as f:
     lines = f.readlines()
     # first line of the routine file is the timestamp of the start of the routine
     start_timestamp = float(lines[0])
