@@ -8,8 +8,8 @@ library(stringr)
 
 library(ggplot2)
 
-GENERATE = TRUE
-REPORT   = FALSE
+GENERATE = FALSE
+REPORT   = TRUE
 
 source("utils.R")
 source("analysis.R")
@@ -28,7 +28,7 @@ if (length(folders) == 0)
               "../data/003",
               "../data/004",
               "../data/005")
-  folders = c("../data/001")
+  #folders = c("../data/001")
 }
 
 #ds_files = c("02_preprocess/dataset_dd.tsv", "02_preprocess/dataset_jf.tsv")
@@ -41,6 +41,7 @@ if (GENERATE)
 }
 
 ###########################################################
+df = load_data(filename_dataset)
 
 confidence = 0.95
 prompt     = 0

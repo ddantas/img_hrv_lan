@@ -1,34 +1,57 @@
 ################################################################################
 ## Com rank
 
-get_pdc <- function(df) {
-    
-    data <- as.matrix(df)
+get_pdc_new <- function(df_pdc) {
 
-    data[, 1] <- rank(data[, 1])
-    data[, 2] <- rank(data[, 2])
+    data_pdc <- as.matrix(df_pdc)
+
+    for (c in ncol(data_pdc)) {
+        data_pdc[, c] <- rank(data_pdc[, c])
+    }
+
     # A função utiliza PDC de forma errada enquanto não temos a posição da mão dos participantes
     # para realizar a covariância. Além disso, o retorno dela foi alterado para conter variáveis dummy.
 
-    ## Seleciona a ordem do VAR/PDC usando o pico da coorrelação cruzada
-    tmp <- ccf(data[,1], data[,2], plot=FALSE)
+    ## Seleciona a ordem do VAR/PDC usando o pico da coorrelação cruzada. Lag não pode ser zero.
+    tmp <- ccf(data_pdc[,1], data_pdc[,2], plot=FALSE)
+    tmp$acf[which(tmp$lag == 0)] = 0.0
     p <- abs(tmp$lag[which(abs(tmp$acf) == max(abs(tmp$acf)))])
 
-    # tmp <- PDC(data[,c(1,2,3)], p=p, srate=1, maxBoot=1000, plot=TRUE) ## se < 0.05, Granger do player 1 para o 2
-    tmp <- PDC(data[,c(1,2)], p=p, srate=1, maxBoot=1000, plot=TRUE) ## se < 0.05, Granger do player 1 para o 2
+    res <- PDC(data_pdc, p=p, srate=1, maxBoot=1000, plot=TRUE) ## se < 0.05, Granger do player 1 para o 2
+    return(res)
+}
+
+get_pdc <- function(df_pdc) {
+    
+    data_pdc <- as.matrix(df_pdc)
+
+    for (c in ncol(data_pdc)) {
+        data_pdc[, c] <- rank(data_pdc[, c])
+    }
+
+    # A função utiliza PDC de forma errada enquanto não temos a posição da mão dos participantes
+    # para realizar a covariância. Além disso, o retorno dela foi alterado para conter variáveis dummy.
+
+    ## Seleciona a ordem do VAR/PDC usando o pico da coorrelação cruzada. Lag não pode ser zero.
+    tmp <- ccf(data_pdc[,1], data_pdc[,2], plot=FALSE)
+    tmp$acf[which(tmp$lag == 0)] = 0.0
+    p <- abs(tmp$lag[which(abs(tmp$acf) == max(abs(tmp$acf)))])
+
+    hand_pos1 = c(3, 4)
+    hand_pos2 = c(5, 6)
+
+    tmp <- PDC(data_pdc[,c(1,2, hand_pos1)], p=p, srate=1, maxBoot=1000, plot=TRUE) ## se < 0.05, Granger do player 1 para o 2
     res_12 <- list()
     res_12$pdc <- tmp$pdc[1,2]
     res_12$p.value <- tmp$p.value[1,2]
 
-    print(c(res_12, res_12))
-    # tmp <- PDC(data[,c(1,2,4)], p=p, srate=1, maxBoot=1000, plot=TRUE) ## se < 0.05, Granger do player 2 para o 1
-    # res_21 <- list()
-    # res_21_p <- tmp$p.value[2,1]
-    # res_21_pdc <- tmp$pdc[2,1]
+    tmp <- PDC(data_pdc[,c(1,2, hand_pos2)], p=p, srate=1, maxBoot=1000, plot=TRUE) ## se < 0.05, Granger do player 2 para o 1
+    res_21 <- list()
+    res_21$pdc <- tmp$pdc[2,1]
+    res_21$p.value <- tmp$p.value[2,1]
 
 
-    # return(c(res_12, res_21))
-    return(c(res_12, res_12))
+    return(list(res_12, res_21))
 }
 
 get_correlationts <- function(df) {
@@ -92,24 +115,28 @@ get_correlationts <- function(df) {
 
 ## Calcula a correlação entre duas séries temporais e o p-valor via block bootstrap
 correlationts <- function(x, y, block=10, nboot=500) {
-	
-	orig <- abs(cor(x,y))
-	
-	distr <- array(0, nboot)
-	for(boot in 1:nboot) {
-		nblock <- length(x)/block
-		tmpx <- sample(seq(1:(length(x)-block)), size=nblock, replace=TRUE)
-		tmpy <- sample(seq(1:(length(x)-block)), size=nblock, replace=TRUE)
-		x.b <- 0
-		y.b <- 0
-		for(i in 1:nblock) {
-			x.b <- c(x.b, x[tmpx[i]:(tmpx[i]+block-1)])
-			y.b <- c(y.b, y[tmpy[i]:(tmpy[i]+block-1)])
-		}
-		distr[boot] <- abs(cor(x.b, y.b))
-	}
-	p <- length(which(distr > orig))/nboot
-	return (p)
+
+    orig <- abs(cor(x, y, method="spearman"))
+
+    distr <- array(0, nboot)
+    for(boot in 1:nboot) {
+        nblock <- length(x)/block
+        tmpx <- sample(seq(1:(length(x)-block)), size=nblock, replace=TRUE)
+        tmpy <- sample(seq(1:(length(x)-block)), size=nblock, replace=TRUE)
+        x.b <- 0
+        y.b <- 0
+        for(i in 1:nblock) {
+            x.b <- c(x.b, x[tmpx[i]:(tmpx[i]+block-1)])
+            y.b <- c(y.b, y[tmpy[i]:(tmpy[i]+block-1)])
+        }
+        distr[boot] <- abs(cor(x.b, y.b, method="spearman"))
+    }
+    p <- length(which(distr > orig))/nboot
+
+    res <- list()
+    res$p.value <- p
+    res$coef    <- orig
+    return (res)
 }
 
 
@@ -117,7 +144,6 @@ VAR <- function(x, p=1) {
 
     T <- dim(x)[1]
     K <- dim(x)[2]
-
 
     for (k in 1:K) {
         x[,k] <- (x[,k] - mean(x[,k])) # / sd(x[,k])
@@ -181,8 +207,16 @@ VAR <- function(x, p=1) {
 #'    @param plot logical indicating if plot or not the PDC
 #'    @return pvalue matrix containing the pvalues for PDC from graph i (i-th row) to graph j (j-th column)
 PDC <- function(x, p=1, srate=1, maxBoot=300, plot=FALSE) {
+    # The value of p should never be zero. If so, search for the second highest correlation.
+    # Ideally, use Akaike information criterion (AIC) or Bayesian information criretion (BIC).
+    #if (p <= 0)
+    #{
+    #  p = 1
+    #}
+
     T <- dim(x)[1]
     K <- dim(x)[2]
+    pvalue <- matrix(-1, K, K)
 
 #    for (k in 1:K) {
 #        x[,k] <- x[,k] - mean(x[,k])
@@ -196,6 +230,16 @@ PDC <- function(x, p=1, srate=1, maxBoot=300, plot=FALSE) {
         for (pp in 2:p) {
             Z <- cbind(Z, x[(p-pp+1):(T-p+p-pp), ])
         }
+    }
+
+    tZZ = t(Z)%*%Z
+    if(det(tZZ) == 0)
+    {
+      res = list()
+      res$p.value = pvalue
+      res$pdc = pvalue
+      res$lag = p
+      return(res)
     }
 
     B <- qr.solve(t(Z)%*%Z)%*%t(Z)%*%Y
@@ -217,14 +261,12 @@ PDC <- function(x, p=1, srate=1, maxBoot=300, plot=FALSE) {
 
     pdc.orig <- GPDC(x, res, plot=plot)
 
-	sum.pdc <- matrix(0, K, K)
-	for (i in 1:K) {
-		for (j in 1:K) {
-			sum.pdc[i,j] <- sum(pdc.orig[i,j,])
-		}
-	}
-
-    pvalue <- matrix(0, K, K)
+    sum.pdc <- matrix(0, K, K)
+    for (i in 1:K) {
+        for (j in 1:K) {
+            sum.pdc[i,j] <- sum(pdc.orig[i,j,])
+        }
+    }
 
     for (source in 1:K) {
         for (target in 1:K) {
@@ -274,6 +316,7 @@ PDC <- function(x, p=1, srate=1, maxBoot=300, plot=FALSE) {
     res <- list()
     res$p.value <- pvalue
     res$pdc <- sum.pdc
+    res$lag = p
     return(res)
 }
 
@@ -302,7 +345,7 @@ GPDC <- function(x, model, srate= 1, plot=FALSE) {
         for(i in 1:K){
             for(j in 1:K){
 #                if (j == 2 && i==1) {
-#                	pdf(file="/Volumes/GoogleDrive/My Drive/Projeto-rank/figuras/xxx12-norank.pdf", width=4, height=4)
+#                   pdf(file="/Volumes/GoogleDrive/My Drive/Projeto-rank/figuras/xxx12-norank.pdf", width=4, height=4)
 #                        plot(x=xaxis, y=Apdc[j,i,], xlim=c(0, 0.3), ylim=c(0,1), xlab="", ylab="", type="l", lwd=5)
 #                    dev.off()
 #                }
@@ -350,3 +393,33 @@ GPDC1 <- function(model, lambda, K){
     return(Apdc^2)
 }
 
+covar <- function(dados, method="spearman")
+{
+    ncols = ncol(dados)
+    nrows = nrow(dados)
+    R <- cor(dados, method=c(method))
+    Rinv <- solve(R)
+    D <- diag(1/sqrt(diag(Rinv)))
+    P <- -D %*% Rinv %*% D
+    result$P = P
+    for (i in 1:ncols) {
+        P[i,i] <- 1
+    }
+    tvalue <- matrix(0, ncols, ncols)
+    k <- ncols - 2
+    for (i in 1:(ncols - 1)) {
+        for (j in (i+1):ncols) {
+            tvalue[i,j] <- ((sqrt(nrows-k-2)*P[i,j])/(sqrt(1-P[i,j]^2)))
+            tvalue[j,i] <- tvalue[i,j]
+        }
+    }
+    result$tvalue = tvalue
+    return(result)
+#    pvalue <- matrix(0, num_genes,num_genes)
+#    for (i in 1:(num_genes-1)) {
+#        for (j in (i+1):num_genes) {
+#            pvalue[i,j] <- 2*(1-pt(abs(tvalue[i,j]), (tam_amostra-k-2)))
+#            pvalue[j,i] <- pvalue[i,j]
+#        }
+#    }
+}

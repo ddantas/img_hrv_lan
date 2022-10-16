@@ -51,18 +51,18 @@ same_mean_test_unpaired <- function(x, y, str_title, confidence=0.95, label1="Te
     }
   }
   ##########
-  writeLines("Mann-Whitney U-test (nonparametric)")
-  result3 = wilcox.test(x, y, paired=FALSE)
-  writeLines(paste("P-value = ", result3$p.value))
-  if (!is.nan(result3$p.value))
-  {
-    if (result3$p.value < significance){
-      writeLines(paste("P-value smaller than", significance, ": Sample means are DIFFERENT.\n"), sep="")
-    }
-    else{
-      writeLines(paste("P-value greater than", significance, ": Sample means are EQUAL.\n"), sep="")
-    }
-  }
+  #writeLines("Mann-Whitney U-test (nonparametric)")
+  #result3 = wilcox.test(x, y, paired=FALSE)
+  #writeLines(paste("P-value = ", result3$p.value))
+  #if (!is.nan(result3$p.value))
+  #{
+  #  if (result3$p.value < significance){
+  #    writeLines(paste("P-value smaller than", significance, ": Sample means are DIFFERENT.\n"), sep="")
+  #  }
+  #  else{
+  #    writeLines(paste("P-value greater than", significance, ": Sample means are EQUAL.\n"), sep="")
+  #  }
+  #}
 }
 
 
