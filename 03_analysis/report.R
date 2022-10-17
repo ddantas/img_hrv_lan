@@ -92,6 +92,23 @@ report <- function(inputFile, outputFile, outputDir, df, df_stack, df_role, conf
     c("df$folder == 4", "ex04"),
     c("df$folder == 5", "ex05") )
 
+  arr_slide = c("slpause")
+  cond_slide = rbind(
+    c("df$slide == 'pause'",                              "slpause",     "Subject 1", "Subject 2") )
+    for (i in seq(47))
+    {
+      if (i != 8 & i != 46)
+      {
+        str_cond = sprintf("df$slide == '%02d'", i)
+        str_label = sprintf("sl%02d", i)
+        arr_slide = c(arr_slide, str_label)
+        cond_new = c(str_cond,                            str_label,         "Subject 1", "Subject 2")
+        cond_slide = rbind(cond_slide, cond_new)
+      }
+    }
+  rownames(cond_slide) = NULL
+  print(cond_slide)
+
   cond_label = rbind(
     c("df$block == 'pause'",                              "block_pause"),
     c("df$block == 'slide'",                              "block_slide") )
@@ -102,21 +119,19 @@ report <- function(inputFile, outputFile, outputDir, df, df_stack, df_role, conf
                         to_col = numeric(0),
                         val = numeric(0))
 
-  #ic_min = nrow(conditions) + 1
-  ic_min = 1
-  ica = 1
-  #for (icf in seq(1))
+  ic_min = nrow(conditions) + 1
   for (icf in seq(1, nrow(cond_folder)))
   {
-    for (icl in seq(1, nrow(cond_label)))
+    for (ics in seq(1, nrow(cond_slide)))
     {
-      cond_new = c(paste(cond_folder[icf, 1], ' & ', cond_label[icl, 1], sep=''),
-                   paste(cond_folder[icf, 2],  '_',  cond_label[icl, 2], sep=''),
+      cond_new = c(paste(cond_folder[icf, 1], ' & ', cond_slide[ics, 1], sep=''),
+                   paste(cond_folder[icf, 2],  '_',  cond_slide[ics, 2], sep=''),
                    "Subject 1", "Subject 2")
       conditions = rbind(conditions, cond_new)
     }
   }
   rownames(conditions) = NULL
+  print(conditions)
 
   #for (ic in seq(ic_min, ic_min+6))
   for (ic in seq(1, dim(conditions)[1]))
@@ -214,37 +229,45 @@ report <- function(inputFile, outputFile, outputDir, df, df_stack, df_role, conf
     }
   }
   print(df_pvals)
+  save_data(df_pvals, "dataset_pvals.tsv")
+  df_prev = load_data("dataset_prev.tsv")
   if (DANTAS_CORR)
   {
-    writeLines(paste("<h3>Wilcoxon paired P-values for every combination of block</h3>", sep=""))
-    arr_label = c("pause", "slide")
+    writeLines(paste("<h3>Wilcoxon paired P-values for every combination of slide</h3>", sep=""))
     writeLines(paste("<table border=1>", sep=""))
     writeLines(paste("  <tr>", sep=""))
     writeLines(paste("    <td></td>", sep=""))
     print("chk200")
-    for (j in seq(length(arr_label)))
+    df_pvals$prev = 0
+    for (j in seq(length(arr_slide)))
     {
-      str_j = arr_label[j]
+      str_j = arr_slide[j]
+      print(str_j)
+      if (str_j != "slpause")
+      {
+        df_pvals[df_pvals$label == str_j, "prev"] = df_prev[df_prev$label == str_j, "prev"]
+      }
       writeLines(paste("    <td>", str_j, "</td>", sep=""))
     }
+    save_data(df_pvals, "dataset_pvals.tsv")
     print("chk300")
     writeLines(paste("  </tr>", sep=""))
-    for (i in seq(length(arr_label)))
+    for (i in seq(length(arr_slide)))
     {
       ##########
       print("chk400")
-      str_i = arr_label[i]
+      str_i = arr_slide[i]
       writeLines(paste("  <tr>", sep=""))
       writeLines(paste("    <td>", str_i, "</td>", sep=""))
       arr_i = df_pvals[df_pvals$to_col=="corr12" & df_pvals$label==str_i, "val"]
-      for (j in seq(length(arr_label)))
+      for (j in seq(length(arr_slide)))
       {
         if (i <= j)
         {
           writeLines(paste("    <td>-</td>", sep=""))
           next
         }
-        str_j = arr_label[j]
+        str_j = arr_slide[j]
         arr_j = df_pvals[df_pvals$to_col=="corr12" & df_pvals$label==str_j, "val"]
         print("chk500")
         print(arr_i)
@@ -252,7 +275,7 @@ report <- function(inputFile, outputFile, outputDir, df, df_stack, df_role, conf
         print(arr_j)
         print(paste("arr j has len ", nrow(arr_j)))
 
-        result = wilcox.test(arr_i, arr_j, paired=TRUE)
+        result = t.test(arr_i, arr_j, paired=TRUE)
         pval = result$p.value
         pval_color
         writeLines(paste("    <td><div style='color:", pval_color(pval), "'>", pval, "</div></td>", sep=""))
@@ -267,9 +290,106 @@ report <- function(inputFile, outputFile, outputDir, df, df_stack, df_role, conf
     {
       outputFile     = paste("boxplot_report_", str_title, ".png", sep="")
       outputFullname = paste(outputDir, "/", outputSubdir, "/", outputFile, sep="")
-      png(outputFullname, width=640);
+      png(outputFullname, width=1280);
     }
     x = ggplot(df_pvals[df_pvals$to_col == "corr12",], aes(x=label, y=.data$val, color=label)) + geom_boxplot()
+    grid::grid.draw(x)
+    if (outputDir != "")
+    {
+      writeLines(paste("<td><img src='", outputSubdir, "/", outputFile, "'></td>", sep=""))
+      writeLines("")
+      writeLines("")
+      dev.off()
+    }
+    ##########
+    str_title = "boxplot_every_label_combination_sort"
+    outputSubdir = "plot_report"
+    if (outputDir != "")
+    {
+      outputFile     = paste("boxplot_report_", str_title, ".png", sep="")
+      outputFullname = paste(outputDir, "/", outputSubdir, "/", outputFile, sep="")
+      png(outputFullname, width=1280);
+    }
+    x = ggplot(df_pvals[df_pvals$to_col == "corr12",], aes(x=reorder(label, val, FUN=median), y=.data$val, color=label)) + geom_boxplot()
+    grid::grid.draw(x)
+    if (outputDir != "")
+    {
+      writeLines(paste("<td><img src='", outputSubdir, "/", outputFile, "'></td>", sep=""))
+      writeLines("")
+      writeLines("")
+      dev.off()
+    }
+    ##########
+    str_title = "boxplot_every_label_combination_sort_label"
+    outputSubdir = "plot_report"
+    if (outputDir != "")
+    {
+      outputFile     = paste("boxplot_report_", str_title, ".png", sep="")
+      outputFullname = paste(outputDir, "/", outputSubdir, "/", outputFile, sep="")
+      png(outputFullname, width=1280, height=720);
+    }
+    plot1 = ggplot(df_pvals[df_pvals$to_col == "corr12",], aes(x=label, y=.data$val, color=label)) + geom_boxplot()
+    plot2 = ggplot(df_pvals, aes(x=label, y=prev, color="red")) + geom_point() + geom_line()
+    grid::grid.draw(plot1 / plot2 + plot_layout(heights=c(4,4)))
+    if (outputDir != "")
+    {
+      writeLines(paste("<td><img src='", outputSubdir, "/", outputFile, "'></td>", sep=""))
+      writeLines("")
+      writeLines("")
+      dev.off()
+    }
+    ##########
+    str_title = "boxplot_every_label_combination_sort_prev"
+    outputSubdir = "plot_report"
+    if (outputDir != "")
+    {
+      outputFile     = paste("boxplot_report_", str_title, ".png", sep="")
+      outputFullname = paste(outputDir, "/", outputSubdir, "/", outputFile, sep="")
+      png(outputFullname, width=1280, height=720);
+    }
+    plot1 = ggplot(df_pvals[df_pvals$to_col == "corr12",], aes(x=label, y=.data$val, color=label)) + geom_boxplot()
+    plot2 = ggplot(df_pvals, aes(x=reorder(label, prev, FUN=median), y=prev, color="red")) + geom_point() + geom_line()
+    grid::grid.draw(plot1 / plot2 + plot_layout(heights=c(4,4)))
+    if (outputDir != "")
+    {
+      writeLines(paste("<td><img src='", outputSubdir, "/", outputFile, "'></td>", sep=""))
+      writeLines("")
+      writeLines("")
+      dev.off()
+    }
+    ##########
+    str_title = "boxplot_every_label_combination_sort_corr"
+    outputSubdir = "plot_report"
+    if (outputDir != "")
+    {
+      outputFile     = paste("boxplot_report_", str_title, ".png", sep="")
+      outputFullname = paste(outputDir, "/", outputSubdir, "/", outputFile, sep="")
+      png(outputFullname, width=1280, height=720);
+    }
+    plot1 = ggplot(df_pvals[df_pvals$to_col == "corr12",], aes(x=reorder(label, val, FUN=median), y=.data$val, color=label)) + geom_boxplot()
+    plot2 = ggplot(df_pvals, aes(x=reorder(label, val, FUN=median), y=prev, color="red")) + geom_point() + geom_line()
+    grid::grid.draw(plot1 / plot2 + plot_layout(heights=c(4,4)))
+    if (outputDir != "")
+    {
+      writeLines(paste("<td><img src='", outputSubdir, "/", outputFile, "'></td>", sep=""))
+      writeLines("")
+      writeLines("")
+      dev.off()
+    }
+    ##########
+    str_title = "scatter_every_label_combination"
+    outputSubdir = "plot_report"
+    if (outputDir != "")
+    {
+      outputFile     = paste("boxplot_report_", str_title, ".png", sep="")
+      outputFullname = paste(outputDir, "/", outputSubdir, "/", outputFile, sep="")
+      png(outputFullname, width=640);
+    }
+    df_scat1 = aggregate(df_pvals[df_pvals$to_col == "corr12", "val"], list(df_pvals[df_pvals$to_col == "corr12", "label"]), median)
+    df_scat2 = aggregate(df_pvals[df_pvals$to_col == "corr12", "prev"], list(df_pvals[df_pvals$to_col == "corr12", "label"]), median)
+    df_scat = cbind(df_scat1, df_scat2)
+    colnames(df_scat) = c("label", "corr", "label2", "prev")
+    x = ggplot(df_scat[, c("corr", "prev")], aes_string(x="corr", y="prev")) + geom_point() + stat_cor()
     grid::grid.draw(x)
     if (outputDir != "")
     {

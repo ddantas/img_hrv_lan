@@ -5,6 +5,13 @@ load_data <- function(filename){
   return(data)
 }
 
+save_data <- function(df_new, filename){
+
+  write.table(df_new, file=filename, sep="\t", row.names=FALSE)
+
+  return(data)
+}
+
 concatenate_datasets <- function(folders, filename_output, ds_files) {
 
   columns = c("folder", "time", "block", "slide",

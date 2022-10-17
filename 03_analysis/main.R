@@ -6,7 +6,9 @@ library(nortest)
 #str_pad
 library(stringr)
 
+#ggplot, stat_cor
 library(ggplot2)
+library(ggpubr)
 
 GENERATE = FALSE
 REPORT   = TRUE
