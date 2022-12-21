@@ -1,0 +1,4559 @@
+<tt><pre>
+
+
+
+**********************************************************************
+**********************************************************************
+**********************************************************************
+input file:   dataset.tsv
+output file:  report.html
+output dir:   saida
+...
+
+
+
+
+**********************************************************************
+**********************************************************************
+**********************************************************************
+<h2>Descriptive statistics in original dataset</h2>
+...
+Descriptive statistics from each column in original dataset
+
+                       Length       Min.     1st Qu.      Median          Mean     3rd Qu.        Max.         SD
+hr_subj1_linear         10505  67.000000  76.2271275  80.7787554  8.216783e+01  87.9281696  109.000000  7.3950935
+hr_subj2_linear         10505  60.000000  69.4807874  72.5229918  7.293962e+01  76.0000000  103.853597  5.1378651
+hr_subj1_nearest        10505  67.000000  76.0000000  81.0000000  8.216802e+01  88.0000000  109.000000  7.4007295
+hr_subj2_nearest        10505  60.000000  69.0000000  73.0000000  7.293927e+01  76.0000000  104.000000  5.1439230
+hr_subj1_ecg_linear     10505  56.256155  75.4898495  81.2160486  8.184310e+01  87.9271021  112.092545  8.6025536
+hr_subj2_ecg_linear     10505  54.514631  68.2861782  72.3215120  7.263934e+01  76.3274427  106.900406  6.4121692
+hr_subj1_ecg_nearest    10505  55.708581  75.4251144  81.3512388  8.184828e+01  88.0834829  112.109660  8.6366171
+hr_subj2_ecg_nearest    10505  54.485215  68.2762818  72.3452814  7.264232e+01  76.4157478  106.807770  6.4848734
+rr_subj1_linear         10505 448.157552 697.0435826 753.3717576  7.583712e+02 813.6344449 1136.340209 81.6489071
+rr_subj2_linear         10505 563.689322 797.5509680 846.5669418  8.529106e+02 903.7288460 1207.750812 84.9185541
+rr_subj1_nearest        10505 425.000000 696.0000000 753.0000000  7.583633e+02 814.0000000 1152.000000 82.4935490
+rr_subj2_nearest        10505 561.000000 790.0000000 845.0000000  8.527644e+02 909.0000000 1241.000000 89.9074500
+rr_subj1_ecg_linear     10505 549.432494 698.0803056 755.1784668  7.598831e+02 815.8361658 1384.287370 82.5426387
+rr_subj2_ecg_linear     10505 573.855170 798.8473678 850.1808238  8.562459e+02 909.7183034 1203.432753 84.8444258
+rr_subj1_ecg_nearest    10505 550.682373 700.1132812 755.2312012  7.598327e+02 818.1669922 1400.324463 83.4512662
+rr_subj2_ecg_nearest    10505 573.071289 792.9157715 847.8703613  8.560772e+02 910.7238770 1240.416260 91.2873433
+d_hr_subj1_linear       10505  -8.434968  -0.4480724   0.0000000 -1.291664e-03   0.7598333    4.351114  0.9317865
+d_hr_subj2_linear       10505  -8.172170  -0.4445706   0.0000000 -2.284478e-03   0.1179880    4.126019  0.6963235
+d_hr_subj1_nearest      10505  -9.000000   0.0000000   0.0000000 -1.142313e-03   1.0000000    5.000000  0.9769812
+d_hr_subj2_nearest      10505  -8.000000   0.0000000   0.0000000 -2.379819e-03   0.0000000    4.000000  0.7786750
+d_hr_subj1_ecg_linear   10505 -20.171450  -1.4286780   0.3158724 -1.713920e-03   1.8017824    7.475662  2.6460043
+d_hr_subj2_ecg_linear   10505 -14.252085  -1.4861003   0.1756668 -1.569399e-04   1.6555752    8.684610  2.5181561
+d_hr_subj1_ecg_nearest  10505 -26.872135  -1.3454594   0.2977941 -1.830774e-03   1.7412145   11.886438  2.8308244
+d_hr_subj2_ecg_nearest  10505 -20.290902  -1.6116448   0.2175615 -5.139181e-04   1.7747073   11.850243  2.8295990
+
+
+
+
+**********************************************************************
+**********************************************************************
+**********************************************************************
+<h2>Distributions of Test and Control groups in original dataset</h2>
+[1] "ic =  1"
+[1] "ic_min =  1"
+...
+<h3>exp_all__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_all__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_all__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  124.799572238868
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_all__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  39.7263175380758
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_all__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  2.07167652825155
+Interval = [ 1.99393251131382 ,  2.15245180734851 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_all__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (82.1678280252731 &plusmn; 7.39509350649123)
+Subject 2 (Mean &plusmn; SD) = (72.9396204121443 &plusmn; 5.13786509690409)
+Student unpaired equal variances t-test (parametric)
+P-value =  0
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  0
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_all__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_all__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_all__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_all__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_all__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0
+
+$coef
+[1] 0.2934089
+
+[1] "chk100"
+Correlation =  0.293408857697659
+[1] "chk110"
+P-value     =  0
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  2"
+[1] "ic_min =  1"
+...
+<h3>exp_block_pause__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_block_pause__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  28.245005906032
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  12.5344509367756
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.77924601942886
+Interval = [ 1.64236749881759 ,  1.9275322970849 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (82.6939544965657 &plusmn; 7.9407742575827)
+Subject 2 (Mean &plusmn; SD) = (74.4911309504941 &plusmn; 5.95312290032872)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.26751321962931e-308
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.90440713250295e-305
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0
+
+$coef
+[1] 0.4437288
+
+[1] "chk100"
+Correlation =  0.443728793542638
+[1] "chk110"
+P-value     =  0
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  3"
+[1] "ic_min =  1"
+...
+<h3>exp_block_slide__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_block_slide__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  96.9945860059779
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  21.5967191396121
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  2.28552756084689
+Interval = [ 2.1881354955037 ,  2.38725446487412 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (82.0120348690606 &plusmn; 7.21876784489652)
+Subject 2 (Mean &plusmn; SD) = (72.480197180554 &plusmn; 4.77496116483279)
+Student unpaired equal variances t-test (parametric)
+P-value =  0
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  0
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0
+
+$coef
+[1] 0.2387152
+
+[1] "chk100"
+Correlation =  0.238715160252553
+[1] "chk110"
+P-value     =  0
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  4"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_pause__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_pause__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_pause__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  28.245005906032
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_pause__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  12.5344509367756
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_pause__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.77924601942886
+Interval = [ 1.64236749881759 ,  1.9275322970849 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_pause__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (82.6939544965657 &plusmn; 7.9407742575827)
+Subject 2 (Mean &plusmn; SD) = (74.4911309504941 &plusmn; 5.95312290032872)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.26751321962931e-308
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.90440713250295e-305
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0
+
+$coef
+[1] 0.4437288
+
+[1] "chk100"
+Correlation =  0.443728793542638
+[1] "chk110"
+P-value     =  0
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  5"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_01__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_01__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_01__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  10.2693650923107
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_01__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  3.83240006927898
+P-value =  1.37797387199558e-09
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_01__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  3.1141046405601
+Interval = [ 2.32104449428674 ,  4.17813951271884 ]
+Fisher f-test
+P-value =  1.38111744263369e-13
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_01__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (83.519769555108 &plusmn; 8.56913133352405)
+Subject 2 (Mean &plusmn; SD) = (72.7972968338865 &plusmn; 4.85590518434191)
+Student unpaired equal variances t-test (parametric)
+P-value =  3.1568059938095e-38
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  2.12511923674283e-36
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_01__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_01__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_01__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_01__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_01__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.72
+
+$coef
+[1] 0.06785329
+
+[1] "chk100"
+Correlation =  0.0678532855035548
+[1] "chk110"
+P-value     =  0.72
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  6"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_02__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_02__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_02__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  6.24902572578111
+P-value =  2.09209312781602e-15
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_02__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  2.12264769354974
+P-value =  2.05774773831176e-05
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_02__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.32522594040418
+Interval = [ 0.987734430178895 ,  1.77803237333951 ]
+Fisher f-test
+P-value =  0.0603888778774737
+P-value greater than 0.05 : Sample variances are EQUAL.
+
+Testing if column exp_slide_02__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (83.6917769268338 &plusmn; 5.49366534392961)
+Subject 2 (Mean &plusmn; SD) = (68.6695299142637 &plusmn; 4.77218461122017)
+Student unpaired equal variances t-test (parametric)
+P-value =  4.90108138761779e-91
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  2.45996560393022e-90
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_02__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_02__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_02__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_02__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_02__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0
+
+$coef
+[1] 0.8097849
+
+[1] "chk100"
+Correlation =  0.809784852739244
+[1] "chk110"
+P-value     =  0
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  7"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_03__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_03__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_03__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  3.75467371648801
+P-value =  2.12797719483697e-09
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_03__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  8.09128664901408
+P-value =  8.88733837117764e-20
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_03__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.6799503603794
+Interval = [ 1.2521221939197 ,  2.25395989867732 ]
+Fisher f-test
+P-value =  0.000568236925115428
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_03__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (82.8753576932193 &plusmn; 6.68432528860816)
+Subject 2 (Mean &plusmn; SD) = (73.9244637714923 &plusmn; 5.15714511200289)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.04090878479463e-36
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  2.82092405263109e-36
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_03__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_03__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_03__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_03__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_03__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.088
+
+$coef
+[1] 0.3207742
+
+[1] "chk100"
+Correlation =  0.320774177291194
+[1] "chk110"
+P-value     =  0.088
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  8"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_04__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_04__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_04__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  2.69185569970341
+P-value =  8.28803771919798e-07
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_04__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  1.35917070915954
+P-value =  0.00155851261930455
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_04__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  3.07712415092377
+Interval = [ 2.29348172046454 ,  4.1285234391493 ]
+Fisher f-test
+P-value =  2.40696351738734e-13
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_04__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (80.5538134169459 &plusmn; 5.75198690515683)
+Subject 2 (Mean &plusmn; SD) = (73.2385370363447 &plusmn; 3.27902991838085)
+Student unpaired equal variances t-test (parametric)
+P-value =  4.25573790849256e-39
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  3.20148452534605e-37
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_04__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_04__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_04__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_04__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_04__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.642
+
+$coef
+[1] 0.09928764
+
+[1] "chk100"
+Correlation =  0.0992876404313288
+[1] "chk110"
+P-value     =  0.642
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  9"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_05__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_05__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_05__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  6.83802163939893
+P-value =  8.25734764205674e-17
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_05__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  1.75627866006971
+P-value =  0.000163694353258782
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_05__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.49926404343548
+Interval = [ 1.11745074593001 ,  2.01153624007628 ]
+Fisher f-test
+P-value =  0.0070142592582354
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_05__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (82.2736568957132 &plusmn; 5.9009250782118)
+Subject 2 (Mean &plusmn; SD) = (72.9369542250842 &plusmn; 4.81926755291844)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.19232012365e-45
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  3.05931928862365e-45
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_05__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_05__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_05__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_05__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_05__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.346
+
+$coef
+[1] 0.1836992
+
+[1] "chk100"
+Correlation =  0.183699181154654
+[1] "chk110"
+P-value     =  0.346
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  10"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_06__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_06__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_06__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  6.37426270220001
+P-value =  1.05107439542385e-15
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_06__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  4.45848120335785
+P-value =  4.19424778029851e-11
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_06__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  4.62718898832558
+Interval = [ 3.44879596706348 ,  6.20821821243084 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_06__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (80.9987826744979 &plusmn; 8.6966364156177)
+Subject 2 (Mean &plusmn; SD) = (71.9638106467749 &plusmn; 4.04289716544634)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.56483755148814e-30
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.03566548125716e-28
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_06__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_06__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_06__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_06__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_06__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.09
+
+$coef
+[1] 0.3282656
+
+[1] "chk100"
+Correlation =  0.328265643157792
+[1] "chk110"
+P-value     =  0.09
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  11"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_07__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_07__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_07__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  2.06819446327989
+P-value =  2.79972666160273e-05
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_07__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  3.7954122702464
+P-value =  1.69448656620704e-09
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_07__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  2.47940994531766
+Interval = [ 1.84798568670586 ,  3.32658078531894 ]
+Fisher f-test
+P-value =  2.42715003651028e-09
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_07__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (79.6589462944095 &plusmn; 6.7108992243004)
+Subject 2 (Mean &plusmn; SD) = (72.8875928436547 &plusmn; 4.26193230972811)
+Student unpaired equal variances t-test (parametric)
+P-value =  5.39755178648834e-26
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  2.17329200602596e-25
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_07__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_07__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_07__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_07__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_07__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.094
+
+$coef
+[1] 0.3115874
+
+[1] "chk100"
+Correlation =  0.311587398334625
+[1] "chk110"
+P-value     =  0.094
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  12"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_09__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_09__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_09__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  5.48620009838598
+P-value =  1.40283465862238e-13
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_09__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  6.61555202696576
+P-value =  2.79500777753058e-16
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_09__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.22267292740429
+Interval = [ 0.911298300481889 ,  1.64043879662331 ]
+Fisher f-test
+P-value =  0.179641981936328
+P-value greater than 0.05 : Sample variances are EQUAL.
+
+Testing if column exp_slide_09__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (81.0641162798704 &plusmn; 8.15799873912771)
+Subject 2 (Mean &plusmn; SD) = (70.1487128234514 &plusmn; 7.37782731275949)
+Student unpaired equal variances t-test (parametric)
+P-value =  3.92380946307744e-33
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  4.46414660763215e-33
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_09__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_09__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_09__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_09__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_09__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.67
+
+$coef
+[1] 0.08310486
+
+[1] "chk100"
+Correlation =  0.0831048649548759
+[1] "chk110"
+P-value     =  0.67
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  13"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_10__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_10__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_10__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  7.06559594270016
+P-value =  2.37674076307917e-17
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_10__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  2.5064758979259
+P-value =  2.35600712119119e-06
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_10__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.78745520538309
+Interval = [ 1.3322490866885 ,  2.39819726143911 ]
+Fisher f-test
+P-value =  0.000116634123302983
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_10__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (82.52008257423 &plusmn; 6.98278048789644)
+Subject 2 (Mean &plusmn; SD) = (72.1464557592079 &plusmn; 5.22288912225512)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.08565524870355e-43
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  6.03378392752546e-43
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_10__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_10__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_10__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_10__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_10__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.204
+
+$coef
+[1] 0.2624898
+
+[1] "chk100"
+Correlation =  0.262489815318406
+[1] "chk110"
+P-value     =  0.204
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  14"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_11__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_11__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_11__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  2.76604133000785
+P-value =  5.45803265536186e-07
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_11__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  7.37495030006454
+P-value =  4.38647526695332e-18
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_11__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  8.77727553700678
+Interval = [ 6.54199181192034 ,  11.7763164594856 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_11__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (82.3433042560498 &plusmn; 7.97009138188183)
+Subject 2 (Mean &plusmn; SD) = (72.5928895827442 &plusmn; 2.69019297880337)
+Student unpaired equal variances t-test (parametric)
+P-value =  4.9714188611383e-42
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  2.99436899316031e-37
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_11__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_11__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_11__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_11__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_11__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.066
+
+$coef
+[1] 0.3568677
+
+[1] "chk100"
+Correlation =  0.356867717567702
+[1] "chk110"
+P-value     =  0.066
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  15"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_12__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_12__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_12__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  4.63958425329832
+P-value =  1.53161708174202e-11
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_12__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  9.57607832645226
+P-value =  2.92081716906878e-23
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_12__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.18790970021703
+Interval = [ 0.885388125205277 ,  1.59379758514669 ]
+Fisher f-test
+P-value =  0.25031222045333
+P-value greater than 0.05 : Sample variances are EQUAL.
+
+Testing if column exp_slide_12__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (79.8422449839306 &plusmn; 6.29802830836131)
+Subject 2 (Mean &plusmn; SD) = (71.8730792643909 &plusmn; 5.77847041407697)
+Student unpaired equal variances t-test (parametric)
+P-value =  4.91358807652185e-30
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  5.3132348087563e-30
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_12__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_12__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_12__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_12__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_12__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.29
+
+$coef
+[1] 0.2233363
+
+[1] "chk100"
+Correlation =  0.223336310269256
+[1] "chk110"
+P-value     =  0.29
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  16"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_13__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_13__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_13__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  7.2593938861535
+P-value =  8.24255866092427e-18
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_13__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  1.62126138295577
+P-value =  0.000351962900522252
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_13__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.12632358957475
+Interval = [ 0.839485973694695 ,  1.51116858194694 ]
+Fisher f-test
+P-value =  0.426941548381594
+P-value greater than 0.05 : Sample variances are EQUAL.
+
+Testing if column exp_slide_13__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (81.1923411757698 &plusmn; 5.39168012368028)
+Subject 2 (Mean &plusmn; SD) = (72.7780824238685 &plusmn; 5.08033707901874)
+Student unpaired equal variances t-test (parametric)
+P-value =  9.1132892068425e-41
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  9.75375434763366e-41
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_13__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_13__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_13__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_13__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_13__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.67
+
+$coef
+[1] 0.0929784
+
+[1] "chk100"
+Correlation =  0.0929784049109723
+[1] "chk110"
+P-value     =  0.67
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  17"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_14__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_14__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_14__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  3.89339943699548
+P-value =  9.79937620213391e-10
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_14__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  2.95856922929806
+P-value =  1.84774232359832e-07
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_14__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  2.58534594644423
+Interval = [ 1.92694326859282 ,  3.46871325779962 ]
+Fisher f-test
+P-value =  4.60968374582649e-10
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_14__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (83.7193515297836 &plusmn; 5.03274564058942)
+Subject 2 (Mean &plusmn; SD) = (72.0645258782467 &plusmn; 3.13000945238572)
+Student unpaired equal variances t-test (parametric)
+P-value =  5.81533719830029e-86
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  4.20720406633396e-80
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_14__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_14__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_14__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_14__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_14__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.086
+
+$coef
+[1] 0.3189212
+
+[1] "chk100"
+Correlation =  0.318921157932111
+[1] "chk110"
+P-value     =  0.086
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  18"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_15__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_15__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_15__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  5.98346702455083
+P-value =  9.02255801318173e-15
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_15__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  1.64040684672185
+P-value =  0.000315744287045779
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_15__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  8.67283211166716
+Interval = [ 6.46414669580202 ,  11.6361865497287 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_15__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (82.8768356454211 &plusmn; 8.37905560031733)
+Subject 2 (Mean &plusmn; SD) = (74.583303060061 &plusmn; 2.8452118088604)
+Student unpaired equal variances t-test (parametric)
+P-value =  2.77058495059662e-30
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.12749050434387e-27
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_15__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_15__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_15__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_15__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_15__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.024
+
+$coef
+[1] 0.4752586
+
+[1] "chk100"
+Correlation =  0.475258563256345
+[1] "chk110"
+P-value     =  0.024
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  19"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_16__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_16__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_16__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  7.69196610334822
+P-value =  7.80051200448466e-19
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_16__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  7.75696811571504
+P-value =  5.47594977166788e-19
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_16__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.16153950720129
+Interval = [ 0.866446160595443 ,  1.55713544377903 ]
+Fisher f-test
+P-value =  0.316021538978316
+P-value greater than 0.05 : Sample variances are EQUAL.
+
+Testing if column exp_slide_16__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (82.0629092586316 &plusmn; 7.20640719414741)
+Subject 2 (Mean &plusmn; SD) = (74.2828650859055 &plusmn; 6.68654551350511)
+Student unpaired equal variances t-test (parametric)
+P-value =  3.38371572860947e-23
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  3.50455956130376e-23
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_16__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_16__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_16__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_16__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_16__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.162
+
+$coef
+[1] 0.2799745
+
+[1] "chk100"
+Correlation =  0.279974511258156
+[1] "chk110"
+P-value     =  0.162
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  20"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_17__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_17__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_17__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  7.47468512827575
+P-value =  2.54596269298835e-18
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_17__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  1.63253385286686
+P-value =  0.000330163055106192
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_17__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  4.03441053012467
+Interval = [ 3.00697870799682 ,  5.41289776422254 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_17__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (82.9456466082074 &plusmn; 7.6890793494163)
+Subject 2 (Mean &plusmn; SD) = (71.0187157723295 &plusmn; 3.82810902811082)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.22813716521115e-54
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  6.07769832361254e-50
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_17__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_17__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_17__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_17__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_17__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.402
+
+$coef
+[1] 0.183004
+
+[1] "chk100"
+Correlation =  0.183004047478666
+[1] "chk110"
+P-value     =  0.402
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  21"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_18__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_18__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_18__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  4.23270610077165
+P-value =  1.47510816816112e-10
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_18__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  2.14256482893708
+P-value =  1.83862305723118e-05
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_18__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.44872606666616
+Interval = [ 1.07978313155218 ,  1.94373032408922 ]
+Fisher f-test
+P-value =  0.0135405829934503
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_18__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (81.0383943243304 &plusmn; 5.24683035099905)
+Subject 2 (Mean &plusmn; SD) = (72.0265207483503 &plusmn; 4.35917079149917)
+Student unpaired equal variances t-test (parametric)
+P-value =  6.54072738826099e-51
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.73292397795347e-50
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_18__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_18__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_18__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_18__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_18__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.78
+
+$coef
+[1] 0.0579111
+
+[1] "chk100"
+Correlation =  0.0579111023862175
+[1] "chk110"
+P-value     =  0.78
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  22"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_19__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_19__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_19__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  4.51629458241877
+P-value =  3.04040899916041e-11
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_19__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  1.90374112694244
+P-value =  7.10011077679611e-05
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_19__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  4.64754339319511
+Interval = [ 3.46396677370291 ,  6.23552736002196 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_19__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (82.2624272977805 &plusmn; 7.56341426841943)
+Subject 2 (Mean &plusmn; SD) = (72.5133597772647 &plusmn; 3.50837624548449)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.39132115636344e-42
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  3.46988466048618e-39
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_19__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_19__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_19__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_19__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_19__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.054
+
+$coef
+[1] 0.3669587
+
+[1] "chk100"
+Correlation =  0.366958677349
+[1] "chk110"
+P-value     =  0.054
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  23"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_20__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_20__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_20__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  6.43407983186893
+P-value =  7.56722856779527e-16
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_20__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  1.89101516748497
+P-value =  7.63058716541354e-05
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_20__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  7.10774390275708
+Interval = [ 5.29763503686481 ,  9.53633518270422 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_20__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (80.2980217742684 &plusmn; 8.14785224030819)
+Subject 2 (Mean &plusmn; SD) = (73.2264588089168 &plusmn; 3.05616824451889)
+Student unpaired equal variances t-test (parametric)
+P-value =  4.31833036679883e-24
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.48372110124624e-22
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_20__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_20__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_20__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_20__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_20__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.018
+
+$coef
+[1] 0.4304178
+
+[1] "chk100"
+Correlation =  0.430417792843774
+[1] "chk110"
+P-value     =  0.018
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  24"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_21__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_21__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_21__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  7.60011051462766
+P-value =  1.28516715547581e-18
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_21__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  2.48598195970484
+P-value =  2.64466548766329e-06
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_21__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  2.40714528705774
+Interval = [ 1.79412446284039 ,  3.22962456229536 ]
+Fisher f-test
+P-value =  7.56620011088671e-09
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_21__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (81.6601207912364 &plusmn; 5.67489115352101)
+Subject 2 (Mean &plusmn; SD) = (73.160838185282 &plusmn; 3.65768569845311)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.75474815917805e-47
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.13681237673942e-45
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_21__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_21__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_21__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_21__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_21__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.01
+
+$coef
+[1] 0.4839286
+
+[1] "chk100"
+Correlation =  0.483928599947138
+[1] "chk110"
+P-value     =  0.01
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  25"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_22__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_22__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_22__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  9.73224338559078
+P-value =  1.26250884427325e-23
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_22__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  3.51429973319588
+P-value =  8.17029433439068e-09
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_22__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  9.76804064788911
+Interval = [ 7.28044159803004 ,  13.105608610971 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_22__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (83.8706248004753 &plusmn; 9.28554980881381)
+Subject 2 (Mean &plusmn; SD) = (71.9474355952693 &plusmn; 2.97100850372788)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.63392262531118e-45
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  8.72292886414602e-40
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_22__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_22__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_22__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_22__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_22__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.648
+
+$coef
+[1] 0.09419164
+
+[1] "chk100"
+Correlation =  0.0941916405324486
+[1] "chk110"
+P-value     =  0.648
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  26"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_23__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_23__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_23__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  6.31139032515938
+P-value =  1.48484574580069e-15
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_23__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  4.35954294464764
+P-value =  7.27599149542676e-11
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_23__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  2.28485966075167
+Interval = [ 1.70298096818343 ,  3.06555608480995 ]
+Fisher f-test
+P-value =  5.19936800280618e-08
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_23__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (80.4737487798043 &plusmn; 6.19642069157657)
+Subject 2 (Mean &plusmn; SD) = (72.4046480939926 &plusmn; 4.09931347722898)
+Student unpaired equal variances t-test (parametric)
+P-value =  4.34073254558826e-38
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  5.22616888612139e-37
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_23__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_23__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_23__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_23__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_23__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.434
+
+$coef
+[1] 0.157837
+
+[1] "chk100"
+Correlation =  0.15783698607569
+[1] "chk110"
+P-value     =  0.434
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  27"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_24__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_24__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_24__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  3.48390667630525
+P-value =  9.68680034991603e-09
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_24__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  1.72518376214546
+P-value =  0.000195242642880959
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_24__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  6.06313422069244
+Interval = [ 4.51905312293186 ,  8.13480071557149 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_24__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (83.6057128924532 &plusmn; 8.11242689891094)
+Subject 2 (Mean &plusmn; SD) = (74.6651437764317 &plusmn; 3.29459629121018)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.22571864788586e-34
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  7.73668014987953e-32
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_24__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_24__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_24__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_24__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_24__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.812
+
+$coef
+[1] 0.05479927
+
+[1] "chk100"
+Correlation =  0.0547992706233603
+[1] "chk110"
+P-value     =  0.812
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  28"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_25__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_25__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_25__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  1.61672148001873
+P-value =  0.000361144490414678
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_25__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  8.60033317274241
+P-value =  5.63015974269015e-21
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_25__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  0.96584519063113
+Interval = [ 0.719876150868364 ,  1.29585753207688 ]
+Fisher f-test
+P-value =  0.816427066393993
+P-value greater than 0.05 : Sample variances are EQUAL.
+
+Testing if column exp_slide_25__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (84.2157427193066 &plusmn; 5.41062939582248)
+Subject 2 (Mean &plusmn; SD) = (76.1307411912386 &plusmn; 5.50546526446645)
+Student unpaired equal variances t-test (parametric)
+P-value =  4.99225692123523e-36
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  5.01517362109872e-36
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_25__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_25__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_25__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_25__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_25__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.522
+
+$coef
+[1] 0.1317499
+
+[1] "chk100"
+Correlation =  0.131749857993582
+[1] "chk110"
+P-value     =  0.522
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  29"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_26__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_26__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_26__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  2.38243738528928
+P-value =  4.74327983370614e-06
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_26__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  2.4662917457934
+P-value =  2.95530865368286e-06
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_26__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  2.54264263268894
+Interval = [ 1.89511508594649 ,  3.41141897160218 ]
+Fisher f-test
+P-value =  8.99630592243739e-10
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_26__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (84.1003279558857 &plusmn; 8.44505059796019)
+Subject 2 (Mean &plusmn; SD) = (72.118327567578 &plusmn; 5.2961416683065)
+Student unpaired equal variances t-test (parametric)
+P-value =  2.29492787320984e-44
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.34087855058452e-42
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_26__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_26__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_26__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_26__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_26__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.01
+
+$coef
+[1] 0.4878454
+
+[1] "chk100"
+Correlation =  0.4878454291128
+[1] "chk110"
+P-value     =  0.01
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  30"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_27__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_27__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_27__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  1.65024746658455
+P-value =  0.000298605111801052
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_27__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  9.31043943233536
+P-value =  1.21911676232451e-22
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_27__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  0.719547039086906
+Interval = [ 0.536302047047658 ,  0.965403627133135 ]
+Fisher f-test
+P-value =  0.0282530885241285
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_27__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (80.9887399017531 &plusmn; 6.08761677196814)
+Subject 2 (Mean &plusmn; SD) = (73.0284043236778 &plusmn; 7.17658296162119)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.04922101475509e-25
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.28920372120835e-25
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_27__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_27__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_27__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_27__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_27__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.948
+
+$coef
+[1] 0.01446631
+
+[1] "chk100"
+Correlation =  0.0144663080836861
+[1] "chk110"
+P-value     =  0.948
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  31"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_28__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_28__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_28__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  9.31254250256907
+P-value =  1.20539101101794e-22
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_28__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  1.03980942769221
+P-value =  0.00958613397523842
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_28__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  3.61587772335565
+Interval = [ 2.6950324573227 ,  4.85135964679556 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_28__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (81.9909824307789 &plusmn; 6.64689491975624)
+Subject 2 (Mean &plusmn; SD) = (73.3363694030161 &plusmn; 3.49552123884553)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.15013973782995e-41
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  4.31069410642927e-39
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_28__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_28__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_28__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_28__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_28__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0
+
+$coef
+[1] 0.590114
+
+[1] "chk100"
+Correlation =  0.590113987435934
+[1] "chk110"
+P-value     =  0
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  32"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_29__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_29__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_29__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  7.51496630749116
+P-value =  2.04397303987087e-18
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_29__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  2.92977793670275
+P-value =  2.17243838568471e-07
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_29__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  4.44127548609203
+Interval = [ 3.31022852615207 ,  5.95878133111581 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_29__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (81.2400764650577 &plusmn; 7.21997355506979)
+Subject 2 (Mean &plusmn; SD) = (72.2573834288094 &plusmn; 3.42595575982497)
+Student unpaired equal variances t-test (parametric)
+P-value =  3.95376988655425e-40
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  3.39710791416696e-37
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_29__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_29__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_29__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_29__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_29__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.01
+
+$coef
+[1] 0.422378
+
+[1] "chk100"
+Correlation =  0.422377983574931
+[1] "chk110"
+P-value     =  0.01
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  33"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_30__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_30__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_30__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  5.31209047242288
+P-value =  3.67711037236773e-13
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_30__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  2.98112422748679
+P-value =  1.62834226570908e-07
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_30__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  3.26656787602445
+Interval = [ 2.43668439769677 ,  4.37909222005152 ]
+Fisher f-test
+P-value =  1.19904086659517e-14
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_30__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (82.785053725438 &plusmn; 7.58165069434114)
+Subject 2 (Mean &plusmn; SD) = (72.7085869754064 &plusmn; 4.19486441337216)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.83959824722865e-42
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  4.16642771263125e-40
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_30__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_30__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_30__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_30__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_30__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.79
+
+$coef
+[1] 0.05765458
+
+[1] "chk100"
+Correlation =  0.0576545817860621
+[1] "chk110"
+P-value     =  0.79
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  34"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_31__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_31__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_31__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  8.20319110523795
+P-value =  4.84168317858657e-20
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_31__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  4.13939710089986
+P-value =  2.48192740332343e-10
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_31__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  4.49730893952757
+Interval = [ 3.35199209982859 ,  6.03396043164566 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_31__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (81.8432424754597 &plusmn; 9.02046606215734)
+Subject 2 (Mean &plusmn; SD) = (73.0291361711446 &plusmn; 4.253560514719)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.39493735139006e-27
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  4.04403321639191e-26
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_31__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_31__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_31__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_31__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_31__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.828
+
+$coef
+[1] 0.05057037
+
+[1] "chk100"
+Correlation =  0.0505703684738657
+[1] "chk110"
+P-value     =  0.828
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  35"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_32__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_32__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_32__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  2.72200734718643
+P-value =  6.99370374262439e-07
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_32__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  1.53168604727639
+P-value =  0.000585098331884184
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_32__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  2.36029215133326
+Interval = [ 1.75920328154899 ,  3.16676253283253 ]
+Fisher f-test
+P-value =  1.58299182650978e-08
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_32__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (83.5818442866884 &plusmn; 7.42095373680067)
+Subject 2 (Mean &plusmn; SD) = (71.7499940646205 &plusmn; 4.83033045601922)
+Student unpaired equal variances t-test (parametric)
+P-value =  9.55842244386652e-52
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.05217958023251e-49
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_32__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_32__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_32__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_32__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_32__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0
+
+$coef
+[1] 0.61898
+
+[1] "chk100"
+Correlation =  0.618979991124254
+[1] "chk110"
+P-value     =  0
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  36"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_33__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_33__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_33__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  3.94403550493979
+P-value =  7.3850452774539e-10
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_33__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  2.33460170969951
+P-value =  6.2136406757851e-06
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_33__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  0.97319345201877
+Interval = [ 0.725353051488278 ,  1.30571656534558 ]
+Fisher f-test
+P-value =  0.855963781211011
+P-value greater than 0.05 : Sample variances are EQUAL.
+
+Testing if column exp_slide_33__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (80.5689120228099 &plusmn; 6.98930845478237)
+Subject 2 (Mean &plusmn; SD) = (73.1378469746298 &plusmn; 7.08491457595324)
+Student unpaired equal variances t-test (parametric)
+P-value =  5.50000312513521e-21
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  5.50523348958725e-21
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_33__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_33__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_33__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_33__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_33__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.932
+
+$coef
+[1] 0.01645812
+
+[1] "chk100"
+Correlation =  0.0164581195313834
+[1] "chk110"
+P-value     =  0.932
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  37"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_34__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_34__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_34__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  3.3390713078285
+P-value =  2.18149441756334e-08
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_34__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  8.10108247872591
+P-value =  8.4270068749078e-20
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_34__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  2.2663925605153
+Interval = [ 1.68921683168949 ,  3.04077910070416 ]
+Fisher f-test
+P-value =  6.95637150105455e-08
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_34__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (80.7672324272958 &plusmn; 6.40037906846297)
+Subject 2 (Mean &plusmn; SD) = (73.0995252292059 &plusmn; 4.25146030268312)
+Student unpaired equal variances t-test (parametric)
+P-value =  2.01453061987984e-33
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.35305992896773e-32
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_34__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_34__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_34__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_34__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_34__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.81
+
+$coef
+[1] 0.05393516
+
+[1] "chk100"
+Correlation =  0.0539351627573624
+[1] "chk110"
+P-value     =  0.81
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  38"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_35__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_35__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_35__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  4.88093120143
+P-value =  4.00812555470159e-12
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_35__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  3.63026934767271
+P-value =  4.26811265396901e-09
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_35__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  3.21230344852419
+Interval = [ 2.39423529192467 ,  4.30989112899814 ]
+Fisher f-test
+P-value =  3.19744231092045e-14
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_35__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (81.0694781243472 &plusmn; 8.40401147833515)
+Subject 2 (Mean &plusmn; SD) = (71.5405379948268 &plusmn; 4.68897972568495)
+Student unpaired equal variances t-test (parametric)
+P-value =  5.11485663465096e-33
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.41932470266693e-31
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_35__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_35__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_35__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_35__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_35__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.922
+
+$coef
+[1] 0.01686183
+
+[1] "chk100"
+Correlation =  0.0168618267363829
+[1] "chk110"
+P-value     =  0.922
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  39"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_36__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_36__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_36__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  4.41425459295067
+P-value =  5.36508645295177e-11
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_36__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  2.73667677030986
+P-value =  6.43923556413603e-07
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_36__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  2.21305109099324
+Interval = [ 1.6494596820617 ,  2.96921178771992 ]
+Fisher f-test
+P-value =  1.61207933668805e-07
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_36__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (81.5441680741312 &plusmn; 5.98107055327889)
+Subject 2 (Mean &plusmn; SD) = (69.7812491556336 &plusmn; 4.02052905803407)
+Student unpaired equal variances t-test (parametric)
+P-value =  4.70533009455822e-68
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  3.93154395869536e-65
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_36__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_36__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_36__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_36__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_36__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.342
+
+$coef
+[1] 0.1823597
+
+[1] "chk100"
+Correlation =  0.182359707235862
+[1] "chk110"
+P-value     =  0.342
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  40"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_37__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_37__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_37__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  7.58196067184016
+P-value =  1.41875027213652e-18
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_37__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  2.1864934025258
+P-value =  1.43438120554631e-05
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_37__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  3.59308335499328
+Interval = [ 2.6780430657335 ,  4.82077684303173 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_37__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (81.7677148000601 &plusmn; 5.9325605820546)
+Subject 2 (Mean &plusmn; SD) = (72.6674435283784 &plusmn; 3.12974198297571)
+Student unpaired equal variances t-test (parametric)
+P-value =  7.06586734888586e-53
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  6.13292003319761e-49
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_37__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_37__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_37__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_37__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_37__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.052
+
+$coef
+[1] 0.3433906
+
+[1] "chk100"
+Correlation =  0.343390581838247
+[1] "chk110"
+P-value     =  0.052
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  41"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_38__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_38__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_38__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  5.89774145384692
+P-value =  1.4470368069409e-14
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_38__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  6.30196430364359
+P-value =  1.56380477189329e-15
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_38__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  3.80597848248973
+Interval = [ 2.83672079836333 ,  5.10641449716601 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_38__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (82.0272877733952 &plusmn; 7.89659144035714)
+Subject 2 (Mean &plusmn; SD) = (68.0663924875812 &plusmn; 4.0476831086274)
+Student unpaired equal variances t-test (parametric)
+P-value =  7.9207942832804e-65
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  7.54991189139362e-59
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_38__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_38__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_38__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_38__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_38__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.6
+
+$coef
+[1] 0.108658
+
+[1] "chk100"
+Correlation =  0.108658047602973
+[1] "chk110"
+P-value     =  0.6
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  42"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_39__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_39__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_39__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  4.81684074559794
+P-value =  5.72079263078958e-12
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_39__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  5.80050507981022
+P-value =  2.47355123618034e-14
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_39__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  2.40557513783482
+Interval = [ 1.79295417904144 ,  3.22751792065471 ]
+Fisher f-test
+P-value =  7.7556330246864e-09
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_39__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (82.3592181678413 &plusmn; 6.78033288828255)
+Subject 2 (Mean &plusmn; SD) = (73.7679869239921 &plusmn; 4.37161143495812)
+Student unpaired equal variances t-test (parametric)
+P-value =  5.84332848921666e-37
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  7.90969031881195e-36
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_39__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_39__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_39__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_39__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_39__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.018
+
+$coef
+[1] 0.4638904
+
+[1] "chk100"
+Correlation =  0.463890364356808
+[1] "chk110"
+P-value     =  0.018
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  43"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_40__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_40__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_40__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  2.94428639078973
+P-value =  2.00303053927419e-07
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_40__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  4.17605416589814
+P-value =  2.02413632820502e-10
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_40__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  3.75674789242651
+Interval = [ 2.802332393808 ,  5.03621724476198 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_40__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (80.763295564878 &plusmn; 7.59849761665434)
+Subject 2 (Mean &plusmn; SD) = (72.5366946735765 &plusmn; 3.9203216941702)
+Student unpaired equal variances t-test (parametric)
+P-value =  9.90306459286889e-32
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  3.95652931957012e-30
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_40__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_40__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_40__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_40__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_40__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.026
+
+$coef
+[1] 0.4390058
+
+[1] "chk100"
+Correlation =  0.439005779747727
+[1] "chk110"
+P-value     =  0.026
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  44"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_41__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_41__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_41__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  2.66772232414414
+P-value =  9.50155972782576e-07
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_41__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  1.15774793040302
+P-value =  0.00490044716420764
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_41__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  3.14324026944069
+Interval = [ 2.34660246625212 ,  4.21032515456842 ]
+Fisher f-test
+P-value =  6.50590692430342e-14
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_41__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (80.1425752862727 &plusmn; 6.2288079934461)
+Subject 2 (Mean &plusmn; SD) = (71.3469387064013 &plusmn; 3.51330742730103)
+Student unpaired equal variances t-test (parametric)
+P-value =  2.19209410156923e-46
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  9.2658517021278e-44
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_41__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_41__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_41__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_41__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_41__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.35
+
+$coef
+[1] 0.191948
+
+[1] "chk100"
+Correlation =  0.191948039381334
+[1] "chk110"
+P-value     =  0.35
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  45"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_42__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_42__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_42__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  5.04409982649739
+P-value =  1.62129550354553e-12
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_42__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  10.3337144771458
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_42__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  4.84816804662332
+Interval = [ 3.61349891889569 ,  6.50470193456779 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_42__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (84.2519283582875 &plusmn; 7.21175677744639)
+Subject 2 (Mean &plusmn; SD) = (72.689946732982 &plusmn; 3.27530870084709)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.43720173937333e-58
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  2.20362442307397e-52
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_42__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_42__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_42__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_42__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_42__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.222
+
+$coef
+[1] 0.2346496
+
+[1] "chk100"
+Correlation =  0.234649632965495
+[1] "chk110"
+P-value     =  0.222
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  46"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_43__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_43__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_43__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  7.13387894882075
+P-value =  1.63630138346078e-17
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_43__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  2.86083775036141
+P-value =  3.20146562178897e-07
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_43__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  3.74545496728464
+Interval = [ 2.79161063414085 ,  5.02521115960522 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_43__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (83.9252235987185 &plusmn; 8.44809273168241)
+Subject 2 (Mean &plusmn; SD) = (74.4390409775558 &plusmn; 4.36522247349423)
+Student unpaired equal variances t-test (parametric)
+P-value =  2.0981113842373e-33
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.23141633063949e-31
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_43__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_43__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_43__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_43__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_43__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.388
+
+$coef
+[1] 0.1809363
+
+[1] "chk100"
+Correlation =  0.180936258140469
+[1] "chk110"
+P-value     =  0.388
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  47"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_44__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_44__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_44__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  2.25375708129371
+P-value =  9.80885914017816e-06
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_44__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  11.711678890837
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_44__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  0.498822360470035
+Interval = [ 0.371788692748569 ,  0.669261201747119 ]
+Fisher f-test
+P-value =  4.21287778214e-06
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_44__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (82.5929706060852 &plusmn; 4.7752628966435)
+Subject 2 (Mean &plusmn; SD) = (73.2815598944856 &plusmn; 6.76120851261421)
+Student unpaired equal variances t-test (parametric)
+P-value =  3.54219736298566e-40
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  2.70593974547503e-39
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_44__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_44__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_44__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_44__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_44__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.002
+
+$coef
+[1] 0.5851855
+
+[1] "chk100"
+Correlation =  0.585185502532457
+[1] "chk110"
+P-value     =  0.002
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  48"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_45__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_45__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_45__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  4.16017889188714
+P-value =  2.21029275022591e-10
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_45__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  2.45639796419761
+P-value =  3.12493155564778e-06
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_45__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.926794279052
+Interval = [ 1.43610307591092 ,  2.58514604979357 ]
+Fisher f-test
+P-value =  1.40563630890433e-05
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_45__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (81.5745585347743 &plusmn; 6.94176953679855)
+Subject 2 (Mean &plusmn; SD) = (71.6464093746877 &plusmn; 5.00095005402465)
+Student unpaired equal variances t-test (parametric)
+P-value =  4.22251163124335e-42
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  3.11459673999196e-41
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_45__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_45__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_45__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_45__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_45__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.792
+
+$coef
+[1] 0.06221245
+
+[1] "chk100"
+Correlation =  0.0622124493397222
+[1] "chk110"
+P-value     =  0.792
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  49"
+[1] "ic_min =  1"
+...
+<h3>exp_slide_47__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_slide_47__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_slide_47__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  9.15027331096013
+P-value =  2.88904333287018e-22
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_slide_47__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  1.84845388344871
+P-value =  9.71033732505154e-05
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_slide_47__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  8.23682730317344
+Interval = [ 6.13917798824605 ,  11.0512065543952 ]
+Fisher f-test
+P-value =  0
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_slide_47__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (81.1161414085146 &plusmn; 7.8715831898987)
+Subject 2 (Mean &plusmn; SD) = (71.3981316702622 &plusmn; 2.7427240161827)
+Student unpaired equal variances t-test (parametric)
+P-value =  2.1501923330807e-42
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.15416282321356e-37
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_slide_47__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_slide_47__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_slide_47__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_slide_47__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_slide_47__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.006
+
+$coef
+[1] 0.5208225
+
+[1] "chk100"
+Correlation =  0.520822518564053
+[1] "chk110"
+P-value     =  0.006
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  50"
+[1] "ic_min =  1"
+...
+<h3>exp_ex01__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_ex01__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_ex01__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  9.78123914113257
+P-value =  1.18872852202114e-23
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_ex01__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  10.53676780975
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_ex01__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.22507956901516
+Interval = [ 1.12461721884364 ,  1.33451624719169 ]
+Fisher f-test
+P-value =  3.3694405594531e-06
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_ex01__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (76.6256313194229 &plusmn; 3.74210881430755)
+Subject 2 (Mean &plusmn; SD) = (72.5612921904615 &plusmn; 3.38091508655808)
+Student unpaired equal variances t-test (parametric)
+P-value =  6.52170071541353e-259
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.41681952322067e-258
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_ex01__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_ex01__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_ex01__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_ex01__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_ex01__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.114
+
+$coef
+[1] 0.09469975
+
+[1] "chk100"
+Correlation =  0.0946997537524061
+[1] "chk110"
+P-value     =  0.114
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  51"
+[1] "ic_min =  1"
+...
+<h3>exp_ex02__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_ex02__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_ex02__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  5.32697281899573
+P-value =  3.7921367992519e-13
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_ex02__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  9.88377970940473
+P-value =  6.87154520391154e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_ex02__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  0.719398728729656
+Interval = [ 0.66040461208082 ,  0.78366280524175 ]
+Fisher f-test
+P-value =  5.1415612348878e-14
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_ex02__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (75.7328605584943 &plusmn; 3.23764550129888)
+Subject 2 (Mean &plusmn; SD) = (72.5249049917397 &plusmn; 3.81719601623845)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.09281881128713e-172
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  2.73665929200377e-172
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_ex02__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_ex02__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_ex02__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_ex02__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_ex02__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.098
+
+$coef
+[1] 0.09220038
+
+[1] "chk100"
+Correlation =  0.0922003816417956
+[1] "chk110"
+P-value     =  0.098
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  52"
+[1] "ic_min =  1"
+...
+<h3>exp_ex03__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_ex03__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_ex03__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  19.1188677286955
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_ex03__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  64.8948918482183
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_ex03__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.20637452807228
+Interval = [ 1.10744608020449 ,  1.31414028005126 ]
+Fisher f-test
+P-value =  1.74498320455463e-05
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_ex03__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (92.6012754309942 &plusmn; 4.50899477275405)
+Subject 2 (Mean &plusmn; SD) = (77.8176295703239 &plusmn; 4.10524095093768)
+Student unpaired equal variances t-test (parametric)
+P-value =  0
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  0
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_ex03__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_ex03__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_ex03__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_ex03__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_ex03__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.998
+
+$coef
+[1] 0.0002005209
+
+[1] "chk100"
+Correlation =  0.000200520927181798
+[1] "chk110"
+P-value     =  0.998
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  53"
+[1] "ic_min =  1"
+...
+<h3>exp_ex04__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_ex04__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_ex04__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  10.7418259542151
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_ex04__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  33.0256564369315
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_ex04__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  0.430480882427208
+Interval = [ 0.395179403040596 ,  0.468935852196403 ]
+Fisher f-test
+P-value =  8.74770482631279e-81
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_ex04__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (86.046207133558 &plusmn; 3.63492327256494)
+Subject 2 (Mean &plusmn; SD) = (72.1638222231777 &plusmn; 5.54010905049359)
+Student unpaired equal variances t-test (parametric)
+P-value =  0
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  0
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_ex04__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_ex04__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_ex04__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_ex04__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_ex04__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.006
+
+$coef
+[1] 0.165384
+
+[1] "chk100"
+Correlation =  0.165384004905058
+[1] "chk110"
+P-value     =  0.006
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  54"
+[1] "ic_min =  1"
+...
+<h3>exp_ex05__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_ex05__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_ex05__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  21.8739127186045
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_ex05__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  40.8010642363133
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_ex05__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  0.611169522371003
+Interval = [ 0.561050715296328 ,  0.665765455584377 ]
+Fisher f-test
+P-value =  3.09774120447428e-29
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_ex05__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (79.8331656838963 &plusmn; 3.73387069141668)
+Subject 2 (Mean &plusmn; SD) = (69.6304530850189 &plusmn; 4.77615518520994)
+Student unpaired equal variances t-test (parametric)
+P-value =  0
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  0
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_ex05__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_ex05__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_ex05__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_ex05__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_ex05__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.162
+
+$coef
+[1] 0.07844761
+
+[1] "chk100"
+Correlation =  0.0784476065436171
+[1] "chk110"
+P-value     =  0.162
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  55"
+[1] "ic_min =  1"
+...
+<h3>exp_ex01_block_pause__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_ex01_block_pause__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_ex01_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  4.22170788271592
+P-value =  1.66941615149301e-10
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_ex01_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  2.71401188438887
+P-value =  7.61847956808117e-07
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_ex01_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.51075605464532
+Interval = [ 1.26274862360369 ,  1.80747285246207 ]
+Fisher f-test
+P-value =  6.89172403944838e-06
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_ex01_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (77.7976521443181 &plusmn; 4.59760862335198)
+Subject 2 (Mean &plusmn; SD) = (73.269308540098 &plusmn; 3.74054451041837)
+Student unpaired equal variances t-test (parametric)
+P-value =  2.30136660645935e-55
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  4.19679659207172e-55
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_ex01_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_ex01_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_ex01_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_ex01_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_ex01_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.038
+
+$coef
+[1] 0.2548875
+
+[1] "chk100"
+Correlation =  0.254887478182272
+[1] "chk110"
+P-value     =  0.038
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  56"
+[1] "ic_min =  1"
+...
+<h3>exp_ex01_block_slide__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_ex01_block_slide__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_ex01_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  7.37231909760203
+P-value =  5.17593577243376e-18
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_ex01_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  8.37808599497657
+P-value =  2.22448572562216e-20
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_ex01_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.08458052759763
+Interval = [ 0.9838986604749 ,  1.19556512077797 ]
+Fisher f-test
+P-value =  0.1023623510003
+P-value greater than 0.05 : Sample variances are EQUAL.
+
+Testing if column exp_ex01_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (76.2785801189604 &plusmn; 3.37267577311108)
+Subject 2 (Mean &plusmn; SD) = (72.3516389839066 &plusmn; 3.23849843504226)
+Student unpaired equal variances t-test (parametric)
+P-value =  6.19807187684699e-215
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  6.9229185857653e-215
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_ex01_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_ex01_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_ex01_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_ex01_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_ex01_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0
+
+$coef
+[1] 0.2540301
+
+[1] "chk100"
+Correlation =  0.254030137883029
+[1] "chk110"
+P-value     =  0
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  57"
+[1] "ic_min =  1"
+...
+<h3>exp_ex02_block_pause__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_ex02_block_pause__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_ex02_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  3.0469026431312
+P-value =  1.17691655418968e-07
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_ex02_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  5.88621059562149
+P-value =  1.68060039650836e-14
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_ex02_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  0.376805659989645
+Interval = [ 0.314948814571991 ,  0.450811366263383 ]
+Fisher f-test
+P-value =  1.13723980139105e-25
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_ex02_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (75.358030564742 &plusmn; 2.93635403766973)
+Subject 2 (Mean &plusmn; SD) = (71.7419871882001 &plusmn; 4.78354329076646)
+Student unpaired equal variances t-test (parametric)
+P-value =  3.08030775096353e-41
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.56459417742767e-40
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_ex02_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_ex02_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_ex02_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_ex02_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_ex02_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.02
+
+$coef
+[1] 0.2780419
+
+[1] "chk100"
+Correlation =  0.278041935607954
+[1] "chk110"
+P-value     =  0.02
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  58"
+[1] "ic_min =  1"
+...
+<h3>exp_ex02_block_slide__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_ex02_block_slide__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_ex02_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  3.53660937823429
+P-value =  7.76759904319665e-09
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_ex02_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  12.9878808014291
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_ex02_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  0.92410029294824
+Interval = [ 0.838315843997474 ,  1.01866302246531 ]
+Fisher f-test
+P-value =  0.112268606604287
+P-value greater than 0.05 : Sample variances are EQUAL.
+
+Testing if column exp_ex02_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (75.8438527836646 &plusmn; 3.31434419215254)
+Subject 2 (Mean &plusmn; SD) = (72.7567375307273 &plusmn; 3.44776815180479)
+Student unpaired equal variances t-test (parametric)
+P-value =  2.0253813043988e-135
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  2.11351735389657e-135
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_ex02_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_ex02_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_ex02_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_ex02_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_ex02_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.824
+
+$coef
+[1] 0.01744228
+
+[1] "chk100"
+Correlation =  0.0174422822503572
+[1] "chk110"
+P-value     =  0.824
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  59"
+[1] "ic_min =  1"
+...
+<h3>exp_ex03_block_pause__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_ex03_block_pause__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_ex03_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  4.70185222645785
+P-value =  1.16131093302546e-11
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_ex03_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  17.9210299751423
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_ex03_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.05991484315878
+Interval = [ 0.885918017816633 ,  1.268085141238 ]
+Fisher f-test
+P-value =  0.52452721815576
+P-value greater than 0.05 : Sample variances are EQUAL.
+
+Testing if column exp_ex03_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (93.9293196959922 &plusmn; 5.06655497577211)
+Subject 2 (Mean &plusmn; SD) = (79.362247220695 &plusmn; 4.92127090198463)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.12595009359956e-239
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.35738186305806e-239
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_ex03_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_ex03_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_ex03_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_ex03_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_ex03_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.634
+
+$coef
+[1] 0.06252328
+
+[1] "chk100"
+Correlation =  0.0625232794647135
+[1] "chk110"
+P-value     =  0.634
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  60"
+[1] "ic_min =  1"
+...
+<h3>exp_ex03_block_slide__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_ex03_block_slide__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_ex03_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  12.9875178769864
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_ex03_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  41.8282339027783
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_ex03_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  1.31362927407504
+Interval = [ 1.19168475759556 ,  1.44805231308712 ]
+Fisher f-test
+P-value =  4.24010542232622e-08
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_ex03_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (92.2080235820127 &plusmn; 4.25295768139802)
+Subject 2 (Mean &plusmn; SD) = (77.3602474159882 &plusmn; 3.71068981576358)
+Student unpaired equal variances t-test (parametric)
+P-value =  0
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  0
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_ex03_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_ex03_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_ex03_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_ex03_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_ex03_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.554
+
+$coef
+[1] 0.03869595
+
+[1] "chk100"
+Correlation =  0.0386959467472843
+[1] "chk110"
+P-value     =  0.554
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  61"
+[1] "ic_min =  1"
+...
+<h3>exp_ex04_block_pause__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_ex04_block_pause__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_ex04_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  4.30082253407204
+P-value =  1.07538519719706e-10
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_ex04_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  11.7119852263315
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_ex04_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  0.355769396676081
+Interval = [ 0.2973658881536 ,  0.425643520839498 ]
+Fisher f-test
+P-value =  1.83181236983788e-28
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_ex04_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (86.607869246295 &plusmn; 3.68878903218689)
+Subject 2 (Mean &plusmn; SD) = (76.3317176943994 &plusmn; 6.18442780801851)
+Student unpaired equal variances t-test (parametric)
+P-value =  1.8156953422237e-148
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  8.03121536384237e-140
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_ex04_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_ex04_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_ex04_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_ex04_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_ex04_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.638
+
+$coef
+[1] 0.04983049
+
+[1] "chk100"
+Correlation =  0.0498304869004241
+[1] "chk110"
+P-value     =  0.638
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  62"
+[1] "ic_min =  1"
+...
+<h3>exp_ex04_block_slide__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_ex04_block_slide__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_ex04_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  7.51175874765295
+P-value =  2.42596404658481e-18
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_ex04_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  16.5899925664739
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_ex04_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  0.595363070559507
+Interval = [ 0.540095375782958 ,  0.656286281422425 ]
+Fisher f-test
+P-value =  3.15194223297686e-25
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_ex04_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (85.8798913938209 &plusmn; 3.60319714597491)
+Subject 2 (Mean &plusmn; SD) = (70.9296520651355 &plusmn; 4.6697870725528)
+Student unpaired equal variances t-test (parametric)
+P-value =  0
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  0
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_ex04_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_ex04_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_ex04_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_ex04_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_ex04_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.012
+
+$coef
+[1] 0.1574149
+
+[1] "chk100"
+Correlation =  0.157414882489311
+[1] "chk110"
+P-value     =  0.012
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  63"
+[1] "ic_min =  1"
+...
+<h3>exp_ex05_block_pause__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_ex05_block_pause__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_ex05_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  7.69740574788057
+P-value =  8.45496741078637e-19
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_ex05_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  8.04842701941237
+P-value =  1.25954544614241e-19
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_ex05_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  0.536337366380232
+Interval = [ 0.448291614719268 ,  0.641675554774366 ]
+Fisher f-test
+P-value =  1.38021740257976e-11
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_ex05_block_pause__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (79.7769008314813 &plusmn; 4.29442882451539)
+Subject 2 (Mean &plusmn; SD) = (71.7503941090778 &plusmn; 5.86389765284195)
+Student unpaired equal variances t-test (parametric)
+P-value =  2.61227143015481e-101
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  1.69997051162504e-99
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_ex05_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_ex05_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_ex05_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_ex05_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_ex05_block_pause__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.284
+
+$coef
+[1] 0.1436345
+
+[1] "chk100"
+Correlation =  0.143634466392364
+[1] "chk110"
+P-value     =  0.284
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+[1] "ic =  64"
+[1] "ic_min =  1"
+...
+<h3>exp_ex05_block_slide__hr_subj1_linear_vs_hr_subj2_linear</h3>
+Testing column exp_ex05_block_slide__hr_subj1_linear_vs_hr_subj2_linear
+
+Testing if column exp_ex05_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 1" has normal distribution...
+W-statistic =  17.4762937644632
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if column exp_ex05_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Group "Subject 2" has normal distribution...
+W-statistic =  24.3302820612982
+P-value =  3.7e-24
+P-value smaller than  0.05 : Distribution IS NOT NORMAL
+
+Testing if exp_ex05_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same variance...
+Ratio =  0.71380835291007
+Interval = [ 0.64754535453412 ,  0.786852011394268 ]
+Fisher f-test
+P-value =  1.30736839572878e-11
+P-value smaller than 0.05 : Sample variances are DIFFERENT.
+
+Testing if column exp_ex05_block_slide__hr_subj1_linear_vs_hr_subj2_linear - Groups "Subject 1" and "Subject 2" have the same mean...
+Subject 1 (Mean &plusmn; SD) = (79.8498264668446 &plusmn; 3.55225673666033)
+Subject 2 (Mean &plusmn; SD) = (69.0027099070126 &plusmn; 4.20449203110849)
+Student unpaired equal variances t-test (parametric)
+P-value =  0
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+Welch unpaired unequal variances t-test (parametric)
+P-value =  0
+P-value smaller than 0.05 : Sample means are DIFFERENT.
+
+
+<table><tr>
+<td><img src='plot_tc_distribution/hist_smooth_tc_exp_ex05_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/hist_bar_tc_exp_ex05_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_distribution/boxplot_tc_exp_ex05_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+<table><tr>
+<td><img src='plot_tc_correlation/corr_scatter_tc_exp_ex05_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+<td><img src='plot_tc_correlation/corr_series_tc_exp_ex05_block_slide__hr_subj1_linear_vs_hr_subj2_linear.png'></td>
+
+
+</tr></table>
+Regarding correlation between Subject 1 and Subject 2:
+
+$p.value
+[1] 0.524
+
+$coef
+[1] 0.04248444
+
+[1] "chk100"
+Correlation =  0.0424844387909783
+[1] "chk110"
+P-value     =  0.524
+[1] "chk120"
+[1] "chk130"
+[1] "chk140"
+    folder label             col to_col          val
+1      all  <NA> hr_subj1_linear corr12 0.2934088577
+2      all  <NA> hr_subj1_linear pval12 0.0000000000
+3    block pause hr_subj1_linear corr12 0.4437287935
+4    block pause hr_subj1_linear pval12 0.0000000000
+5    block slide hr_subj1_linear corr12 0.2387151603
+6    block slide hr_subj1_linear pval12 0.0000000000
+7    slide pause hr_subj1_linear corr12 0.4437287935
+8    slide pause hr_subj1_linear pval12 0.0000000000
+9    slide    01 hr_subj1_linear corr12 0.0678532855
+10   slide    01 hr_subj1_linear pval12 0.7200000000
+11   slide    02 hr_subj1_linear corr12 0.8097848527
+12   slide    02 hr_subj1_linear pval12 0.0000000000
+13   slide    03 hr_subj1_linear corr12 0.3207741773
+14   slide    03 hr_subj1_linear pval12 0.0880000000
+15   slide    04 hr_subj1_linear corr12 0.0992876404
+16   slide    04 hr_subj1_linear pval12 0.6420000000
+17   slide    05 hr_subj1_linear corr12 0.1836991812
+18   slide    05 hr_subj1_linear pval12 0.3460000000
+19   slide    06 hr_subj1_linear corr12 0.3282656432
+20   slide    06 hr_subj1_linear pval12 0.0900000000
+21   slide    07 hr_subj1_linear corr12 0.3115873983
+22   slide    07 hr_subj1_linear pval12 0.0940000000
+23   slide    09 hr_subj1_linear corr12 0.0831048650
+24   slide    09 hr_subj1_linear pval12 0.6700000000
+25   slide    10 hr_subj1_linear corr12 0.2624898153
+26   slide    10 hr_subj1_linear pval12 0.2040000000
+27   slide    11 hr_subj1_linear corr12 0.3568677176
+28   slide    11 hr_subj1_linear pval12 0.0660000000
+29   slide    12 hr_subj1_linear corr12 0.2233363103
+30   slide    12 hr_subj1_linear pval12 0.2900000000
+31   slide    13 hr_subj1_linear corr12 0.0929784049
+32   slide    13 hr_subj1_linear pval12 0.6700000000
+33   slide    14 hr_subj1_linear corr12 0.3189211579
+34   slide    14 hr_subj1_linear pval12 0.0860000000
+35   slide    15 hr_subj1_linear corr12 0.4752585633
+36   slide    15 hr_subj1_linear pval12 0.0240000000
+37   slide    16 hr_subj1_linear corr12 0.2799745113
+38   slide    16 hr_subj1_linear pval12 0.1620000000
+39   slide    17 hr_subj1_linear corr12 0.1830040475
+40   slide    17 hr_subj1_linear pval12 0.4020000000
+41   slide    18 hr_subj1_linear corr12 0.0579111024
+42   slide    18 hr_subj1_linear pval12 0.7800000000
+43   slide    19 hr_subj1_linear corr12 0.3669586773
+44   slide    19 hr_subj1_linear pval12 0.0540000000
+45   slide    20 hr_subj1_linear corr12 0.4304177928
+46   slide    20 hr_subj1_linear pval12 0.0180000000
+47   slide    21 hr_subj1_linear corr12 0.4839285999
+48   slide    21 hr_subj1_linear pval12 0.0100000000
+49   slide    22 hr_subj1_linear corr12 0.0941916405
+50   slide    22 hr_subj1_linear pval12 0.6480000000
+51   slide    23 hr_subj1_linear corr12 0.1578369861
+52   slide    23 hr_subj1_linear pval12 0.4340000000
+53   slide    24 hr_subj1_linear corr12 0.0547992706
+54   slide    24 hr_subj1_linear pval12 0.8120000000
+55   slide    25 hr_subj1_linear corr12 0.1317498580
+56   slide    25 hr_subj1_linear pval12 0.5220000000
+57   slide    26 hr_subj1_linear corr12 0.4878454291
+58   slide    26 hr_subj1_linear pval12 0.0100000000
+59   slide    27 hr_subj1_linear corr12 0.0144663081
+60   slide    27 hr_subj1_linear pval12 0.9480000000
+61   slide    28 hr_subj1_linear corr12 0.5901139874
+62   slide    28 hr_subj1_linear pval12 0.0000000000
+63   slide    29 hr_subj1_linear corr12 0.4223779836
+64   slide    29 hr_subj1_linear pval12 0.0100000000
+65   slide    30 hr_subj1_linear corr12 0.0576545818
+66   slide    30 hr_subj1_linear pval12 0.7900000000
+67   slide    31 hr_subj1_linear corr12 0.0505703685
+68   slide    31 hr_subj1_linear pval12 0.8280000000
+69   slide    32 hr_subj1_linear corr12 0.6189799911
+70   slide    32 hr_subj1_linear pval12 0.0000000000
+71   slide    33 hr_subj1_linear corr12 0.0164581195
+72   slide    33 hr_subj1_linear pval12 0.9320000000
+73   slide    34 hr_subj1_linear corr12 0.0539351628
+74   slide    34 hr_subj1_linear pval12 0.8100000000
+75   slide    35 hr_subj1_linear corr12 0.0168618267
+76   slide    35 hr_subj1_linear pval12 0.9220000000
+77   slide    36 hr_subj1_linear corr12 0.1823597072
+78   slide    36 hr_subj1_linear pval12 0.3420000000
+79   slide    37 hr_subj1_linear corr12 0.3433905818
+80   slide    37 hr_subj1_linear pval12 0.0520000000
+81   slide    38 hr_subj1_linear corr12 0.1086580476
+82   slide    38 hr_subj1_linear pval12 0.6000000000
+83   slide    39 hr_subj1_linear corr12 0.4638903644
+84   slide    39 hr_subj1_linear pval12 0.0180000000
+85   slide    40 hr_subj1_linear corr12 0.4390057797
+86   slide    40 hr_subj1_linear pval12 0.0260000000
+87   slide    41 hr_subj1_linear corr12 0.1919480394
+88   slide    41 hr_subj1_linear pval12 0.3500000000
+89   slide    42 hr_subj1_linear corr12 0.2346496330
+90   slide    42 hr_subj1_linear pval12 0.2220000000
+91   slide    43 hr_subj1_linear corr12 0.1809362581
+92   slide    43 hr_subj1_linear pval12 0.3880000000
+93   slide    44 hr_subj1_linear corr12 0.5851855025
+94   slide    44 hr_subj1_linear pval12 0.0020000000
+95   slide    45 hr_subj1_linear corr12 0.0622124493
+96   slide    45 hr_subj1_linear pval12 0.7920000000
+97   slide    47 hr_subj1_linear corr12 0.5208225186
+98   slide    47 hr_subj1_linear pval12 0.0060000000
+99    ex01  <NA> hr_subj1_linear corr12 0.0946997538
+100   ex01  <NA> hr_subj1_linear pval12 0.1140000000
+101   ex02  <NA> hr_subj1_linear corr12 0.0922003816
+102   ex02  <NA> hr_subj1_linear pval12 0.0980000000
+103   ex03  <NA> hr_subj1_linear corr12 0.0002005209
+104   ex03  <NA> hr_subj1_linear pval12 0.9980000000
+105   ex04  <NA> hr_subj1_linear corr12 0.1653840049
+106   ex04  <NA> hr_subj1_linear pval12 0.0060000000
+107   ex05  <NA> hr_subj1_linear corr12 0.0784476065
+108   ex05  <NA> hr_subj1_linear pval12 0.1620000000
+109   ex01 block hr_subj1_linear corr12 0.2548874782
+110   ex01 block hr_subj1_linear pval12 0.0380000000
+111   ex01 block hr_subj1_linear corr12 0.2540301379
+112   ex01 block hr_subj1_linear pval12 0.0000000000
+113   ex02 block hr_subj1_linear corr12 0.2780419356
+114   ex02 block hr_subj1_linear pval12 0.0200000000
+115   ex02 block hr_subj1_linear corr12 0.0174422823
+116   ex02 block hr_subj1_linear pval12 0.8240000000
+117   ex03 block hr_subj1_linear corr12 0.0625232795
+118   ex03 block hr_subj1_linear pval12 0.6340000000
+119   ex03 block hr_subj1_linear corr12 0.0386959467
+120   ex03 block hr_subj1_linear pval12 0.5540000000
+121   ex04 block hr_subj1_linear corr12 0.0498304869
+122   ex04 block hr_subj1_linear pval12 0.6380000000
+123   ex04 block hr_subj1_linear corr12 0.1574148825
+124   ex04 block hr_subj1_linear pval12 0.0120000000
+125   ex05 block hr_subj1_linear corr12 0.1436344664
+126   ex05 block hr_subj1_linear pval12 0.2840000000
+127   ex05 block hr_subj1_linear corr12 0.0424844388
+128   ex05 block hr_subj1_linear pval12 0.5240000000
+<h3>Wilcoxon paired P-values for every combination of block</h3>
+<table border=1>
+  <tr>
+    <td></td>
+[1] "chk200"
+    <td>pause</td>
+    <td>slide</td>
+[1] "chk300"
+  </tr>
+[1] "chk400"
+  <tr>
+    <td>pause</td>
+    <td>-</td>
+    <td>-</td>
+  </tr>
+[1] "chk400"
+  <tr>
+    <td>slide</td>
+[1] "chk500"
+[1]        NA 0.2387152        NA        NA        NA        NA        NA
+[1] "arr i has len  "
+[1]        NA 0.4437288 0.4437288        NA        NA        NA        NA        NA
+[1] "arr j has len  "
